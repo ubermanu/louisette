@@ -9,7 +9,7 @@
   const { triggerProps, contentProps, state } = provider
 </script>
 
-<div class="collapsible" class:disabled={!$state.disabled}>
+<div class="collapsible" class:disabled={$state.disabled}>
   <div class="trigger" on:click={() => provider.toggle()} {...$triggerProps}>
     {label}
   </div>
