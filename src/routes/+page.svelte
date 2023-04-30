@@ -16,10 +16,13 @@
   <AccordionItem label="Item 1">
     <p><button>Focusable button</button></p>
   </AccordionItem>
-  <AccordionItem label="Item 2">
+  <AccordionItem label="Item 2" open>
     <p>Content</p>
   </AccordionItem>
-  <AccordionItem label="Item 3">
+  <AccordionItem label="Item 3" disabled>
+    <p>Content</p>
+  </AccordionItem>
+  <AccordionItem label="Item 4">
     <p>Content</p>
   </AccordionItem>
 </Accordion>

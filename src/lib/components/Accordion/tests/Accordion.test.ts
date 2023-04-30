@@ -130,4 +130,25 @@ describe('Accordion', async () => {
       getByTestId('accordion-item-2-trigger').getAttribute('aria-expanded')
     ).toBe('true')
   })
+
+  test('Click on a disabled item does nothing', async () => {
+    const { getByTestId } = render(AccordionTest, {
+      props: {
+        items: [
+          {
+            id: '1',
+            label: 'Item 1',
+            content: 'Content 1',
+            defaults: { disabled: true },
+          },
+        ],
+      },
+    })
+
+    await fireEvent.click(getByTestId('accordion-item-1-trigger'))
+
+    expect(
+      getByTestId('accordion-item-1-trigger').getAttribute('aria-expanded')
+    ).toBe('false')
+  })
 })

@@ -125,14 +125,17 @@ export const createAccordionProvider = (config: AccordionConfig) => {
     )
 
     const toggle = () => {
+      if (get(state).disabled) return
       toggleItem(id)
     }
 
     const open = () => {
+      if (get(state).disabled || get(state).expanded) return
       openItem(id)
     }
 
     const close = () => {
+      if (get(state).disabled || !get(state).expanded) return
       closeItem(id)
     }
 

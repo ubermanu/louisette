@@ -18,7 +18,7 @@
   const { trigger, content, state } = item
 </script>
 
-<div class="accordion-item" {...$$restProps}>
+<div class="accordion-item" {...$$restProps} class:disabled={$state.disabled}>
   <div class="toggle" use:trigger>
     {label}
   </div>
@@ -30,6 +30,10 @@
 <style>
   .accordion-item {
     border-bottom: 1px solid #ddd;
+  }
+
+  .accordion-item.disabled {
+    opacity: 0.5;
   }
 
   .toggle {
