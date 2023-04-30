@@ -1,6 +1,6 @@
 # Collapsible
 
-Collapsible provider component.
+Collapsible component provider.
 
 https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
 
