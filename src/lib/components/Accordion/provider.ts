@@ -1,4 +1,5 @@
-import { uuid } from '$lib/helpers.js'
+import { generateId } from '$lib/helpers.js'
+import { v4 as uuid } from '@lukeed/uuid'
 import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 
@@ -90,6 +91,8 @@ export const createAccordionProvider = (config: AccordionConfig) => {
     const disabled = itemConfig?.disabled || false
 
     const id = uuid()
+    const triggerId = generateId()
+    const contentId = generateId()
 
     const item: AccordionItem = {
       id,
@@ -194,9 +197,9 @@ export const createAccordionProvider = (config: AccordionConfig) => {
         }
       }
 
-      node.setAttribute('id', `${id}-trigger`)
+      node.setAttribute('id', triggerId)
       node.setAttribute('role', 'button')
-      node.setAttribute('aria-controls', `${id}-content`)
+      node.setAttribute('aria-controls', contentId)
 
       node.addEventListener('click', onClick)
       node.addEventListener('keydown', onKeyDown)
@@ -222,9 +225,9 @@ export const createAccordionProvider = (config: AccordionConfig) => {
     }
 
     const contentAction: Action = (node) => {
-      node.setAttribute('id', `${id}-content`)
+      node.setAttribute('id', contentId)
       node.setAttribute('role', 'region')
-      node.setAttribute('aria-labelledby', `${id}-trigger`)
+      node.setAttribute('aria-labelledby', triggerId)
 
       const unsubscribe = state.subscribe(($state) => {
         node.setAttribute('aria-hidden', `${!$state.expanded}`)

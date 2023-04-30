@@ -1,4 +1,4 @@
-import { uuid } from '$lib/helpers.js'
+import { generateId } from '$lib/helpers.js'
 import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 
@@ -11,8 +11,8 @@ export const createCollapsibleProvider = (config: CollapsibleConfig) => {
   const expanded = writable(config?.expanded || false)
   const disabled = writable(config?.disabled || false)
 
-  const triggerId = uuid()
-  const contentId = uuid()
+  const triggerId = generateId()
+  const contentId = generateId()
 
   const state = derived([expanded, disabled], ([$expanded, $disabled]) => ({
     expanded: $expanded,
