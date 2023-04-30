@@ -1,0 +1,84 @@
+# Accordion
+
+Accordion component provider.
+
+It basically acts like a group of collapsible, but with the ability to have multiple items open at the same time.
+
+https://www.w3.org/WAI/ARIA/apg/patterns/accordion/
+
+## Usage
+
+Accordion:
+
+```svelte
+<script>
+  import { createAccordionProvider } from 'louisette'
+  import { setContext } from 'svelte'
+
+  const accordion = createAccordionProvider()
+  setContext('accordion', accordion)
+</script>
+
+<div>
+  <slot />
+</div>
+```
+
+Accordion item:
+
+```svelte
+<script>
+  import { getContext } from 'svelte'
+
+  const accordion = getContext('accordion')
+  const accordionItem = accordion.createItemProvider()
+
+  const { triggerAction, contentAction } = accordionItem
+</script>
+
+<div>
+  <div use:triggerAction>Trigger</div>
+  <div use:contentAction>
+    <p>Content</p>
+  </div>
+</div>
+```
+
+## createAccordionProvider
+
+### Options
+
+- `multiple` (boolean): Whether multiple items can be open at the same time or not by default.
+
+### Stores
+
+- `multiple` (boolean): Whether multiple items can be open at the same time or not.
+
+### Methods
+
+- `createItemProvider()`: Creates a new item provider.
+- `openAll()`: Opens all items.
+- `closeAll()`: Closes all items.
+
+## createItemProvider
+
+### Options
+
+- `expanded` (boolean): Whether the item is open or not by default.
+- `disabled` (boolean): Whether the item is disabled or not by default.
+
+### Stores
+
+- `expanded` (boolean): Whether the item is open or not.
+- `disabled` (boolean): Whether the item is disabled or not.
+
+### Methods
+
+- `toggle()`: Toggles the visibility of the content.
+- `open()`: Opens the content.
+- `close()`: Closes the content.
+
+### Actions
+
+- `trigger`: The action to apply to the trigger element.
+- `content`: The action to apply to the content element.
