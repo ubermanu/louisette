@@ -13,6 +13,11 @@ interface AccordionItem {
   triggerElement?: HTMLElement
 }
 
+type AccordionItemConfig = {
+  expanded?: boolean
+  disabled?: boolean
+}
+
 export const createAccordionProvider = (config: AccordionConfig) => {
   const multiple = writable(config?.multiple || false)
   const items = writable<AccordionItem[]>([])
@@ -46,18 +51,18 @@ export const createAccordionProvider = (config: AccordionConfig) => {
 
   /** Toggle an item by id */
   const toggleItem = (id: string) => {
-    if (get(multiple)) {
-      openItem(id)
-    } else {
-      items.update(($items) => {
-        return $items.map(($item) => {
-          return {
-            ...$item,
-            expanded: $item.id === id,
-          }
-        })
-      })
-    }
+    const $multiple = get(multiple)
+    items.update(($items) => {
+      return $items.map(($item) => ({
+        ...$item,
+        expanded:
+          $item.id === id
+            ? !$item.expanded
+            : $multiple
+            ? $item.expanded
+            : false,
+      }))
+    })
   }
 
   /** Open all items */
@@ -80,7 +85,7 @@ export const createAccordionProvider = (config: AccordionConfig) => {
     })
   }
 
-  const createItemProvider = (itemConfig: any = {}) => {
+  const createItemProvider = (itemConfig: AccordionItemConfig) => {
     const expanded = itemConfig?.expanded || false
     const disabled = itemConfig?.disabled || false
 
@@ -104,9 +109,10 @@ export const createAccordionProvider = (config: AccordionConfig) => {
       [items],
       ([$items]) => {
         const $item = $items.find(($item) => $item.id === id)
+        // TODO: Handle item not found
         return {
-          expanded: $item?.expanded || false,
-          disabled: $item?.disabled || false,
+          expanded: $item?.expanded ?? false,
+          disabled: $item?.disabled ?? false,
         }
       },
       {
@@ -190,10 +196,7 @@ export const createAccordionProvider = (config: AccordionConfig) => {
 
       node.setAttribute('id', `${id}-trigger`)
       node.setAttribute('role', 'button')
-      node.setAttribute('tabindex', '0')
       node.setAttribute('aria-controls', `${id}-content`)
-      node.setAttribute('aria-expanded', `${expanded}`)
-      node.setAttribute('aria-disabled', `${disabled}`)
 
       node.addEventListener('click', onClick)
       node.addEventListener('keydown', onKeyDown)

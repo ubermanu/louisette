@@ -62,6 +62,12 @@ describe('Accordion', async () => {
     expect(
       getByTestId('accordion-item-1-trigger').getAttribute('aria-expanded')
     ).toBe('true')
+
+    await fireEvent.click(getByTestId('accordion-item-1-trigger'))
+
+    expect(
+      getByTestId('accordion-item-1-trigger').getAttribute('aria-expanded')
+    ).toBe('false')
   })
 
   test('Click on the trigger closes the other items', async () => {
