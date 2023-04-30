@@ -18,8 +18,9 @@ describe('Collapsible', async () => {
   })
 
   test('Expanded by defaults means its opened', async () => {
-    const { getByTestId } = render(CollapsibleTest)
-    await fireEvent.click(getByTestId('trigger'))
+    const { getByTestId } = render(CollapsibleTest, {
+      props: { defaults: { expanded: true } },
+    })
     expect(getByTestId('trigger').getAttribute('aria-expanded')).toBe('true')
   })
 
