@@ -12,10 +12,6 @@
   const { triggerAction, contentAction } = item
 </script>
 
-<div {...$$restProps}>
-  <slot />
-</div>
-
 <div data-testid="accordion-item-{id}">
   <div data-testid="accordion-item-{id}-trigger" use:triggerAction>
     {label}

@@ -10,10 +10,6 @@
   setContext('accordion', provider)
 </script>
 
-<div {...$$restProps}>
-  <slot />
-</div>
-
 <div data-testid="accordion">
   {#each items as item}
     <AccordionItemTest {...item} />
