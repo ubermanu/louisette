@@ -1,17 +1,9 @@
 <script>
-  import Collapsible from './Collapsible.svelte'
-  let open = false
-  let disabled = false
-
-  $: console.log({ open, disabled })
+  import Collapsible from './components/Collapsible.svelte'
 </script>
 
-<Collapsible />
+<h2>Collapsible</h2>
 
-<label>
-  <input type="checkbox" bind:checked={open} /> Open
-</label>
-
-<label>
-  <input type="checkbox" bind:checked={disabled} /> Disabled
-</label>
+<Collapsible label="Trigger">
+  <p>Content</p>
+</Collapsible>
