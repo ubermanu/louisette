@@ -11,7 +11,8 @@ export const createCollapsibleProvider = (config: CollapsibleConfig) => {
   const expanded = writable(config?.expanded || false)
   const disabled = writable(config?.disabled || false)
 
-  const id = uuid()
+  const triggerId = uuid()
+  const contentId = uuid()
 
   const state = derived([expanded, disabled], ([$expanded, $disabled]) => ({
     expanded: $expanded,
@@ -54,11 +55,11 @@ export const createCollapsibleProvider = (config: CollapsibleConfig) => {
     node.addEventListener('click', onClick)
     node.addEventListener('keydown', onKeyDown)
 
-    node.setAttribute('id', `${id}-trigger`)
+    node.setAttribute('id', triggerId)
     node.setAttribute('role', 'button')
-    node.setAttribute('aria-controls', `${id}-content`)
+    node.setAttribute('aria-controls', contentId)
 
-    const unsubState = state.subscribe(($state) => {
+    const unsubscribe = state.subscribe(($state) => {
       node.setAttribute('aria-expanded', $state.expanded.toString())
       node.setAttribute('aria-disabled', $state.disabled.toString())
       node.setAttribute('tabindex', $state.disabled ? '-1' : '0')
@@ -68,22 +69,22 @@ export const createCollapsibleProvider = (config: CollapsibleConfig) => {
       destroy() {
         node.removeEventListener('click', onClick)
         node.removeEventListener('keydown', onKeyDown)
-        unsubState()
+        unsubscribe()
       },
     }
   }
 
   const contentAction: Action = (node) => {
-    node.setAttribute('id', `${id}-content`)
+    node.setAttribute('id', contentId)
     node.setAttribute('role', 'region')
 
-    const unsubState = state.subscribe(($state) => {
+    const unsubscribe = state.subscribe(($state) => {
       node.setAttribute('aria-hidden', (!$state.expanded).toString())
     })
 
     return {
       destroy() {
-        unsubState()
+        unsubscribe()
       },
     }
   }
