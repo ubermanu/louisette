@@ -151,4 +151,52 @@ describe('Accordion', async () => {
       getByTestId('accordion-item-1-trigger').getAttribute('aria-expanded')
     ).toBe('false')
   })
+
+  test('Pressing enter or space on the trigger toggles its content', async () => {
+    const { getByTestId } = render(AccordionTest, {
+      props: {
+        items: [{ id: '1', label: 'Item 1', content: 'Content 1' }],
+      },
+    })
+
+    await fireEvent.keyDown(getByTestId('accordion-item-1-trigger'), {
+      key: 'Enter',
+    })
+
+    expect(
+      getByTestId('accordion-item-1-trigger').getAttribute('aria-expanded')
+    ).toBe('true')
+
+    await fireEvent.keyDown(getByTestId('accordion-item-1-trigger'), {
+      key: ' ',
+    })
+
+    expect(
+      getByTestId('accordion-item-1-trigger').getAttribute('aria-expanded')
+    ).toBe('false')
+  })
+
+  test('Pressing escape on the trigger closes its content', async () => {
+    const { getByTestId } = render(AccordionTest, {
+      props: {
+        items: [{ id: '1', label: 'Item 1', content: 'Content 1' }],
+      },
+    })
+
+    await fireEvent.keyDown(getByTestId('accordion-item-1-trigger'), {
+      key: 'Enter',
+    })
+
+    expect(
+      getByTestId('accordion-item-1-trigger').getAttribute('aria-expanded')
+    ).toBe('true')
+
+    await fireEvent.keyDown(getByTestId('accordion-item-1-trigger'), {
+      key: 'Escape',
+    })
+
+    expect(
+      getByTestId('accordion-item-1-trigger').getAttribute('aria-expanded')
+    ).toBe('false')
+  })
 })
