@@ -37,8 +37,10 @@ https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
 ### Methods
 
 - `toggle()`: Toggles the visibility of the content.
+- `open()`: Shows the content.
+- `close()`: Hides the content.
 
-### Props
+### Actions
 
-- `triggerProps`: Props to spread on the trigger element.
-- `contentProps`: Props to spread on the content element.
+- `trigger`: The action to apply to the trigger element.
+- `content`: The action to apply to the content element.
