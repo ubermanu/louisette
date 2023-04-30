@@ -8,17 +8,17 @@ https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
 
 ```svelte
 <script>
-    import { createCollapsibleProvider } from 'louisette'
+  import { createCollapsibleProvider } from 'louisette'
 
-    const collapsible = createCollapsibleProvider()
-    const { triggerProps, contentProps } = collapsible
+  const collapsible = createCollapsibleProvider()
+  const { triggerEvents, triggerProps, contentProps } = collapsible
 </script>
 
 <div>
-    <div on:click={() => collapsible.toggle()} {...$triggerProps}>Trigger</div>
-    <div {...$contentProps}>
-        <p>Content</p>
-    </div>
+  <div use:triggerEvents {...$triggerProps}>Trigger</div>
+  <div {...$contentProps}>
+    <p>Content</p>
+  </div>
 </div>
 ```
 

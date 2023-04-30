@@ -1,4 +1,5 @@
 import { uuid } from '$lib/helpers.js'
+import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 
 export type CollapsibleProvider = ReturnType<typeof createCollapsibleProvider>
@@ -64,10 +65,50 @@ export const createCollapsibleProvider = (
     expanded.update(($expanded) => !$expanded)
   }
 
+  const open = () => {
+    if (get(disabled) || get(expanded)) return
+    expanded.set(true)
+  }
+
+  const close = () => {
+    if (get(disabled) || !get(expanded)) return
+    expanded.set(false)
+  }
+
+  const triggerEvents: Action = (node) => {
+    const onClick = (event: MouseEvent) => {
+      event.preventDefault()
+      toggle()
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        toggle()
+      }
+
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        close()
+      }
+    }
+
+    node.addEventListener('click', onClick)
+    node.addEventListener('keydown', onKeyDown)
+
+    return {
+      destroy() {
+        node.removeEventListener('click', onClick)
+        node.removeEventListener('keydown', onKeyDown)
+      },
+    }
+  }
+
   return {
     state,
+    triggerEvents,
     triggerProps,
     contentProps,
-    toggle,
+    toggle, // FIXME: Keep exposed for now, but remove in favor of triggerEvents
   }
 }
