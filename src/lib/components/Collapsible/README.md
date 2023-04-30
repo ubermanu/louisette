@@ -15,7 +15,7 @@ https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
 </script>
 
 <div>
-  <div use:triggerEvents {...$triggerProps}>Trigger</div>
+  <div use:trigger>Trigger</div>
   <div use:content>
     <p>Content</p>
   </div>
