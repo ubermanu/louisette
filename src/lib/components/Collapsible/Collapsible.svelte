@@ -1,5 +1,12 @@
 <script lang="ts">
-  import { createCollapsibleProvider } from '$lib'
+  import { createCollapsibleProvider } from './provider'
+
+  /**
+   * This component is a simple implementation of the collapsible provider.
+   *
+   * It is not intended to be used in production, but rather as a reference for
+   * how you can implement your own component.
+   */
 
   export let label
   export let open = false

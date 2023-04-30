@@ -2,25 +2,14 @@ import { uuid } from '$lib/helpers.js'
 import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 
-export type CollapsibleProvider = ReturnType<typeof createCollapsibleProvider>
-
-export type CollapsibleProviderConfig = {
+export type CollapsibleConfig = {
   expanded?: boolean
   disabled?: boolean
 }
 
-const defaults: CollapsibleProviderConfig = {
-  expanded: false,
-  disabled: false,
-}
-
-export const createCollapsibleProvider = (
-  config: CollapsibleProviderConfig = defaults
-) => {
-  config = { ...defaults, ...config }
-
-  const expanded = writable(config.expanded)
-  const disabled = writable(config.disabled)
+export const createCollapsibleProvider = (config: CollapsibleConfig) => {
+  const expanded = writable(config?.expanded || false)
+  const disabled = writable(config?.disabled || false)
 
   const id = uuid()
 
@@ -68,8 +57,6 @@ export const createCollapsibleProvider = (
     node.setAttribute('id', `${id}-trigger`)
     node.setAttribute('role', 'button')
     node.setAttribute('aria-controls', `${id}-content`)
-    node.setAttribute('aria-expanded', config?.expanded?.toString() ?? 'false')
-    node.setAttribute('aria-disabled', config?.disabled?.toString() ?? 'false')
 
     const unsubState = state.subscribe(($state) => {
       node.setAttribute('aria-expanded', $state.expanded.toString())
@@ -89,7 +76,6 @@ export const createCollapsibleProvider = (
   const contentAction: Action = (node) => {
     node.setAttribute('id', `${id}-content`)
     node.setAttribute('role', 'region')
-    node.setAttribute('aria-hidden', config?.expanded?.toString() ?? 'false')
 
     const unsubState = state.subscribe(($state) => {
       node.setAttribute('aria-hidden', (!$state.expanded).toString())

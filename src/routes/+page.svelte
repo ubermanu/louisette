@@ -1,5 +1,5 @@
 <script>
-  import Collapsible from './components/Collapsible.svelte'
+  import Collapsible from '$lib/components/Collapsible/Collapsible.svelte'
 </script>
 
 <h2>Collapsible</h2>
