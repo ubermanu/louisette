@@ -33,12 +33,12 @@ Accordion item:
   const accordion = getContext('accordion')
   const accordionItem = accordion.createItemProvider()
 
-  const { triggerAction, contentAction } = accordionItem
+  const { trigger, content } = accordionItem
 </script>
 
 <div>
-  <div use:triggerAction>Trigger</div>
-  <div use:contentAction>
+  <div use:trigger>Trigger</div>
+  <div use:content>
     <p>Content</p>
   </div>
 </div>
