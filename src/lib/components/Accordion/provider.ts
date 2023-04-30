@@ -86,6 +86,39 @@ export const createAccordionProvider = (config: AccordionConfig) => {
     })
   }
 
+  const getFirstEnabledItem = () => {
+    const $items = get(items)
+    return $items.find(($item) => !$item.disabled)
+  }
+
+  /** TODO: Optimize this */
+  const getLastEnabledItem = () => {
+    const $items = get(items)
+    return [...$items].reverse().find(($item) => !$item.disabled)
+  }
+
+  /** TODO: Optimize this */
+  const getNextEnabledItem = (id: string): AccordionItem | null => {
+    const $items = get(items)
+    const $currentIndex = $items.findIndex(($item) => $item.id === id)
+    const $nextIndex = $currentIndex + 1
+    const $nextItem = $items[$nextIndex]
+    if (!$nextItem) return null
+    if ($nextItem.disabled) return getNextEnabledItem($nextItem.id)
+    return $nextItem
+  }
+
+  /** TODO: Optimize this */
+  const getPreviousEnabledItem = (id: string): AccordionItem | null => {
+    const $items = get(items)
+    const $currentIndex = $items.findIndex(($item) => $item.id === id)
+    const $previousIndex = $currentIndex - 1
+    const $previousItem = $items[$previousIndex]
+    if (!$previousItem) return null
+    if ($previousItem.disabled) return getPreviousEnabledItem($previousItem.id)
+    return $previousItem
+  }
+
   const createItemProvider = (itemConfig: AccordionItemConfig) => {
     const expanded = itemConfig?.expanded || false
     const disabled = itemConfig?.disabled || false
@@ -171,32 +204,22 @@ export const createAccordionProvider = (config: AccordionConfig) => {
 
         if (event.key === 'ArrowUp') {
           event.preventDefault()
-          const $items = get(items)
-          const index = $items.findIndex(($item) => $item.id === id)
-          const $previous = $items[index - 1]
-          $previous?.triggerElement?.focus()
+          getPreviousEnabledItem(id)?.triggerElement?.focus()
         }
 
         if (event.key === 'ArrowDown') {
           event.preventDefault()
-          const $items = get(items)
-          const index = $items.findIndex(($item) => $item.id === id)
-          const $next = $items[index + 1]
-          $next?.triggerElement?.focus()
+          getNextEnabledItem(id)?.triggerElement?.focus()
         }
 
         if (event.key === 'Home') {
           event.preventDefault()
-          const $items = get(items)
-          const $first = $items[0]
-          $first?.triggerElement?.focus()
+          getFirstEnabledItem()?.triggerElement?.focus()
         }
 
         if (event.key === 'End') {
           event.preventDefault()
-          const $items = get(items)
-          const $last = $items[$items.length - 1]
-          $last?.triggerElement?.focus()
+          getLastEnabledItem()?.triggerElement?.focus()
         }
       }
 

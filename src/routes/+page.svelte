@@ -25,4 +25,7 @@
   <AccordionItem label="Item 4">
     <p>Content</p>
   </AccordionItem>
+  <AccordionItem label="Item 5" disabled>
+    <p>Content</p>
+  </AccordionItem>
 </Accordion>
