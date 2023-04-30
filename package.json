@@ -25,14 +25,16 @@
     "package": "svelte-kit sync && svelte-package && publint",
     "prepublishOnly": "npm run package",
     "preview": "vite preview",
-    "test:unit": "vitest"
+    "test": "vitest"
   },
   "prettier": "@ubermanu/prettier-config",
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/kit": "^1.5.0",
     "@sveltejs/package": "^2.0.0",
+    "@testing-library/svelte": "^3.2.2",
     "@ubermanu/prettier-config": "^1.7.1",
+    "jest-mock": "^29.5.0",
     "jsdom": "^21.1.1",
     "prettier": "^2.8.0",
     "prettier-plugin-svelte": "^2.8.1",
