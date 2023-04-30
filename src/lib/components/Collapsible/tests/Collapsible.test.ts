@@ -1,7 +1,7 @@
 import { fireEvent, render } from '@testing-library/svelte'
 import { describe, expect, test } from 'vitest'
 
-import CollapsibleTest from './CollapsibleTest.svelte'
+import CollapsibleTest from './Collapsible.test.svelte'
 
 describe('Collapsible', async () => {
   test('Renders as closed by default', async () => {
