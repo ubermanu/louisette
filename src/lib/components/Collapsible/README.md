@@ -29,7 +29,7 @@ https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
 
 ## Provider
 
-### Stores
+### State
 
 - `expanded` (boolean): Whether the collapsible is open or not.
 - `disabled` (boolean): Whether the collapsible is disabled or not.

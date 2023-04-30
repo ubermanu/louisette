@@ -63,8 +63,7 @@ export const createCollapsibleProvider = (
   }
 
   return {
-    expanded,
-    disabled,
+    state,
     triggerProps,
     contentProps,
     toggle,
