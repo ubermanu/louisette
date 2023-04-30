@@ -32,6 +32,7 @@ export const createCollapsibleProvider = (
     ($state) => ({
       id: `${id}-trigger`,
       role: 'button',
+      tabindex: $state.disabled ? -1 : 0,
       'aria-controls': `${id}-content`,
       'aria-expanded': $state.expanded,
       'aria-disabled': $state.disabled,
@@ -39,6 +40,7 @@ export const createCollapsibleProvider = (
     {
       id: `${id}-trigger`,
       role: 'button',
+      tabindex: config.disabled ? -1 : 0,
       'aria-controls': `${id}-content`,
       'aria-expanded': config.expanded,
       'aria-disabled': config.disabled,
