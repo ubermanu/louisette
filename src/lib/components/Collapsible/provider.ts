@@ -3,6 +3,7 @@ import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 
 export type CollapsibleProvider = ReturnType<typeof createCollapsibleProvider>
+
 export type CollapsibleProviderConfig = {
   expanded?: boolean
   disabled?: boolean
