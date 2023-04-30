@@ -1,11 +1,21 @@
-<script>
-  import Collapsible from '../index'
-  const { Root, Trigger, Content } = Collapsible
+<script lang="ts">
+  import { createCollapsibleProvider } from '../provider'
+
+  export let defaults = {}
+
+  const provider = createCollapsibleProvider(defaults)
+  const { triggerProps, contentProps } = provider
 </script>
 
-<Root data-testid="collapsible" {...$$restProps}>
-  <Trigger data-testid="trigger">Trigger</Trigger>
-  <Content data-testid="content">
+<div data-testid="collapsible">
+  <div
+    data-testid="trigger"
+    on:click={() => provider.toggle()}
+    {...$triggerProps}
+  >
+    Trigger
+  </div>
+  <div data-testid="content" {...$contentProps}>
     <p>Content</p>
-  </Content>
-</Root>
+  </div>
+</div>

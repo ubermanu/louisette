@@ -1,1 +1,1 @@
-export * from './components/Collapsible/index.js'
+export * from './components/Collapsible/provider.js'
