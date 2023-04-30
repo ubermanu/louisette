@@ -6,8 +6,7 @@ https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
 
 ## Usage
 
-```sveltehtml
-
+```svelte
 <script>
     import { createCollapsibleProvider } from 'louisette'
 
