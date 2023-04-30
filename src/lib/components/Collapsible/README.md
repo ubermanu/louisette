@@ -11,12 +11,12 @@ https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/
   import { createCollapsibleProvider } from 'louisette'
 
   const collapsible = createCollapsibleProvider()
-  const { triggerEvents, triggerProps, contentProps } = collapsible
+  const { trigger, content } = collapsible
 </script>
 
 <div>
   <div use:triggerEvents {...$triggerProps}>Trigger</div>
-  <div {...$contentProps}>
+  <div use:content>
     <p>Content</p>
   </div>
 </div>

@@ -28,38 +28,6 @@ export const createCollapsibleProvider = (
     disabled: $disabled,
   }))
 
-  const triggerProps = derived(
-    state,
-    ($state) => ({
-      id: `${id}-trigger`,
-      role: 'button',
-      tabindex: $state.disabled ? -1 : 0,
-      'aria-controls': `${id}-content`,
-      'aria-expanded': $state.expanded,
-      'aria-disabled': $state.disabled,
-    }),
-    {
-      id: `${id}-trigger`,
-      role: 'button',
-      tabindex: config.disabled ? -1 : 0,
-      'aria-controls': `${id}-content`,
-      'aria-expanded': config.expanded,
-      'aria-disabled': config.disabled,
-    }
-  )
-
-  const contentProps = derived(
-    state,
-    ($state) => ({
-      id: `${id}-content`,
-      'aria-hidden': !$state.expanded,
-    }),
-    {
-      id: `${id}-content`,
-      'aria-hidden': !config.expanded,
-    }
-  )
-
   const toggle = () => {
     if (get(disabled)) return
     expanded.update(($expanded) => !$expanded)
@@ -75,7 +43,7 @@ export const createCollapsibleProvider = (
     expanded.set(false)
   }
 
-  const triggerEvents: Action = (node) => {
+  const triggerAction: Action = (node) => {
     const onClick = (event: MouseEvent) => {
       event.preventDefault()
       toggle()
@@ -96,19 +64,49 @@ export const createCollapsibleProvider = (
     node.addEventListener('click', onClick)
     node.addEventListener('keydown', onKeyDown)
 
+    node.setAttribute('id', `${id}-trigger`)
+    node.setAttribute('role', 'button')
+    node.setAttribute('aria-controls', `${id}-content`)
+    node.setAttribute('aria-expanded', config?.expanded?.toString() ?? 'false')
+    node.setAttribute('aria-disabled', config?.disabled?.toString() ?? 'false')
+
+    const unsubState = state.subscribe(($state) => {
+      node.setAttribute('aria-expanded', $state.expanded.toString())
+      node.setAttribute('aria-disabled', $state.disabled.toString())
+      node.setAttribute('tabindex', $state.disabled ? '-1' : '0')
+    })
+
     return {
       destroy() {
         node.removeEventListener('click', onClick)
         node.removeEventListener('keydown', onKeyDown)
+        unsubState()
+      },
+    }
+  }
+
+  const contentAction: Action = (node) => {
+    node.setAttribute('id', `${id}-content`)
+    node.setAttribute('role', 'region')
+    node.setAttribute('aria-hidden', config?.expanded?.toString() ?? 'false')
+
+    const unsubState = state.subscribe(($state) => {
+      node.setAttribute('aria-hidden', (!$state.expanded).toString())
+    })
+
+    return {
+      destroy() {
+        unsubState()
       },
     }
   }
 
   return {
     state,
-    triggerEvents,
-    triggerProps,
-    contentProps,
-    toggle, // FIXME: Keep exposed for now, but remove in favor of triggerEvents
+    trigger: triggerAction,
+    content: contentAction,
+    open,
+    close,
+    toggle,
   }
 }

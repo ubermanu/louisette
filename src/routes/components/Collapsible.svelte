@@ -6,14 +6,14 @@
   export let disabled = false
 
   const provider = createCollapsibleProvider({ expanded: open, disabled })
-  const { triggerEvents, triggerProps, contentProps, state } = provider
+  const { trigger, content, state } = provider
 </script>
 
 <div class="collapsible" class:disabled={$state.disabled}>
-  <div class="trigger" use:triggerEvents {...$triggerProps}>
+  <div class="trigger" use:trigger>
     {label}
   </div>
-  <div class="content" {...$contentProps} class:hidden={!$state.expanded}>
+  <div class="content" use:content class:hidden={!$state.expanded}>
     <slot />
   </div>
 </div>

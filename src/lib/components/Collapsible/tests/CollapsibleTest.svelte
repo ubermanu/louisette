@@ -4,12 +4,12 @@
   export let defaults = {}
 
   const provider = createCollapsibleProvider(defaults)
-  const { triggerEvents, triggerProps, contentProps } = provider
+  const { trigger, content } = provider
 </script>
 
 <div data-testid="collapsible">
-  <div data-testid="trigger" use:triggerEvents {...$triggerProps}>Trigger</div>
-  <div data-testid="content" {...$contentProps}>
+  <div data-testid="trigger" use:trigger>Trigger</div>
+  <div data-testid="content" use:content>
     <p>Content</p>
   </div>
 </div>
