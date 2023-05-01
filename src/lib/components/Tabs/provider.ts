@@ -38,7 +38,7 @@ export const createTabsProvider = (config?: TabsConfig) => {
   const panels = writable<Panel[]>([])
 
   const orientation = writable(config?.orientation || 'horizontal')
-  const behavior = writable(config?.behavior || 'auto')
+  const behavior = writable(config?.behavior || 'manual')
 
   /** Open a panel by id */
   const openTab = (id: string) => {
@@ -163,12 +163,16 @@ export const createTabsProvider = (config?: TabsConfig) => {
       }
 
       function onKeyDown(event: KeyboardEvent) {
-        if (event.key === 'Enter' || event.key === ' ') {
+        const $orientation = get(orientation)
+        const $behavior = get(behavior)
+
+        if (
+          (event.key === 'Enter' || event.key === ' ') &&
+          $behavior === 'manual'
+        ) {
           event.preventDefault()
           onClick()
         }
-
-        const $orientation = get(orientation)
 
         if (event.key === 'ArrowLeft' && $orientation === 'horizontal') {
           event.preventDefault()
