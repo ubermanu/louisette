@@ -9,14 +9,14 @@
   const accordion = getContext('accordion')
   const item = accordion.createItemProvider(defaults)
 
-  const { trigger, content: contentAction } = item
+  const { triggerRef, contentRef } = item
 </script>
 
 <div data-testid="accordion-item-{id}">
-  <div data-testid="accordion-item-{id}-trigger" use:trigger>
+  <div data-testid="accordion-item-{id}-trigger" use:triggerRef>
     {label}
   </div>
-  <div data-testid="accordion-item-{id}-content" use:contentAction>
+  <div data-testid="accordion-item-{id}-content" use:contentRef>
     {content}
   </div>
 </div>

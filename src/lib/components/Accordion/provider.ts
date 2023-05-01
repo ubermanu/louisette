@@ -268,8 +268,8 @@ export const createAccordionProvider = (config: AccordionConfig) => {
 
     return {
       state,
-      trigger: triggerAction,
-      content: contentAction,
+      triggerRef: triggerAction,
+      contentRef: contentAction,
       toggle,
       open,
       close,

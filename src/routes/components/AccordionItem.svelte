@@ -15,14 +15,14 @@
   const accordion = getContext('accordion')
   const item = accordion.createItemProvider({ expanded: open, disabled })
 
-  const { trigger, content, state } = item
+  const { triggerRef, contentRef, state } = item
 </script>
 
 <div class="accordion-item" {...$$restProps} class:disabled={$state.disabled}>
-  <div class="toggle" use:trigger>
+  <div class="toggle" use:triggerRef>
     {label}
   </div>
-  <div class="content" use:content class:hidden={!$state.expanded}>
+  <div class="content" use:contentRef class:hidden={!$state.expanded}>
     <slot />
   </div>
 </div>

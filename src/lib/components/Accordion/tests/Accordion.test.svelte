@@ -6,8 +6,8 @@
   export let items: { id: number; label: string; content: string }[] = []
   export let defaults = {}
 
-  const provider = createAccordionProvider(defaults)
-  setContext('accordion', provider)
+  const accordion = createAccordionProvider(defaults)
+  setContext('accordion', accordion)
 </script>
 
 <div data-testid="accordion">
