@@ -1,5 +1,4 @@
 import { generateId } from '$lib/helpers.js'
-import { v4 as uuid } from '@lukeed/uuid'
 import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 
@@ -8,24 +7,24 @@ type TabsConfig = {
   behavior?: 'manual' | 'auto'
 }
 
-type TabItemConfig = {
+type TabConfig = {
   key: string
   selected?: boolean
   disabled?: boolean
 }
 
-type PanelItemConfig = {
+type PanelConfig = {
   key: string
 }
 
-type TabItem = {
+type Tab = {
   id: string
   disabled: boolean
   key: string
   triggerElement?: HTMLElement
 }
 
-type PanelItem = {
+type Panel = {
   id: string
   key: string
   element?: HTMLElement
@@ -35,8 +34,8 @@ export const createTabsProvider = (config?: TabsConfig) => {
   // The currently selected identifier
   const selected = writable<string>('')
 
-  const tabs = writable<TabItem[]>([])
-  const panels = writable<PanelItem[]>([])
+  const tabs = writable<Tab[]>([])
+  const panels = writable<Panel[]>([])
 
   const orientation = writable(config?.orientation || 'horizontal')
   const behavior = writable(config?.behavior || 'auto')
@@ -56,7 +55,8 @@ export const createTabsProvider = (config?: TabsConfig) => {
     }
   )
 
-  const listAction: Action = (node) => {
+  /** The action to be applied to the tab list element */
+  const listRef: Action = (node) => {
     node.setAttribute('role', 'tablist')
 
     const unsubscribe = listState.subscribe(($state) => {
@@ -70,8 +70,7 @@ export const createTabsProvider = (config?: TabsConfig) => {
     }
   }
 
-  const createItemProvider = (config: TabItemConfig) => {
-    const id = uuid()
+  const createItemProvider = (config: TabConfig) => {
     const tabId = generateId()
 
     const disabled = writable<boolean>(config?.disabled || false)
@@ -91,32 +90,35 @@ export const createTabsProvider = (config?: TabsConfig) => {
       openTab(config.key)
     }
 
-    const itemState = derived(
-      [disabled, selected],
-      ([$disabled, $selected]) => {
-        return {
-          active: $selected === config.key,
-          disabled: $disabled,
-        }
+    const tabState = derived([disabled, selected], ([$disabled, $selected]) => {
+      return {
+        active: $selected === config.key,
+        disabled: $disabled,
       }
-    )
+    })
 
-    const itemAction: Action = (node) => {
+    /** The action to be applied to the tab element */
+    const triggerRef: Action = (node) => {
       node.setAttribute('id', tabId)
       node.setAttribute('role', 'tab')
+
+      // This handles the case where there are multiple panels with the same key
       node.setAttribute(
         'aria-controls',
-        get(panels).find((panel) => panel.key === config.key)?.id || ''
+        get(panels)
+          .filter((panel) => panel.key === config.key)
+          .map((panel) => panel.id)
+          .join(' ')
       )
 
       function onClick() {
-        if (get(itemState).disabled) return
+        if (get(tabState).disabled) return
         openTab(config.key)
       }
 
       node.addEventListener('click', onClick)
 
-      const unsubscribe = itemState.subscribe(($state) => {
+      const unsubscribe = tabState.subscribe(($state) => {
         node.setAttribute('aria-selected', $state.active.toString())
         node.setAttribute('aria-disabled', $state.disabled.toString())
       })
@@ -130,13 +132,12 @@ export const createTabsProvider = (config?: TabsConfig) => {
     }
 
     return {
-      state: itemState,
-      triggerRef: itemAction,
+      state: tabState,
+      triggerRef,
     }
   }
 
-  const createPanelProvider = (config: PanelItemConfig) => {
-    const id = uuid()
+  const createPanelProvider = (config: PanelConfig) => {
     const panelId = generateId()
 
     panels.update(($items) => {
@@ -160,12 +161,19 @@ export const createTabsProvider = (config?: TabsConfig) => {
       }
     })
 
-    const panelAction: Action = (node) => {
+    /** The action to be applied to the tab panel element */
+    const panelRef: Action = (node) => {
       node.setAttribute('id', panelId)
       node.setAttribute('role', 'tabpanel')
+
+      // Attach the panel to the tab, based on the tab key
+      // This handles the case where there are multiple tabs with the same key
       node.setAttribute(
         'aria-labelledby',
-        get(tabs).find((tab) => tab.key === config.key)?.id || ''
+        get(tabs)
+          .filter((tab) => tab.key === config.key)
+          .map((tab) => tab.id)
+          .join(' ')
       )
 
       const unsubscribe = panelState.subscribe(($state) => {
@@ -181,13 +189,13 @@ export const createTabsProvider = (config?: TabsConfig) => {
 
     return {
       state: panelState,
-      panelRef: panelAction,
+      panelRef,
     }
   }
 
   return {
     state: listState,
-    listRef: listAction,
+    listRef,
     createItemProvider,
     createPanelProvider,
   }

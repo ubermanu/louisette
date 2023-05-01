@@ -41,6 +41,7 @@
     <Tab key="tab-1">Tab 1</Tab>
     <Tab key="tab-2">Tab 2</Tab>
     <Tab key="tab-3">Tab 3</Tab>
+    <Tab key="tab-1">Tab 1</Tab>
   </TabList>
   <TabPanel key="tab-1">Tab 1 content</TabPanel>
   <TabPanel key="tab-2">Tab 2 content</TabPanel>
