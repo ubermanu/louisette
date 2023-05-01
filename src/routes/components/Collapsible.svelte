@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createCollapsibleProvider } from '$lib'
+  import { createCollapsible } from '$lib'
 
   /**
    * This component is a simple implementation of the collapsible provider.
@@ -12,7 +12,7 @@
   export let open = false
   export let disabled = false
 
-  const collapsible = createCollapsibleProvider({ expanded: open, disabled })
+  const collapsible = createCollapsible({ expanded: open, disabled })
   const { triggerRef, contentRef, state } = collapsible
 </script>
 

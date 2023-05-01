@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { createCollapsibleProvider } from '../provider'
+  import { createCollapsible } from '../provider'
 
   export let defaults = {}
 
-  const collapsible = createCollapsibleProvider(defaults)
+  const collapsible = createCollapsible(defaults)
   const { triggerRef, contentRef } = collapsible
 </script>
 
