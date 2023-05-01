@@ -28,7 +28,7 @@ type ContentAttrs = {
   key: string
 }
 
-export const createAccordionProvider = (config: AccordionConfig) => {
+export const createAccordion = (config: AccordionConfig) => {
   const multiple = writable(config?.multiple || false)
 
   const triggers = writable<Trigger[]>([])

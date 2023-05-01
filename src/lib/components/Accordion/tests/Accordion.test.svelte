@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { createAccordionProvider } from '../provider'
+  import { createAccordion } from '../provider'
 
   export let items: { id: number; label: string; content: string }[] = []
   export let defaults = {}
 
-  const accordion = createAccordionProvider(defaults)
+  const accordion = createAccordion(defaults)
   const { triggerRef, contentRef } = accordion
 </script>
 

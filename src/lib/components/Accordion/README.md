@@ -12,10 +12,10 @@ Accordion:
 
 ```svelte
 <script>
-  import { createAccordionProvider } from 'louisette'
+  import { createAccordion } from 'louisette'
   import { setContext } from 'svelte'
 
-  const accordion = createAccordionProvider()
+  const accordion = createAccordion()
   setContext('accordion', accordion)
 </script>
 
@@ -44,7 +44,7 @@ Accordion item:
 </div>
 ```
 
-## createAccordionProvider
+## createAccordion
 
 ### Options
 

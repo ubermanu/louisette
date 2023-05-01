@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createAccordionProvider } from '$lib'
+  import { createAccordion } from '$lib'
   import { setContext } from 'svelte'
 
   /**
@@ -11,7 +11,7 @@
 
   export let multiple: boolean = false
 
-  const accordion = createAccordionProvider({ multiple })
+  const accordion = createAccordion({ multiple })
   setContext('accordion', accordion)
 </script>
 
