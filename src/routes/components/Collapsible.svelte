@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createCollapsibleProvider } from './provider'
+  import { createCollapsibleProvider } from '$lib'
 
   /**
    * This component is a simple implementation of the collapsible provider.
@@ -12,15 +12,15 @@
   export let open = false
   export let disabled = false
 
-  const provider = createCollapsibleProvider({ expanded: open, disabled })
-  const { trigger, content, state } = provider
+  const collapsible = createCollapsibleProvider({ expanded: open, disabled })
+  const { triggerRef, contentRef, state } = collapsible
 </script>
 
 <div class="collapsible" class:disabled={$state.disabled}>
-  <div class="trigger" use:trigger>
+  <div class="trigger" use:triggerRef>
     {label}
   </div>
-  <div class="content" use:content class:hidden={!$state.expanded}>
+  <div class="content" use:contentRef class:hidden={!$state.expanded}>
     <slot />
   </div>
 </div>

@@ -1,7 +1,7 @@
 <script>
-  import Collapsible from '$lib/components/Collapsible/Collapsible.svelte'
-  import Accordion from '$lib/components/Accordion/Accordion.svelte'
-  import AccordionItem from '$lib/components/Accordion/AccordionItem.svelte'
+  import Collapsible from './components/Collapsible.svelte'
+  import Accordion from './components/Accordion.svelte'
+  import AccordionItem from './components/AccordionItem.svelte'
 </script>
 
 <h2>Collapsible</h2>

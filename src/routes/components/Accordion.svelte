@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createAccordionProvider } from './provider'
+  import { createAccordionProvider } from '$lib'
   import { setContext } from 'svelte'
 
   /**

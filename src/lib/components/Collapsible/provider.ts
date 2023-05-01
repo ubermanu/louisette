@@ -7,7 +7,7 @@ export type CollapsibleConfig = {
   disabled?: boolean
 }
 
-export const createCollapsibleProvider = (config: CollapsibleConfig) => {
+export const createCollapsibleProvider = (config?: CollapsibleConfig) => {
   const expanded = writable(config?.expanded || false)
   const disabled = writable(config?.disabled || false)
 
@@ -34,7 +34,7 @@ export const createCollapsibleProvider = (config: CollapsibleConfig) => {
     expanded.set(false)
   }
 
-  const triggerAction: Action = (node) => {
+  const triggerRef: Action = (node) => {
     const onClick = (event: MouseEvent) => {
       event.preventDefault()
       toggle()
@@ -74,7 +74,7 @@ export const createCollapsibleProvider = (config: CollapsibleConfig) => {
     }
   }
 
-  const contentAction: Action = (node) => {
+  const contentRef: Action = (node) => {
     node.setAttribute('id', contentId)
     node.setAttribute('role', 'region')
 
@@ -91,8 +91,8 @@ export const createCollapsibleProvider = (config: CollapsibleConfig) => {
 
   return {
     state,
-    trigger: triggerAction,
-    content: contentAction,
+    triggerRef,
+    contentRef,
     open,
     close,
     toggle,
