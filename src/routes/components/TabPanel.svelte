@@ -9,7 +9,16 @@
 </script>
 
 {#if $state.active}
-  <div use:panelRef>
+  <div class="panel" use:panelRef>
     <slot />
   </div>
 {/if}
+
+<style>
+  .panel {
+    border: 1px solid #ccc;
+    border-top: none;
+    background: #eee;
+    padding: 1rem;
+  }
+</style>

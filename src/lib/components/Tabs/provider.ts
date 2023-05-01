@@ -102,6 +102,19 @@ export const createTabsProvider = (config?: TabsConfig) => {
       node.setAttribute('id', tabId)
       node.setAttribute('role', 'tab')
 
+      // Attach the node to the tab entry
+      tabs.update(($items) => {
+        return $items.map((item) => {
+          if (item.id === tabId) {
+            return {
+              ...item,
+              triggerElement: node,
+            }
+          }
+          return item
+        })
+      })
+
       // This handles the case where there are multiple panels with the same key
       node.setAttribute(
         'aria-controls',
@@ -116,16 +129,66 @@ export const createTabsProvider = (config?: TabsConfig) => {
         openTab(config.key)
       }
 
+      function onKeyDown(event: KeyboardEvent) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
+          onClick()
+        }
+
+        const $orientation = get(orientation)
+
+        if (event.key === 'ArrowLeft' && $orientation === 'horizontal') {
+          event.preventDefault()
+          // TODO: Get the previous enabled tab
+        }
+
+        if (event.key === 'ArrowRight' && $orientation === 'horizontal') {
+          event.preventDefault()
+          // TODO: Get the next enabled tab
+        }
+
+        if (event.key === 'ArrowUp' && $orientation === 'vertical') {
+          event.preventDefault()
+          // TODO: Get the previous enabled tab
+        }
+
+        if (event.key === 'ArrowDown' && $orientation === 'vertical') {
+          event.preventDefault()
+          // TODO: Get the next enabled tab
+        }
+
+        if (event.key === 'Home') {
+          event.preventDefault()
+          // TODO: Get the first enabled tab
+        }
+
+        if (event.key === 'End') {
+          event.preventDefault()
+          // TODO: Get the last enabled tab
+        }
+      }
+
+      function onFocus() {
+        if (get(listState).behavior === 'manual') return
+        if (get(tabState).disabled) return
+        openTab(config.key)
+      }
+
       node.addEventListener('click', onClick)
+      node.addEventListener('keydown', onKeyDown)
+      node.addEventListener('focus', onFocus)
 
       const unsubscribe = tabState.subscribe(($state) => {
         node.setAttribute('aria-selected', $state.active.toString())
         node.setAttribute('aria-disabled', $state.disabled.toString())
+        node.setAttribute('tabindex', $state.active ? '0' : '-1')
       })
 
       return {
         destroy: () => {
           node.removeEventListener('click', onClick)
+          node.removeEventListener('keydown', onKeyDown)
+          node.removeEventListener('focus', onFocus)
           unsubscribe()
         },
       }
