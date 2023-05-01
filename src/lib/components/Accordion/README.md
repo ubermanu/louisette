@@ -30,15 +30,15 @@ Accordion item:
 <script>
   import { getContext } from 'svelte'
 
-  const accordion = getContext('accordion')
-  const accordionItem = accordion.createItemProvider()
+  const key = Math.random().toString(36).substr(2, 9)
 
-  const { trigger, content } = accordionItem
+  const accordion = getContext('accordion')
+  const { triggerRef, contentRef } = accordion
 </script>
 
 <div>
-  <div use:trigger>Trigger</div>
-  <div use:content>
+  <div use:triggerRef={{ key }}>Trigger</div>
+  <div use:contentRef={{ key }}>
     <p>Content</p>
   </div>
 </div>
@@ -50,35 +50,38 @@ Accordion item:
 
 - `multiple` (boolean): Whether multiple items can be open at the same time or not by default.
 
-### Stores
+### State
 
 - `multiple` (boolean): Whether multiple items can be open at the same time or not.
+- `expanded` (array): The list of expanded items.
+- `disabled` (array): The list of disabled items.
+- `items` (array): The list of items.
+- `triggers` (array): The list of triggers.
+- `contents` (array): The list of contents.
 
 ### Methods
 
-- `createItemProvider()`: Creates a new item provider.
+- `toggle(key)`: Toggles the visibility of the content.
+- `open(key)`: Opens the content.
+- `close(key)`: Closes the content.
 - `openAll()`: Opens all items.
 - `closeAll()`: Closes all items.
-
-## createItemProvider
-
-### Options
-
-- `expanded` (boolean): Whether the item is open or not by default.
-- `disabled` (boolean): Whether the item is disabled or not by default.
-
-### Stores
-
-- `expanded` (boolean): Whether the item is open or not.
-- `disabled` (boolean): Whether the item is disabled or not.
-
-### Methods
-
-- `toggle()`: Toggles the visibility of the content.
-- `open()`: Opens the content.
-- `close()`: Closes the content.
 
 ### Actions
 
 - `triggerRef`: The action to apply to the trigger element.
 - `contentRef`: The action to apply to the content element.
+
+## triggerRef
+
+### Options
+
+- `key` (string): The key of the item.
+- `expanded` (boolean): Whether the item is open or not by default.
+- `disabled` (boolean): Whether the item is disabled or not by default.
+
+## contentRef
+
+### Options
+
+- `key` (string): The key of the item.
