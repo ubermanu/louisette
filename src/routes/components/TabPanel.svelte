@@ -1,15 +1,14 @@
 <script>
   import { getContext } from 'svelte'
+
   export let key
 
   const tabs = getContext('tabs')
-  const panel = tabs.createPanelProvider({ key })
-
-  const { state, panelRef } = panel
+  const { panelRef, state } = tabs
 </script>
 
-{#if $state.active}
-  <div class="panel" use:panelRef>
+{#if $state.selected === key}
+  <div class="panel" use:panelRef={{ key }}>
     <slot />
   </div>
 {/if}

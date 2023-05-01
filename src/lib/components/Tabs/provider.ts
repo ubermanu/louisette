@@ -19,9 +19,8 @@ type PanelConfig = {
 
 type Tab = {
   id: string
-  disabled: boolean
   key: string
-  triggerElement?: HTMLElement
+  element?: HTMLElement
 }
 
 type Panel = {
@@ -30,70 +29,97 @@ type Panel = {
   element?: HTMLElement
 }
 
-export const createTabsProvider = (config?: TabsConfig) => {
-  // The currently selected identifier
+type TabAttrs = {
+  key: string
+  selected?: boolean
+  disabled?: boolean
+}
+
+type PanelAttrs = {
+  key: string
+}
+
+export const createTabs = (config?: TabsConfig) => {
+  const orientation = writable(config?.orientation || 'horizontal')
+  const behavior = writable(config?.behavior || 'manual')
+
   const selected = writable<string>('')
+  const disabled = writable<string[]>([])
 
   const tabs = writable<Tab[]>([])
   const panels = writable<Panel[]>([])
 
-  const orientation = writable(config?.orientation || 'horizontal')
-  const behavior = writable(config?.behavior || 'manual')
+  const state = derived(
+    [orientation, behavior, selected, disabled, tabs, panels],
+    ([$orientation, $behavior, $selected, $disabled, $tabs, $panels]) => {
+      return {
+        orientation: $orientation,
+        behavior: $behavior,
+        selected: $selected,
+        disabled: $disabled,
+        tabs: $tabs,
+        panels: $panels,
+      }
+    }
+  )
 
   /** Open a panel by id */
   const openTab = (id: string) => {
     selected.set(id)
   }
 
-  const getFirstEnabledTab = () => {
-    const $items = get(tabs)
-    return $items.find(($item) => !$item.disabled)
-  }
-
   /** TODO: Optimize this */
-  const getLastEnabledTab = () => {
-    const $items = get(tabs)
-    return [...$items].reverse().find(($item) => !$item.disabled)
+  const getPrevEnabledTab = (id: string): Tab | null => {
+    const $tabs = get(tabs)
+    const index = $tabs.findIndex(($tab) => $tab.id === id)
+    const prevTab = $tabs[index - 1]
+    if (!prevTab) return null
+    if (get(disabled).includes(prevTab.key)) {
+      return getPrevEnabledTab(prevTab.id)
+    }
+    return prevTab
   }
 
   /** TODO: Optimize this */
   const getNextEnabledTab = (id: string): Tab | null => {
-    const $items = get(tabs)
-    const $currentIndex = $items.findIndex(($item) => $item.id === id)
-    const $nextIndex = $currentIndex + 1
-    const $nextItem = $items[$nextIndex]
-    if (!$nextItem) return null
-    if ($nextItem.disabled) return getNextEnabledTab($nextItem.id)
-    return $nextItem
+    const $tabs = get(tabs)
+    const index = $tabs.findIndex(($tab) => $tab.id === id)
+    const nextTab = $tabs[index + 1]
+    if (!nextTab) return null
+    if (get(disabled).includes(nextTab.key)) {
+      return getNextEnabledTab(nextTab.id)
+    }
+    return nextTab
   }
 
   /** TODO: Optimize this */
-  const getPreviousEnabledTab = (id: string): Tab | null => {
-    const $items = get(tabs)
-    const $currentIndex = $items.findIndex(($item) => $item.id === id)
-    const $previousIndex = $currentIndex - 1
-    const $previousItem = $items[$previousIndex]
-    if (!$previousItem) return null
-    if ($previousItem.disabled) return getPreviousEnabledTab($previousItem.id)
-    return $previousItem
+  const getFirstEnabledTab = () => {
+    const $tabs = get(tabs)
+    const firstTab = $tabs[0]
+    if (!firstTab) return null
+    if (get(disabled).includes(firstTab.key)) {
+      return getNextEnabledTab(firstTab.id)
+    }
+    return firstTab
   }
 
-  const listState = derived(
-    [orientation, behavior],
-    ([$orientation, $behavior]) => {
-      return {
-        orientation: $orientation,
-        behavior: $behavior,
-      }
+  /** TODO: Optimize this */
+  const getLastEnabledTab = () => {
+    const $tabs = get(tabs)
+    const lastTab = $tabs[$tabs.length - 1]
+    if (!lastTab) return null
+    if (get(disabled).includes(lastTab.key)) {
+      return getPrevEnabledTab(lastTab.id)
     }
-  )
+    return lastTab
+  }
 
   /** The action to be applied to the tab list element */
   const listRef: Action = (node) => {
     node.setAttribute('role', 'tablist')
 
-    const unsubscribe = listState.subscribe(($state) => {
-      node.setAttribute('aria-orientation', $state.orientation || 'horizontal')
+    const unsubscribe = orientation.subscribe(($orientation) => {
+      node.setAttribute('aria-orientation', $orientation || 'horizontal')
     })
 
     return {
@@ -103,200 +129,171 @@ export const createTabsProvider = (config?: TabsConfig) => {
     }
   }
 
-  const createItemProvider = (config: TabConfig) => {
+  const tabRef: Action = (node, attrs?: TabAttrs) => {
     const tabId = generateId()
 
-    const disabled = writable<boolean>(config?.disabled || false)
-
-    tabs.update(($items) => {
-      return [
-        ...$items,
-        {
-          id: tabId,
-          disabled: config?.disabled || false,
-          key: config.key,
-        },
-      ]
-    })
-
-    if (config?.selected) {
-      openTab(config.key)
+    if (!attrs || !attrs.key) {
+      throw new Error('Tab key is required')
     }
 
-    const tabState = derived([disabled, selected], ([$disabled, $selected]) => {
-      return {
-        active: $selected === config.key,
-        disabled: $disabled,
-      }
-    })
+    const { key } = attrs
 
-    /** The action to be applied to the tab element */
-    const triggerRef: Action = (node) => {
-      node.setAttribute('id', tabId)
-      node.setAttribute('role', 'tab')
+    // Attach the node to the tab entry
+    tabs.update(($tabs) => [...$tabs, { id: tabId, key, element: node }])
 
-      // Attach the node to the tab entry
-      tabs.update(($items) => {
-        return $items.map((item) => {
-          if (item.id === tabId) {
-            return {
-              ...item,
-              triggerElement: node,
-            }
-          }
-          return item
-        })
-      })
+    // Set the disabled tab
+    if (attrs.disabled) {
+      disabled.update(($disabled) => [...$disabled, key])
+    }
 
-      // This handles the case where there are multiple panels with the same key
-      node.setAttribute(
-        'aria-controls',
-        get(panels)
-          .filter((panel) => panel.key === config.key)
-          .map((panel) => panel.id)
-          .join(' ')
-      )
+    // Set the selected tab
+    if (attrs.selected) {
+      selected.set(key)
+    }
 
-      function onClick() {
-        if (get(tabState).disabled) return
-        openTab(config.key)
-      }
+    // Set the first tab as selected if none are selected
+    if (!get(selected)) {
+      selected.set(key)
+    }
 
-      function onKeyDown(event: KeyboardEvent) {
-        const $orientation = get(orientation)
-        const $behavior = get(behavior)
+    node.setAttribute('id', tabId)
+    node.setAttribute('role', 'tab')
 
-        if (
-          (event.key === 'Enter' || event.key === ' ') &&
-          $behavior === 'manual'
-        ) {
-          event.preventDefault()
-          onClick()
-        }
+    // This handles the case where there are multiple panels with the same key
+    node.setAttribute(
+      'aria-controls',
+      get(panels)
+        .filter((panel) => panel.key === key)
+        .map((panel) => panel.id)
+        .join(' ')
+    )
 
-        if (event.key === 'ArrowLeft' && $orientation === 'horizontal') {
-          event.preventDefault()
-          getPreviousEnabledTab(tabId)?.triggerElement?.focus()
-        }
+    function onClick() {
+      if (get(disabled).includes(key)) return
+      openTab(key)
+    }
 
-        if (event.key === 'ArrowRight' && $orientation === 'horizontal') {
-          event.preventDefault()
-          getNextEnabledTab(tabId)?.triggerElement?.focus()
-        }
+    function onKeyDown(event: KeyboardEvent) {
+      const $orientation = get(orientation)
+      const $behavior = get(behavior)
 
-        if (event.key === 'ArrowUp' && $orientation === 'vertical') {
-          event.preventDefault()
-          getPreviousEnabledTab(tabId)?.triggerElement?.focus()
-        }
-
-        if (event.key === 'ArrowDown' && $orientation === 'vertical') {
-          event.preventDefault()
-          getNextEnabledTab(tabId)?.triggerElement?.focus()
-        }
-
-        if (event.key === 'Home') {
-          event.preventDefault()
-          getFirstEnabledTab()?.triggerElement?.focus()
-        }
-
-        if (event.key === 'End') {
-          event.preventDefault()
-          getLastEnabledTab()?.triggerElement?.focus()
-        }
+      if (
+        (event.key === 'Enter' || event.key === ' ') &&
+        $behavior === 'manual'
+      ) {
+        event.preventDefault()
+        onClick()
       }
 
-      function onFocus() {
-        if (get(listState).behavior === 'manual') return
-        if (get(tabState).disabled) return
-        openTab(config.key)
+      if (event.key === 'ArrowLeft' && $orientation === 'horizontal') {
+        event.preventDefault()
+        getPrevEnabledTab(tabId)?.element?.focus()
       }
 
-      node.addEventListener('click', onClick)
-      node.addEventListener('keydown', onKeyDown)
-      node.addEventListener('focus', onFocus)
+      if (event.key === 'ArrowRight' && $orientation === 'horizontal') {
+        event.preventDefault()
+        getNextEnabledTab(tabId)?.element?.focus()
+      }
 
-      const unsubscribe = tabState.subscribe(($state) => {
-        node.setAttribute('aria-selected', $state.active.toString())
-        node.setAttribute('aria-disabled', $state.disabled.toString())
-        node.setAttribute('tabindex', $state.active ? '0' : '-1')
-      })
+      if (event.key === 'ArrowUp' && $orientation === 'vertical') {
+        event.preventDefault()
+        getPrevEnabledTab(tabId)?.element?.focus()
+      }
 
-      return {
-        destroy: () => {
-          node.removeEventListener('click', onClick)
-          node.removeEventListener('keydown', onKeyDown)
-          node.removeEventListener('focus', onFocus)
-          unsubscribe()
-        },
+      if (event.key === 'ArrowDown' && $orientation === 'vertical') {
+        event.preventDefault()
+        getNextEnabledTab(tabId)?.element?.focus()
+      }
+
+      if (event.key === 'Home') {
+        event.preventDefault()
+        getFirstEnabledTab()?.element?.focus()
+      }
+
+      if (event.key === 'End') {
+        event.preventDefault()
+        getLastEnabledTab()?.element?.focus()
       }
     }
+
+    function onFocus() {
+      if (get(behavior) === 'manual') return
+      if (get(disabled).includes(key)) return
+      openTab(key)
+    }
+
+    node.addEventListener('click', onClick)
+    node.addEventListener('keydown', onKeyDown)
+    node.addEventListener('focus', onFocus)
+
+    const unsubscribe = selected.subscribe(($selected) => {
+      const active = $selected === key
+      node.setAttribute('aria-selected', active.toString())
+      node.setAttribute('tabindex', active ? '0' : '-1')
+    })
+
+    const unsubscribe2 = disabled.subscribe(($disabled) => {
+      node.setAttribute('aria-disabled', $disabled.includes(key).toString())
+    })
 
     return {
-      state: tabState,
-      triggerRef,
+      destroy: () => {
+        node.removeEventListener('click', onClick)
+        node.removeEventListener('keydown', onKeyDown)
+        node.removeEventListener('focus', onFocus)
+        unsubscribe()
+        unsubscribe2()
+      },
     }
   }
 
-  const createPanelProvider = (config: PanelConfig) => {
+  /** The action to be applied to the tab panel element */
+  const panelRef: Action = (node, attrs?: PanelAttrs) => {
     const panelId = generateId()
 
-    panels.update(($items) => {
-      return [
-        ...$items,
-        {
-          id: panelId,
-          active: false,
-          key: config.key,
-        },
-      ]
-    })
-
-    if (get(panels).length === 1 && !get(selected)) {
-      openTab(config.key)
+    if (!attrs || !attrs.key) {
+      throw new Error('Tab panel must have a key')
     }
 
-    const panelState = derived([selected], ([$selected]) => {
-      return {
-        active: $selected === config.key,
-      }
+    const { key } = attrs
+
+    // Push the panel to its store
+    panels.update(($panels) => [
+      ...$panels,
+      { id: panelId, key, element: node },
+    ])
+
+    node.setAttribute('id', panelId)
+    node.setAttribute('role', 'tabpanel')
+
+    // Attach the panel to the tab, based on the tab key
+    // This handles the case where there are multiple tabs with the same key
+    node.setAttribute(
+      'aria-labelledby',
+      get(tabs)
+        .filter((tab) => tab.key === key)
+        .map((tab) => tab.id)
+        .join(' ')
+    )
+
+    const unsubscribe = selected.subscribe(($state) => {
+      node.setAttribute('aria-hidden', ($state !== key).toString())
     })
-
-    /** The action to be applied to the tab panel element */
-    const panelRef: Action = (node) => {
-      node.setAttribute('id', panelId)
-      node.setAttribute('role', 'tabpanel')
-
-      // Attach the panel to the tab, based on the tab key
-      // This handles the case where there are multiple tabs with the same key
-      node.setAttribute(
-        'aria-labelledby',
-        get(tabs)
-          .filter((tab) => tab.key === config.key)
-          .map((tab) => tab.id)
-          .join(' ')
-      )
-
-      const unsubscribe = panelState.subscribe(($state) => {
-        node.setAttribute('aria-hidden', (!$state.active).toString())
-      })
-
-      return {
-        destroy: () => {
-          unsubscribe()
-        },
-      }
-    }
 
     return {
-      state: panelState,
-      panelRef,
+      destroy: () => {
+        panels.update(($panels) =>
+          $panels.filter(($panel) => $panel.id !== panelId)
+        )
+        unsubscribe()
+      },
     }
   }
 
   return {
-    state: listState,
+    state,
     listRef,
-    createItemProvider,
-    createPanelProvider,
+    panelRef,
+    tabRef,
   }
 }

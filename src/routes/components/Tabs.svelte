@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { createTabsProvider } from '$lib'
+  import { createTabs } from '$lib'
   import { setContext } from 'svelte'
 
-  const tabs = createTabsProvider()
+  const tabs = createTabs()
   setContext('tabs', tabs)
 </script>
 

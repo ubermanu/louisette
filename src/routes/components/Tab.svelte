@@ -6,16 +6,14 @@
   export let disabled = false
 
   const tabs = getContext('tabs')
-  const item = tabs.createItemProvider({ key, selected, disabled })
-
-  const { state, triggerRef } = item
+  const { state, tabRef } = tabs
 </script>
 
 <div
   class="tab"
-  class:active={$state.active}
-  class:disabled={$state.disabled}
-  use:triggerRef
+  class:active={$state.selected === key}
+  class:disabled={$state.disabled.includes(key)}
+  use:tabRef={{ key, selected, disabled }}
 >
   <slot />
 </div>
