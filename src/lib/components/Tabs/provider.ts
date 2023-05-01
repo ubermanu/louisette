@@ -7,16 +7,6 @@ type TabsConfig = {
   behavior?: 'manual' | 'auto'
 }
 
-type TabConfig = {
-  key: string
-  selected?: boolean
-  disabled?: boolean
-}
-
-type PanelConfig = {
-  key: string
-}
-
 type Tab = {
   id: string
   key: string
