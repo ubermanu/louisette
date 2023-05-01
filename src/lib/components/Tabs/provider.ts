@@ -45,6 +45,39 @@ export const createTabsProvider = (config?: TabsConfig) => {
     selected.set(id)
   }
 
+  const getFirstEnabledTab = () => {
+    const $items = get(tabs)
+    return $items.find(($item) => !$item.disabled)
+  }
+
+  /** TODO: Optimize this */
+  const getLastEnabledTab = () => {
+    const $items = get(tabs)
+    return [...$items].reverse().find(($item) => !$item.disabled)
+  }
+
+  /** TODO: Optimize this */
+  const getNextEnabledTab = (id: string): Tab | null => {
+    const $items = get(tabs)
+    const $currentIndex = $items.findIndex(($item) => $item.id === id)
+    const $nextIndex = $currentIndex + 1
+    const $nextItem = $items[$nextIndex]
+    if (!$nextItem) return null
+    if ($nextItem.disabled) return getNextEnabledTab($nextItem.id)
+    return $nextItem
+  }
+
+  /** TODO: Optimize this */
+  const getPreviousEnabledTab = (id: string): Tab | null => {
+    const $items = get(tabs)
+    const $currentIndex = $items.findIndex(($item) => $item.id === id)
+    const $previousIndex = $currentIndex - 1
+    const $previousItem = $items[$previousIndex]
+    if (!$previousItem) return null
+    if ($previousItem.disabled) return getPreviousEnabledTab($previousItem.id)
+    return $previousItem
+  }
+
   const listState = derived(
     [orientation, behavior],
     ([$orientation, $behavior]) => {
@@ -139,32 +172,32 @@ export const createTabsProvider = (config?: TabsConfig) => {
 
         if (event.key === 'ArrowLeft' && $orientation === 'horizontal') {
           event.preventDefault()
-          // TODO: Get the previous enabled tab
+          getPreviousEnabledTab(tabId)?.triggerElement?.focus()
         }
 
         if (event.key === 'ArrowRight' && $orientation === 'horizontal') {
           event.preventDefault()
-          // TODO: Get the next enabled tab
+          getNextEnabledTab(tabId)?.triggerElement?.focus()
         }
 
         if (event.key === 'ArrowUp' && $orientation === 'vertical') {
           event.preventDefault()
-          // TODO: Get the previous enabled tab
+          getPreviousEnabledTab(tabId)?.triggerElement?.focus()
         }
 
         if (event.key === 'ArrowDown' && $orientation === 'vertical') {
           event.preventDefault()
-          // TODO: Get the next enabled tab
+          getNextEnabledTab(tabId)?.triggerElement?.focus()
         }
 
         if (event.key === 'Home') {
           event.preventDefault()
-          // TODO: Get the first enabled tab
+          getFirstEnabledTab()?.triggerElement?.focus()
         }
 
         if (event.key === 'End') {
           event.preventDefault()
-          // TODO: Get the last enabled tab
+          getLastEnabledTab()?.triggerElement?.focus()
         }
       }
 
