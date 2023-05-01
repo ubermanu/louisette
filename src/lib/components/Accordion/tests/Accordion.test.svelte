@@ -1,17 +1,28 @@
 <script lang="ts">
-  import { setContext } from 'svelte'
   import { createAccordionProvider } from '../provider'
-  import AccordionItemTest from './AccordionItem.test.svelte'
 
   export let items: { id: number; label: string; content: string }[] = []
   export let defaults = {}
 
   const accordion = createAccordionProvider(defaults)
-  setContext('accordion', accordion)
+  const { triggerRef, contentRef } = accordion
 </script>
 
 <div data-testid="accordion">
   {#each items as item}
-    <AccordionItemTest {...item} />
+    <div data-testid="accordion-item-{item.id}">
+      <div
+        data-testid="accordion-item-{item.id}-trigger"
+        use:triggerRef={{ key: item.id, ...item.defaults }}
+      >
+        {item.label}
+      </div>
+      <div
+        data-testid="accordion-item-{item.id}-content"
+        use:contentRef={{ key: item.id }}
+      >
+        {item.content}
+      </div>
+    </div>
   {/each}
 </div>

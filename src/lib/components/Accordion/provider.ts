@@ -1,5 +1,4 @@
 import { generateId } from '$lib/helpers.js'
-import { v4 as uuid } from '@lukeed/uuid'
 import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 
@@ -7,279 +6,283 @@ type AccordionConfig = {
   multiple?: boolean
 }
 
-interface AccordionItem {
+type Trigger = {
   id: string
-  expanded: boolean
-  disabled: boolean
-  triggerElement?: HTMLElement
+  key: string
+  element?: HTMLElement
 }
 
-type AccordionItemConfig = {
+type Content = {
+  id: string
+  key: string
+  element?: HTMLElement
+}
+
+type TriggerAttrs = {
+  key: string
   expanded?: boolean
   disabled?: boolean
 }
 
+type ContentAttrs = {
+  key: string
+}
+
 export const createAccordionProvider = (config: AccordionConfig) => {
   const multiple = writable(config?.multiple || false)
-  const items = writable<AccordionItem[]>([])
 
-  /** Open an item by id */
-  const openItem = (id: string) => {
-    const $multiple = get(multiple)
-    items.update(($items) => {
-      if (!$multiple) {
-        return $items.map(($item) => ({
-          ...$item,
-          expanded: $item.id === id,
-        }))
+  const triggers = writable<Trigger[]>([])
+  const contents = writable<Content[]>([])
+
+  const expanded = writable<string[]>([])
+  const disabled = writable<string[]>([])
+
+  const keys = derived([triggers, contents], ([$triggers, $contents]) => {
+    return [...$triggers, ...$contents].map(($item) => $item.key)
+  })
+
+  const state = derived(
+    [multiple, expanded, disabled, triggers, contents],
+    ([$multiple, $expanded, $disabled, $triggers, $contents]) => {
+      return {
+        multiple: $multiple,
+        expanded: $expanded,
+        disabled: $disabled,
+        triggers: $triggers,
+        contents: $contents,
       }
-      return $items.map(($item) => ({
-        ...$item,
-        expanded: $item.id === id ? !$item.expanded : $item.expanded,
-      }))
-    })
-  }
+    }
+  )
 
-  /** Close an item by id */
-  const closeItem = (id: string) => {
-    items.update(($items) => {
-      return $items.map(($item) => ({
-        ...$item,
-        expanded: $item.id === id ? false : $item.expanded,
-      }))
-    })
-  }
-
-  /** Toggle an item by id */
-  const toggleItem = (id: string) => {
+  /** Open an item by key */
+  const openItem = (key: string) => {
+    if (get(disabled).includes(key)) return
     const $multiple = get(multiple)
-    items.update(($items) => {
-      return $items.map(($item) => ({
-        ...$item,
-        expanded:
-          $item.id === id
-            ? !$item.expanded
-            : $multiple
-            ? $item.expanded
-            : false,
-      }))
+    expanded.set($multiple ? [...get(expanded), key] : [key])
+  }
+
+  /** Close an item by key */
+  const closeItem = (key: string) => {
+    if (get(disabled).includes(key)) return
+    expanded.update(($expanded) => $expanded.filter(($key) => $key !== key))
+  }
+
+  /** Toggle an item by key */
+  const toggleItem = (key: string) => {
+    if (get(disabled).includes(key)) return
+    const $multiple = get(multiple)
+    expanded.update(($expanded) => {
+      if ($multiple) {
+        return $expanded.includes(key)
+          ? $expanded.filter(($key) => $key !== key)
+          : [...$expanded, key]
+      } else {
+        return $expanded.includes(key) ? [] : [key]
+      }
     })
   }
 
   /** Open all items */
-  const openAll = () => {
-    items.update(($items) => {
-      return $items.map(($item) => ({
-        ...$item,
-        expanded: true,
-      }))
-    })
-  }
+  const openAll = () => {}
 
   /** Close all items */
   const closeAll = () => {
-    items.update(($items) => {
-      return $items.map(($item) => ({
-        ...$item,
-        expanded: false,
-      }))
-    })
-  }
-
-  const getFirstEnabledItem = () => {
-    const $items = get(items)
-    return $items.find(($item) => !$item.disabled)
+    expanded.set([])
   }
 
   /** TODO: Optimize this */
-  const getLastEnabledItem = () => {
-    const $items = get(items)
-    return [...$items].reverse().find(($item) => !$item.disabled)
+  const getPrevEnabledTrigger = (id: string): Trigger | null => {
+    const $triggers = get(triggers)
+    const index = $triggers.findIndex(($trigger) => $trigger.id === id)
+    const prevTrigger = $triggers[index - 1]
+    if (!prevTrigger) return null
+    if (get(disabled).includes(prevTrigger.key)) {
+      return getPrevEnabledTrigger(prevTrigger.id)
+    }
+    return prevTrigger
   }
 
   /** TODO: Optimize this */
-  const getNextEnabledItem = (id: string): AccordionItem | null => {
-    const $items = get(items)
-    const $currentIndex = $items.findIndex(($item) => $item.id === id)
-    const $nextIndex = $currentIndex + 1
-    const $nextItem = $items[$nextIndex]
-    if (!$nextItem) return null
-    if ($nextItem.disabled) return getNextEnabledItem($nextItem.id)
-    return $nextItem
+  const getNextEnabledTrigger = (id: string): Trigger | null => {
+    const $triggers = get(triggers)
+    const index = $triggers.findIndex(($trigger) => $trigger.id === id)
+    const nextTrigger = $triggers[index + 1]
+    if (!nextTrigger) return null
+    if (get(disabled).includes(nextTrigger.key)) {
+      return getNextEnabledTrigger(nextTrigger.id)
+    }
+    return nextTrigger
   }
 
   /** TODO: Optimize this */
-  const getPreviousEnabledItem = (id: string): AccordionItem | null => {
-    const $items = get(items)
-    const $currentIndex = $items.findIndex(($item) => $item.id === id)
-    const $previousIndex = $currentIndex - 1
-    const $previousItem = $items[$previousIndex]
-    if (!$previousItem) return null
-    if ($previousItem.disabled) return getPreviousEnabledItem($previousItem.id)
-    return $previousItem
+  const getFirstEnabledTrigger = () => {
+    const $triggers = get(triggers)
+    const firstTrigger = $triggers[0]
+    if (!firstTrigger) return null
+    if (get(disabled).includes(firstTrigger.key)) {
+      return getNextEnabledTrigger(firstTrigger.id)
+    }
+    return firstTrigger
   }
 
-  const createItemProvider = (itemConfig: AccordionItemConfig) => {
-    const expanded = itemConfig?.expanded || false
-    const disabled = itemConfig?.disabled || false
+  /** TODO: Optimize this */
+  const getLastEnabledTrigger = () => {
+    const $triggers = get(triggers)
+    const lastTrigger = $triggers[$triggers.length - 1]
+    if (!lastTrigger) return null
+    if (get(disabled).includes(lastTrigger.key)) {
+      return getPrevEnabledTrigger(lastTrigger.id)
+    }
+    return lastTrigger
+  }
 
-    const id = uuid()
+  /**
+   * This action is responsible for registering the trigger element and handling
+   * events and state changes.
+   *
+   * The `key` is a unique identifier for the item.
+   */
+  const triggerRef: Action = (node, attrs?: TriggerAttrs) => {
     const triggerId = generateId()
-    const contentId = generateId()
 
-    const item: AccordionItem = {
-      id,
-      expanded,
-      disabled,
+    if (!attrs || !attrs.key) {
+      throw new Error(
+        'The `key` attribute is required for an accordion item trigger.'
+      )
     }
 
-    // Register the item
-    items.update(($items) => [...$items, item])
+    const { key } = attrs
 
-    // Open the item if it's expanded by default
-    if (expanded) {
-      openItem(id)
+    // Register the trigger
+    triggers.update(($triggers) => [
+      ...$triggers,
+      { id: triggerId, element: node, key },
+    ])
+
+    // If the trigger is disabled, add it to the disabled list
+    if (attrs.disabled) {
+      disabled.update(($disabled) => [...$disabled, key])
     }
 
-    const state = derived(
-      [items],
-      ([$items]) => {
-        const $item = $items.find(($item) => $item.id === id)
-        // TODO: Handle item not found
-        return {
-          expanded: $item?.expanded ?? false,
-          disabled: $item?.disabled ?? false,
-        }
-      },
-      {
-        expanded: expanded,
-        disabled: disabled,
-      }
-    )
-
-    const toggle = () => {
-      if (get(state).disabled) return
-      toggleItem(id)
+    // If the trigger is already expanded, open the content
+    if (attrs.expanded) {
+      openItem(key)
     }
 
-    const open = () => {
-      if (get(state).disabled || get(state).expanded) return
-      openItem(id)
+    function onClick() {
+      toggleItem(key)
     }
 
-    const close = () => {
-      if (get(state).disabled || !get(state).expanded) return
-      closeItem(id)
-    }
-
-    const triggerAction: Action = (node) => {
-      // Set the trigger element
-      items.update(($items) => {
-        return $items.map(($item) => {
-          if ($item.id === id) {
-            return {
-              ...$item,
-              triggerElement: node,
-            }
-          }
-          return $item
-        })
-      })
-
-      const onClick = (event: MouseEvent) => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault()
-        toggle()
+        toggleItem(key)
       }
 
-      const onKeyDown = (event: KeyboardEvent) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault()
-          toggle()
-        }
-
-        if (event.key === 'Escape') {
-          event.preventDefault()
-          close()
-        }
-
-        if (event.key === 'ArrowUp') {
-          event.preventDefault()
-          getPreviousEnabledItem(id)?.triggerElement?.focus()
-        }
-
-        if (event.key === 'ArrowDown') {
-          event.preventDefault()
-          getNextEnabledItem(id)?.triggerElement?.focus()
-        }
-
-        if (event.key === 'Home') {
-          event.preventDefault()
-          getFirstEnabledItem()?.triggerElement?.focus()
-        }
-
-        if (event.key === 'End') {
-          event.preventDefault()
-          getLastEnabledItem()?.triggerElement?.focus()
-        }
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        closeItem(key)
       }
 
-      node.setAttribute('id', triggerId)
-      node.setAttribute('role', 'button')
-      node.setAttribute('aria-controls', contentId)
+      if (event.key === 'ArrowUp') {
+        event.preventDefault()
+        getPrevEnabledTrigger(triggerId)?.element?.focus()
+      }
 
-      node.addEventListener('click', onClick)
-      node.addEventListener('keydown', onKeyDown)
+      if (event.key === 'ArrowDown') {
+        event.preventDefault()
+        getNextEnabledTrigger(triggerId)?.element?.focus()
+      }
 
-      const unsubscribe = state.subscribe(($state) => {
-        node.setAttribute('aria-expanded', `${$state.expanded}`)
-        node.setAttribute('aria-disabled', `${$state.disabled}`)
-        node.setAttribute('tabindex', `${$state.disabled ? '-1' : '0'}`)
-      })
+      if (event.key === 'Home') {
+        event.preventDefault()
+        getFirstEnabledTrigger()?.element?.focus()
+      }
 
-      return {
-        destroy() {
-          node.removeEventListener('click', onClick)
-          node.removeEventListener('keydown', onKeyDown)
-          unsubscribe()
-
-          // Remove the item
-          items.update(($items) => {
-            return $items.filter(($item) => $item.id !== id)
-          })
-        },
+      if (event.key === 'End') {
+        event.preventDefault()
+        getLastEnabledTrigger()?.element?.focus()
       }
     }
 
-    const contentAction: Action = (node) => {
-      node.setAttribute('id', contentId)
-      node.setAttribute('role', 'region')
-      node.setAttribute('aria-labelledby', triggerId)
+    node.addEventListener('click', onClick)
+    node.addEventListener('keydown', onKeyDown)
 
-      const unsubscribe = state.subscribe(($state) => {
-        node.setAttribute('aria-hidden', `${!$state.expanded}`)
-      })
+    node.setAttribute('id', triggerId)
+    node.setAttribute('role', 'button')
 
-      return {
-        destroy() {
-          unsubscribe()
-        },
-      }
-    }
+    const unsubscribe = state.subscribe(($state) => {
+      const expanded = $state.expanded.includes(key)
+      const disabled = $state.disabled.includes(key)
+      node.setAttribute('aria-expanded', `${expanded}`)
+      node.setAttribute('aria-disabled', `${disabled}`)
+      node.setAttribute('tabindex', `${disabled ? '-1' : '0'}`)
+
+      const content = $state.contents.find(($content) => $content.key === key)
+      node.setAttribute('aria-controls', content?.id ?? '')
+    })
 
     return {
-      state,
-      triggerRef: triggerAction,
-      contentRef: contentAction,
-      toggle,
-      open,
-      close,
+      destroy() {
+        // Remove the trigger
+        triggers.update(($triggers) => {
+          return $triggers.filter(($trigger) => $trigger.id !== triggerId)
+        })
+        node.removeEventListener('click', onClick)
+        node.removeEventListener('keydown', onKeyDown)
+        unsubscribe()
+      },
+    }
+  }
+
+  /**
+   * This action is responsible for registering the content element and handling
+   * events and state changes.
+   *
+   * The `key` is a unique identifier for the item.
+   */
+  const contentRef: Action = (node, attrs: ContentAttrs) => {
+    const contentId = generateId()
+
+    if (!attrs || !attrs.key) {
+      throw new Error(
+        'The `key` attribute is required for an accordion item content.'
+      )
+    }
+
+    const { key } = attrs
+
+    // Register the content
+    contents.update(($contents) => [
+      ...$contents,
+      { id: contentId, element: node, key },
+    ])
+
+    node.setAttribute('id', contentId)
+    node.setAttribute('role', 'region')
+
+    // TODO: Use the `expanded` store to set the `aria-hidden` attribute
+    const unsubscribe = state.subscribe(($state) => {
+      const expanded = $state.expanded.includes(key)
+      node.setAttribute('aria-hidden', `${!expanded}`)
+      const trigger = $state.triggers.find(($trigger) => $trigger.key === key)
+      node.setAttribute('aria-labelledby', trigger?.id ?? '')
+    })
+
+    return {
+      destroy() {
+        // Remove the content
+        contents.update(($contents) => {
+          return $contents.filter(($content) => $content.id !== contentId)
+        })
+        unsubscribe()
+      },
     }
   }
 
   return {
-    multiple,
-    createItemProvider,
-    openAll,
-    closeAll,
+    state,
+    triggerRef,
+    contentRef,
   }
 }
