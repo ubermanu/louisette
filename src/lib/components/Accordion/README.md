@@ -80,5 +80,5 @@ Accordion item:
 
 ### Actions
 
-- `trigger`: The action to apply to the trigger element.
-- `content`: The action to apply to the content element.
+- `triggerRef`: The action to apply to the trigger element.
+- `contentRef`: The action to apply to the content element.
