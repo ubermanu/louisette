@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { createAccordion } from '$lib'
-  import { setContext } from 'svelte'
+  import Provider from '$lib/components/Accordion/Accordion.svelte'
 
   /**
    * This component is a simple implementation of the accordion provider.
@@ -10,14 +9,13 @@
    */
 
   export let multiple: boolean = false
-
-  const accordion = createAccordion({ multiple })
-  setContext('accordion', accordion)
 </script>
 
-<div class="accordion" {...$$restProps}>
-  <slot />
-</div>
+<Provider defaults={{ multiple }}>
+  <div class="accordion" {...$$restProps}>
+    <slot />
+  </div>
+</Provider>
 
 <style>
   .accordion {

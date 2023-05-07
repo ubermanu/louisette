@@ -1,29 +1,37 @@
 <script lang="ts">
-  import { createCollapsible } from '$lib'
-
-  /**
-   * This component is a simple implementation of the collapsible provider.
-   *
-   * It is not intended to be used in production, but rather as a reference for
-   * how you can implement your own component.
-   */
+  import Provider from '$lib/components/Collapsible/Collapsible.svelte'
 
   export let label
   export let open = false
   export let disabled = false
-
-  const collapsible = createCollapsible({ expanded: open, disabled })
-  const { triggerRef, contentRef, state } = collapsible
 </script>
 
-<div class="collapsible" class:disabled={$state.disabled}>
-  <div class="trigger" use:triggerRef>
-    {label}
+<Provider
+  defaults={{
+    disabled: disabled,
+    expanded: open,
+  }}
+  let:triggerProps
+  let:contentProps
+  let:onTriggerClick
+  let:onTriggerKeyDown
+  let:disabled
+  let:expanded
+>
+  <div class="collapsible" class:disabled>
+    <div
+      class="trigger"
+      on:click={onTriggerClick}
+      on:keydown={onTriggerKeyDown}
+      {...triggerProps}
+    >
+      {label}
+    </div>
+    <div class="content" {...contentProps} class:hidden={!expanded}>
+      <slot />
+    </div>
   </div>
-  <div class="content" use:contentRef class:hidden={!$state.expanded}>
-    <slot />
-  </div>
-</div>
+</Provider>
 
 <style>
   .collapsible {
