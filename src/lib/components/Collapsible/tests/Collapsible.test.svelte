@@ -1,15 +1,27 @@
 <script lang="ts">
-  import { createCollapsible } from '../provider'
+  import CollapsibleProvider from '../Collapsible.svelte'
 
   export let defaults = {}
-
-  const collapsible = createCollapsible(defaults)
-  const { triggerRef, contentRef } = collapsible
 </script>
 
-<div data-testid="collapsible">
-  <div data-testid="trigger" use:triggerRef>Trigger</div>
-  <div data-testid="content" use:contentRef>
-    <p>Content</p>
+<CollapsibleProvider
+  {defaults}
+  let:triggerProps
+  let:contentProps
+  let:onTriggerClick
+  let:onTriggerKeyDown
+>
+  <div data-testid="collapsible">
+    <div
+      data-testid="trigger"
+      on:click={onTriggerClick}
+      on:keydown={onTriggerKeyDown}
+      {...triggerProps}
+    >
+      Trigger
+    </div>
+    <div data-testid="content" {...contentProps}>
+      <p>Content</p>
+    </div>
   </div>
-</div>
+</CollapsibleProvider>
