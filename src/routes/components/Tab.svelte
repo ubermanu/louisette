@@ -1,22 +1,34 @@
 <script>
-  import { getContext } from 'svelte'
+  import Provider from '$lib/components/Tabs/Tab.svelte'
 
   export let key
   export let selected = false
   export let disabled = false
-
-  const tabs = getContext('tabs')
-  const { state, tabRef } = tabs
 </script>
 
-<div
-  class="tab"
-  class:active={$state.selected === key}
-  class:disabled={$state.disabled.includes(key)}
-  use:tabRef={{ key, selected, disabled }}
+<Provider
+  defaults={{ key, selected, disabled }}
+  let:selected={active}
+  let:disabled={isDisabled}
+  let:tabProps
+  let:tabRef
+  let:onTabClick
+  let:onTabKeyDown
+  let:onTabFocus
 >
-  <slot />
-</div>
+  <div
+    class="tab"
+    class:active
+    class:disabled={isDisabled}
+    use:tabRef
+    on:click={onTabClick}
+    on:keydown={onTabKeyDown}
+    on:focus={onTabFocus}
+    {...tabProps}
+  >
+    <slot />
+  </div>
+</Provider>
 
 <style>
   .tab {

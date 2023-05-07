@@ -2,10 +2,10 @@
   import { getContext } from 'svelte'
 
   const tabs = getContext('tabs')
-  const { listRef } = tabs
+  const { listProps } = tabs
 </script>
 
-<div class="tablist" use:listRef>
+<div class="tablist" {...$listProps}>
   <slot />
 </div>
 

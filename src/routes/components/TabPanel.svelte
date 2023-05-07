@@ -1,17 +1,16 @@
 <script>
-  import { getContext } from 'svelte'
+  import Provider from '$lib/components/Tabs/Panel.svelte'
 
   export let key
-
-  const tabs = getContext('tabs')
-  const { panelRef, state } = tabs
 </script>
 
-{#if $state.selected === key}
-  <div class="panel" use:panelRef={{ key }}>
-    <slot />
-  </div>
-{/if}
+<Provider defaults={{ key }} let:selected let:panelProps>
+  {#if selected}
+    <div class="panel" {...panelProps}>
+      <slot />
+    </div>
+  {/if}
+</Provider>
 
 <style>
   .panel {

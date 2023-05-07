@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { createTabs } from '$lib'
-  import { setContext } from 'svelte'
-
-  const tabs = createTabs()
-  setContext('tabs', tabs)
+  import Provider from '$lib/components/Tabs/Tabs.svelte'
 </script>
 
-<div class="tabs">
-  <slot />
-</div>
+<Provider>
+  <div class="tabs">
+    <slot />
+  </div>
+</Provider>
