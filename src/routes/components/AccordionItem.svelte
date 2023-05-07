@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { getContext } from 'svelte'
-  import { v4 as uuid } from '@lukeed/uuid'
+  import Provider from '$lib/components/Accordion/AccordionItem.svelte'
 
   /**
    * This component is a simple implementation of the accordion provider.
@@ -9,32 +8,36 @@
    * how you can implement your own component.
    */
 
-  const key = uuid()
-
   export let open = false
   export let disabled = false
   export let label
-
-  const accordion = getContext('accordion')
-  const { triggerRef, contentRef, state } = accordion
 </script>
 
-<div
-  class="accordion-item"
-  {...$$restProps}
-  class:disabled={$state.disabled.includes(key)}
+<Provider
+  defaults={{ expanded: open, disabled }}
+  let:triggerProps
+  let:contentProps
+  let:triggerRef
+  let:onTriggerClick
+  let:onTriggerKeyDown
+  let:disabled={isDisabled}
+  let:expanded
 >
-  <div class="toggle" use:triggerRef={{ key, expanded: open, disabled }}>
-    {label}
+  <div class="accordion-item" {...$$restProps} class:disabled={isDisabled}>
+    <div
+      class="toggle"
+      use:triggerRef
+      on:click={onTriggerClick}
+      on:keydown={onTriggerKeyDown}
+      {...triggerProps}
+    >
+      {label}
+    </div>
+    <div class="content" {...contentProps} class:hidden={!expanded}>
+      <slot />
+    </div>
   </div>
-  <div
-    class="content"
-    use:contentRef={{ key }}
-    class:hidden={!$state.expanded.includes(key)}
-  >
-    <slot />
-  </div>
-</div>
+</Provider>
 
 <style>
   .accordion-item {
