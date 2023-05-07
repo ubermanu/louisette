@@ -18,6 +18,7 @@
   const disabled = writable([])
 
   function open(id) {
+    if ($disabled.includes(id)) return
     if ($multiple) {
       $expanded = [...$expanded, id]
     } else {
@@ -26,10 +27,12 @@
   }
 
   function close(id) {
+    if ($disabled.includes(id)) return
     $expanded = $expanded.filter((item) => item !== id)
   }
 
   function toggle(id) {
+    if ($disabled.includes(id)) return
     if ($expanded.includes(id)) {
       close(id)
     } else {

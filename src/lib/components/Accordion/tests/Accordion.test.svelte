@@ -1,28 +1,37 @@
 <script lang="ts">
-  import { createAccordion } from '../provider'
+  import AccordionProvider from '../Accordion.svelte'
+  import AccordionItemProvider from '../AccordionItem.svelte'
 
   export let items: { id: number; label: string; content: string }[] = []
   export let defaults = {}
-
-  const accordion = createAccordion(defaults)
-  const { triggerRef, contentRef } = accordion
 </script>
 
-<div data-testid="accordion">
-  {#each items as item}
-    <div data-testid="accordion-item-{item.id}">
-      <div
-        data-testid="accordion-item-{item.id}-trigger"
-        use:triggerRef={{ key: item.id, ...item.defaults }}
+<AccordionProvider {defaults}>
+  <div data-testid="accordion">
+    {#each items as item}
+      <AccordionItemProvider
+        defaults={item.defaults}
+        let:triggerRef
+        let:triggerProps
+        let:contentProps
+        let:onTriggerClick
+        let:onTriggerKeyDown
       >
-        {item.label}
-      </div>
-      <div
-        data-testid="accordion-item-{item.id}-content"
-        use:contentRef={{ key: item.id }}
-      >
-        {item.content}
-      </div>
-    </div>
-  {/each}
-</div>
+        <div data-testid="accordion-item-{item.id}">
+          <div
+            data-testid="accordion-item-{item.id}-trigger"
+            use:triggerRef
+            on:click={onTriggerClick}
+            on:keydown={onTriggerKeyDown}
+            {...triggerProps}
+          >
+            {item.label}
+          </div>
+          <div data-testid="accordion-item-{item.id}-content" {...contentProps}>
+            {item.content}
+          </div>
+        </div>
+      </AccordionItemProvider>
+    {/each}
+  </div>
+</AccordionProvider>
