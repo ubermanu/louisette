@@ -32,12 +32,12 @@
   }
 
   if (defaults?.disabled) {
-    $disabled = [...$disabled, id]
+    $disabled = [...$disabled, key]
   }
 
   const state = derived([selected, disabled], ([s, d]) => ({
     selected: s === key,
-    disabled: d.includes(id),
+    disabled: d.includes(key),
   }))
 
   const tabProps = derived([state, panels], ([s, p]) => ({
@@ -114,8 +114,8 @@
 </script>
 
 <slot
-  selected={$selected === key}
-  disabled={$disabled.includes(id)}
+  selected={$state.selected}
+  disabled={$state.disabled}
   tabProps={$tabProps}
   {tabRef}
   {onTabClick}

@@ -41,7 +41,7 @@
     const index = $tabs.findIndex((t) => t.id === id)
     const prevTab = $tabs[index - 1]
     if (!prevTab) return null
-    if ($disabled.includes(prevTab.id)) {
+    if ($disabled.includes(prevTab.key)) {
       return getPrevEnabledTab(prevTab.id)
     }
     return prevTab
@@ -52,7 +52,7 @@
     const index = $tabs.findIndex((t) => t.id === id)
     const nextTab = $tabs[index + 1]
     if (!nextTab) return null
-    if ($disabled.includes(nextTab.id)) {
+    if ($disabled.includes(nextTab.key)) {
       return getNextEnabledTab(nextTab.id)
     }
     return nextTab
@@ -62,7 +62,7 @@
   function getFirstEnabledTab() {
     const firstTab = $tabs[0]
     if (!firstTab) return null
-    if ($disabled.includes(firstTab.id)) {
+    if ($disabled.includes(firstTab.key)) {
       return getNextEnabledTab(firstTab.id)
     }
     return firstTab
@@ -72,7 +72,7 @@
   function getLastEnabledTab() {
     const lastTab = $tabs[$tabs.length - 1]
     if (!lastTab) return null
-    if ($disabled.includes(lastTab.id)) {
+    if ($disabled.includes(lastTab.key)) {
       return getPrevEnabledTab(lastTab.id)
     }
     return lastTab
