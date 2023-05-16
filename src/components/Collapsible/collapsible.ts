@@ -8,7 +8,7 @@ export type CollapsibleConfig = {
   onExpandedChange?: (expanded: boolean) => void
 }
 
-export const createCollapsible = (config: CollapsibleConfig = {}) => {
+export const createCollapsible = (config: CollapsibleConfig) => {
   const { expanded, disabled, onExpandedChange } = {
     expanded: false,
     disabled: false,
