@@ -11,6 +11,7 @@ export type CalendarConfig = {
   onYearChange?: () => void
   onSelectionChange?: () => void
   lang?: string
+  firstDayOfWeek?: number
 }
 
 export type CalendarDay = {
@@ -32,6 +33,7 @@ export const createCalendar = (config?: CalendarConfig) => {
     onMonthChange,
     onYearChange,
     onSelectionChange,
+    firstDayOfWeek,
   } = {
     ...config,
   }
@@ -39,6 +41,9 @@ export const createCalendar = (config?: CalendarConfig) => {
   const today = new Date()
   const month$ = writable(month || today.getMonth())
   const year$ = writable(year || today.getFullYear())
+
+  // TODO: Add support for different languages
+  const firstDayOfWeek$ = writable(firstDayOfWeek || 7)
 
   // Contains the dates that are selected (in the format YYYY-MM-DD)
   const selected$ = writable(
@@ -101,15 +106,21 @@ export const createCalendar = (config?: CalendarConfig) => {
     return formatter.format(date)
   })
 
-  const weekdays = derived([month$, year$], ([month, year]) => {
-    const date = new Date(year, month)
-    const formatter = new Intl.DateTimeFormat('en', { weekday: 'short' })
-    const days = []
+  /**
+   * Returns an array of weekdays as strings, starting with the first day of the
+   * week
+   */
+  const weekdays = derived(firstDayOfWeek$, (firstDayOfWeek) => {
+    const weekdays = []
+    const formatter = new Intl.DateTimeFormat('en', { weekday: 'long' })
+
     for (let i = 0; i < 7; i++) {
-      days.push(formatter.format(date))
-      date.setDate(date.getDate() + 1)
+      const dayIndex = (firstDayOfWeek + i) % 7
+      const formattedDay = formatter.format(new Date(2023, 0, 1 + dayIndex))
+      weekdays.push(formattedDay)
     }
-    return days
+
+    return weekdays
   })
 
   const onPrevMonthClick = () => {
@@ -250,77 +261,6 @@ export const createCalendar = (config?: CalendarConfig) => {
     onSelectionChange?.()
   })
 
-  // TODO: Get first day of week from locale.
-  const generateDays = (
-    month: number,
-    year: number,
-    startWeekday: number = 0
-  ): CalendarDay[] => {
-    if (year === -1 || month === -1) {
-      return []
-    }
-
-    const data: { date: Date; isOutOfMonth: boolean }[] = []
-
-    const $disabled = get(disabled$)
-    const $selected = get(selected$)
-
-    // Add the days of the previous month.
-    const firstDay = new Date(year, month, 1)
-    const lastDayOfPreviousMonth = new Date(year, month, 0)
-
-    const previousMonthDaysToAdd =
-      firstDay.getDay() - startWeekday < 0
-        ? firstDay.getDay() - startWeekday + 7
-        : firstDay.getDay() - startWeekday
-
-    for (let i = previousMonthDaysToAdd; i > 0; i--) {
-      data.push({
-        date: new Date(
-          year,
-          month - 1,
-          lastDayOfPreviousMonth.getDate() - i + 1
-        ),
-        isOutOfMonth: true,
-      })
-    }
-
-    const lastDay = new Date(year, month + 1, 0)
-
-    // Add the days of the current month.
-    for (let i = 1; i <= lastDay.getDate(); i++) {
-      data.push({
-        date: new Date(year, month, i),
-        isOutOfMonth: false,
-      })
-    }
-
-    // Add the days of the next month.
-    const nextMonthDaysToAdd = 42 - data.length
-    for (let i = 1; i <= nextMonthDaysToAdd; i++) {
-      data.push({
-        date: new Date(year, month + 1, i),
-        isOutOfMonth: true,
-      })
-    }
-
-    return data.map(({ date, isOutOfMonth }) => {
-      const key = date.toISOString().slice(0, 10)
-      return {
-        date,
-        isOutOfMonth,
-        dayProps: {
-          'data-calendar-day': key,
-          'aria-label': date.toDateString(),
-          'aria-selected': $selected.includes(key) ? 'true' : undefined,
-          'aria-disabled': $disabled.includes(key) ? 'true' : undefined,
-          'aria-current': isSameDay(new Date(), date) ? 'date' : undefined,
-          tabIndex: !isOutOfMonth && $selected.includes(key) ? 0 : -1,
-        },
-      }
-    })
-  }
-
   const isSameDay = (date1: Date, date2: Date) => {
     return (
       date1.getFullYear() === date2.getFullYear() &&
@@ -330,9 +270,68 @@ export const createCalendar = (config?: CalendarConfig) => {
   }
 
   const days: Readable<CalendarDay[]> = derived(
-    [month$, year$, selected$, disabled$],
-    ([month, year, selected, disabled]) => {
-      return generateDays(month, year)
+    [month$, year$, selected$, disabled$, firstDayOfWeek$],
+    ([month, year, selected, disabled, startWeekday]) => {
+      if (year === -1 || month === -1) {
+        return []
+      }
+
+      const data: { date: Date; isOutOfMonth: boolean }[] = []
+
+      // Add the days of the previous month.
+      const firstDay = new Date(year, month, 1)
+      const lastDayOfPreviousMonth = new Date(year, month, 0)
+
+      const previousMonthDaysToAdd =
+        firstDay.getDay() - startWeekday < 0
+          ? firstDay.getDay() - startWeekday + 7
+          : firstDay.getDay() - startWeekday
+
+      for (let i = previousMonthDaysToAdd; i > 0; i--) {
+        data.push({
+          date: new Date(
+            year,
+            month - 1,
+            lastDayOfPreviousMonth.getDate() - i + 1
+          ),
+          isOutOfMonth: true,
+        })
+      }
+
+      const lastDay = new Date(year, month + 1, 0)
+
+      // Add the days of the current month.
+      for (let i = 1; i <= lastDay.getDate(); i++) {
+        data.push({
+          date: new Date(year, month, i),
+          isOutOfMonth: false,
+        })
+      }
+
+      // Add the days of the next month.
+      const nextMonthDaysToAdd = 42 - data.length
+      for (let i = 1; i <= nextMonthDaysToAdd; i++) {
+        data.push({
+          date: new Date(year, month + 1, i),
+          isOutOfMonth: true,
+        })
+      }
+
+      return data.map(({ date, isOutOfMonth }) => {
+        const key = date.toISOString().slice(0, 10)
+        return {
+          date,
+          isOutOfMonth,
+          dayProps: {
+            'data-calendar-day': key,
+            'aria-label': date.toDateString(),
+            'aria-selected': selected.includes(key) ? 'true' : undefined,
+            'aria-disabled': disabled.includes(key) ? 'true' : undefined,
+            'aria-current': isSameDay(new Date(), date) ? 'date' : undefined,
+            tabIndex: !isOutOfMonth && selected.includes(key) ? 0 : -1,
+          },
+        }
+      })
     }
   )
 
