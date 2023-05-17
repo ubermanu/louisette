@@ -5,8 +5,8 @@ import { derived, get, readonly, writable, type Readable } from 'svelte/store'
 export type CalendarConfig = {
   month?: number
   year?: number
-  selected?: Date | Date[]
-  disabled?: Date | Date[]
+  selected?: string | string[] | Date | Date[]
+  disabled?: string | string[] | Date | Date[]
   onMonthChange?: () => void
   onYearChange?: () => void
   onSelectionChange?: () => void
@@ -34,15 +34,24 @@ export const createCalendar = (config?: CalendarConfig) => {
   }
 
   const today = new Date()
-
   const month$ = writable(month || today.getMonth())
   const year$ = writable(year || today.getFullYear())
 
+  // Contains the dates that are selected (in the format YYYY-MM-DD)
   const selected$ = writable(
-    selected ? (Array.isArray(selected) ? selected : [selected]) : [today]
+    (selected
+      ? Array.isArray(selected)
+        ? selected
+        : [selected]
+      : [today]
+    ).map((date) => new Date(date).toISOString().slice(0, 10))
   )
+
+  // Contains the dates that are disabled (in the format YYYY-MM-DD)
   const disabled$ = writable(
-    disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []
+    (disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []).map(
+      (date) => new Date(date).toISOString().slice(0, 10)
+    )
   )
 
   const goToPrevMonth = () => {
@@ -210,19 +219,22 @@ export const createCalendar = (config?: CalendarConfig) => {
       })
     }
 
-    return data.map(({ date, isOutOfMonth }) => ({
-      date,
-      isOutOfMonth,
-      isWeekend: isWeekend(date),
-      dayProps: {
-        'data-calendar-day': date.toISOString().slice(0, 10),
-        'aria-label': date.toDateString(),
-        'aria-selected': $selected.includes(date) ? 'true' : undefined,
-        'aria-disabled': $disabled.includes(date) ? 'true' : undefined,
-        'aria-current': isSameDay(new Date(), date) ? 'date' : undefined,
-        tabIndex: -1,
-      },
-    }))
+    return data.map(({ date, isOutOfMonth }) => {
+      const key = date.toISOString().slice(0, 10)
+      return {
+        date,
+        isOutOfMonth,
+        isWeekend: isWeekend(date),
+        dayProps: {
+          'data-calendar-day': key,
+          'aria-label': date.toDateString(),
+          'aria-selected': $selected.includes(key) ? 'true' : undefined,
+          'aria-disabled': $disabled.includes(key) ? 'true' : undefined,
+          'aria-current': isSameDay(new Date(), date) ? 'date' : undefined,
+          tabIndex: -1,
+        },
+      }
+    })
   }
 
   // TODO: Check according to locale.
