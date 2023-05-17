@@ -15,9 +15,6 @@ export type CalendarConfig = {
 
 export type CalendarDay = {
   date: Date
-  isToday: boolean
-  isSelected: boolean
-  isDisabled: boolean
   isWeekend: boolean
   isOutOfMonth: boolean
   dayProps: Record<string, any>
@@ -33,7 +30,6 @@ export const createCalendar = (config?: CalendarConfig) => {
     onYearChange,
     onSelectionChange,
   } = {
-    selected: new Date(),
     ...config,
   }
 
@@ -42,8 +38,12 @@ export const createCalendar = (config?: CalendarConfig) => {
   const month$ = writable(month || today.getMonth())
   const year$ = writable(year || today.getFullYear())
 
-  const selected$ = writable(selected || [])
-  const disabled$ = writable(disabled || [])
+  const selected$ = writable(
+    selected ? (Array.isArray(selected) ? selected : [selected]) : [today]
+  )
+  const disabled$ = writable(
+    disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []
+  )
 
   const goToPrevMonth = () => {
     month$.update((m) => (m - 1) % 12)
@@ -156,16 +156,20 @@ export const createCalendar = (config?: CalendarConfig) => {
     onSelectionChange?.()
   })
 
+  // TODO: Get first day of week from locale.
   const generateDays = (
     month: number,
     year: number,
     startWeekday: number = 0
   ) => {
-    const data: CalendarDay[] = []
-
     if (year === -1 || month === -1) {
-      return data
+      return []
     }
+
+    const data: { date: Date; isOutOfMonth: boolean }[] = []
+
+    const $disabled = get(disabled$)
+    const $selected = get(selected$)
 
     // Add the days of the previous month.
     const firstDay = new Date(year, month, 1)
@@ -177,24 +181,13 @@ export const createCalendar = (config?: CalendarConfig) => {
         : firstDay.getDay() - startWeekday
 
     for (let i = previousMonthDaysToAdd; i > 0; i--) {
-      const d = new Date(
-        year,
-        month - 1,
-        lastDayOfPreviousMonth.getDate() - i + 1
-      )
       data.push({
-        date: d,
+        date: new Date(
+          year,
+          month - 1,
+          lastDayOfPreviousMonth.getDate() - i + 1
+        ),
         isOutOfMonth: true,
-        isWeekend: false,
-        isToday: false,
-        isSelected: false,
-        isDisabled: false,
-        dayProps: {
-          'data-calendar-day': d.toISOString().slice(0, 10),
-          'aria-label': d.toLocaleDateString(),
-          'aria-disabled': false,
-          tabIndex: -1,
-        },
       })
     }
 
@@ -202,44 +195,47 @@ export const createCalendar = (config?: CalendarConfig) => {
 
     // Add the days of the current month.
     for (let i = 1; i <= lastDay.getDate(); i++) {
-      const d = new Date(year, month, i)
       data.push({
-        date: d,
+        date: new Date(year, month, i),
         isOutOfMonth: false,
-        isWeekend: false,
-        isToday: false,
-        isSelected: false,
-        isDisabled: false,
-        dayProps: {
-          'data-calendar-day': d.toISOString().slice(0, 10),
-          'aria-label': d.toLocaleDateString(),
-          'aria-disabled': false,
-          tabIndex: -1,
-        },
       })
     }
 
     // Add the days of the next month.
     const nextMonthDaysToAdd = 42 - data.length
     for (let i = 1; i <= nextMonthDaysToAdd; i++) {
-      const d = new Date(year, month + 1, i)
       data.push({
-        date: d,
+        date: new Date(year, month + 1, i),
         isOutOfMonth: true,
-        isWeekend: false,
-        isToday: false,
-        isSelected: false,
-        isDisabled: false,
-        dayProps: {
-          'data-calendar-day': d.toISOString().slice(0, 10),
-          'aria-label': d.toLocaleDateString(),
-          'aria-disabled': false,
-          tabIndex: -1,
-        },
       })
     }
 
-    return data
+    return data.map(({ date, isOutOfMonth }) => ({
+      date,
+      isOutOfMonth,
+      isWeekend: isWeekend(date),
+      dayProps: {
+        'data-calendar-day': date.toISOString().slice(0, 10),
+        'aria-label': date.toDateString(),
+        'aria-selected': $selected.includes(date) ? 'true' : undefined,
+        'aria-disabled': $disabled.includes(date) ? 'true' : undefined,
+        'aria-current': isSameDay(new Date(), date) ? 'date' : undefined,
+        tabIndex: -1,
+      },
+    }))
+  }
+
+  // TODO: Check according to locale.
+  const isWeekend = (date: Date) => {
+    return date.getDay() === 0 || date.getDay() === 6
+  }
+
+  const isSameDay = (date1: Date, date2: Date) => {
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    )
   }
 
   const days: Readable<CalendarDay[]> = derived(
