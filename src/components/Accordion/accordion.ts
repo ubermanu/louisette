@@ -50,7 +50,7 @@ export const createAccordion = (config: AccordionConfig) => {
   })
 
   const expand = (key: string) => {
-    if (get(disabled$).includes(key)) return
+    if (!key || get(disabled$).includes(key)) return
     expanded$.update((expanded) => {
       if (expanded.includes(key)) return expanded
       return multiple ? [...expanded, key] : [key]
@@ -58,7 +58,7 @@ export const createAccordion = (config: AccordionConfig) => {
   }
 
   const collapse = (key: string) => {
-    if (get(disabled$).includes(key)) return
+    if (!key || get(disabled$).includes(key)) return
     expanded$.update((expanded) => {
       if (!expanded.includes(key)) return expanded
       return expanded.filter((e) => e !== key)
@@ -66,7 +66,7 @@ export const createAccordion = (config: AccordionConfig) => {
   }
 
   const toggle = (key: string) => {
-    if (get(disabled$).includes(key)) return
+    if (!key || get(disabled$).includes(key)) return
     expanded$.update((expanded) => {
       if (expanded.includes(key)) {
         return expanded.filter((e) => e !== key)
@@ -84,6 +84,7 @@ export const createAccordion = (config: AccordionConfig) => {
 
   let rootNode: HTMLElement | null = null
 
+  // TODO: Handle the case where the accordion is inside another accordion
   function getTrigger(event: Event) {
     const path = event.composedPath()
     const node = path.find(
@@ -94,6 +95,8 @@ export const createAccordion = (config: AccordionConfig) => {
   }
 
   const useAccordion: Action = (node) => {
+    rootNode = node
+
     const triggers = node.querySelectorAll(
       '[data-accordion-trigger]'
     ) as NodeListOf<HTMLElement>
@@ -115,50 +118,142 @@ export const createAccordion = (config: AccordionConfig) => {
 
   const onTriggerClick = (event: MouseEvent) => {
     event.preventDefault()
-    const key = getTrigger(event)?.dataset.accordionTrigger || ''
-    if (!key) return
-    toggle(key)
+    toggle(getTrigger(event)?.dataset.accordionTrigger || '')
+  }
+
+  /** Get the previous enabled trigger that is not disabled */
+  const getPrevEnabledTrigger = (key: string): HTMLElement | null => {
+    if (!rootNode || !key) {
+      return null
+    }
+
+    const triggers = rootNode.querySelectorAll(
+      '[data-accordion-trigger]'
+    ) as NodeListOf<HTMLElement>
+
+    const index = Array.from(triggers).findIndex(
+      (el) => el.dataset.accordionTrigger === key
+    )
+
+    if (index === -1) {
+      return null
+    }
+
+    const $disabled = get(disabled$)
+
+    const prev = Array.from(triggers)
+      .slice(0, index)
+      .reverse()
+      .find((el) => {
+        const key = el.dataset.accordionTrigger
+        return key && !$disabled.includes(key)
+      })
+
+    return prev || null
+  }
+
+  /** Get the next enabled trigger that is not disabled */
+  const getNextEnabledTrigger = (key: string): HTMLElement | null => {
+    if (!rootNode || !key) {
+      return null
+    }
+
+    const triggers = rootNode.querySelectorAll(
+      '[data-accordion-trigger]'
+    ) as NodeListOf<HTMLElement>
+
+    const index = Array.from(triggers).findIndex(
+      (el) => el.dataset.accordionTrigger === key
+    )
+
+    if (index === -1) {
+      return null
+    }
+
+    const $disabled = get(disabled$)
+
+    const next = Array.from(triggers)
+      .slice(index + 1)
+      .find((el) => {
+        const key = el.dataset.accordionTrigger
+        return key && !$disabled.includes(key)
+      })
+
+    return next || null
+  }
+
+  /** Get the first enabled trigger that is not disabled */
+  const getFirstEnabledTrigger = (): HTMLElement | null => {
+    if (!rootNode) {
+      return null
+    }
+
+    const triggers = rootNode.querySelectorAll(
+      '[data-accordion-trigger]'
+    ) as NodeListOf<HTMLElement>
+
+    const $disabled = get(disabled$)
+
+    const first = Array.from(triggers).find((el) => {
+      const key = el.dataset.accordionTrigger
+      return key && !$disabled.includes(key)
+    })
+
+    return first || null
+  }
+
+  const getLastEnabledTrigger = (): HTMLElement | null => {
+    if (!rootNode) {
+      return null
+    }
+
+    const triggers = rootNode.querySelectorAll(
+      '[data-accordion-trigger]'
+    ) as NodeListOf<HTMLElement>
+
+    const $disabled = get(disabled$)
+
+    const last = Array.from(triggers)
+      .reverse()
+      .find((el) => {
+        const key = el.dataset.accordionTrigger
+        return key && !$disabled.includes(key)
+      })
+
+    return last || null
   }
 
   const onTriggerKeyDown = (event: KeyboardEvent) => {
+    const key = getTrigger(event)?.dataset.accordionTrigger || ''
+
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
-      const trigger = event.currentTarget as HTMLElement
-      const key = trigger.dataset.accordionTrigger
-      if (!key) return
       toggle(key)
     }
-
-    const key = getTrigger(event)?.dataset.accordionTrigger || ''
-    if (!key) return
 
     if (event.key === 'Escape') {
       event.preventDefault()
       collapse(key)
     }
 
-    // TODO: implement
     if (event.key === 'ArrowUp') {
       event.preventDefault()
-      // accordion.getPrevEnabledTrigger(id)?.element?.focus()
+      getPrevEnabledTrigger(key)?.focus()
     }
 
-    // TODO: implement
     if (event.key === 'ArrowDown') {
       event.preventDefault()
-      // accordion.getNextEnabledTrigger(id)?.element?.focus()
+      getNextEnabledTrigger(key)?.focus()
     }
 
-    // TODO: implement
     if (event.key === 'Home') {
       event.preventDefault()
-      // accordion.getFirstEnabledTrigger()?.element?.focus()
+      getFirstEnabledTrigger()?.focus()
     }
 
-    // TODO: implement
     if (event.key === 'End') {
       event.preventDefault()
-      // accordion.getLastEnabledTrigger()?.element?.focus()
+      getLastEnabledTrigger()?.focus()
     }
   }
 
