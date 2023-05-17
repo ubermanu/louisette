@@ -212,11 +212,13 @@ export const createCalendar = (config?: CalendarConfig) => {
       goToDate(new Date(Date.UTC(date.getFullYear(), date.getMonth() + 1, 0)))
     }
 
+    // TODO: ensure that the day is preserved
     if (event.key === 'PageUp') {
       event.preventDefault()
       goToPrevMonth()
     }
 
+    // TODO: ensure that the day is preserved
     if (event.key === 'PageDown') {
       event.preventDefault()
       goToNextMonth()
