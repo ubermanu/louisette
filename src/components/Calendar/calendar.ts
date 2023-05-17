@@ -267,8 +267,8 @@ export const createCalendar = (config?: CalendarConfig) => {
       const data: { date: Date; isOutOfMonth: boolean }[] = []
 
       // Add the days of the previous month.
-      const firstDay = new Date(year, month, 1)
-      const lastDayOfPreviousMonth = new Date(year, month, 0)
+      const firstDay = new Date(Date.UTC(year, month, 1))
+      const lastDayOfPreviousMonth = new Date(Date.UTC(year, month, 0))
 
       const previousMonthDaysToAdd =
         firstDay.getDay() - startWeekday < 0
@@ -278,9 +278,7 @@ export const createCalendar = (config?: CalendarConfig) => {
       for (let i = previousMonthDaysToAdd; i > 0; i--) {
         data.push({
           date: new Date(
-            year,
-            month - 1,
-            lastDayOfPreviousMonth.getDate() - i + 1
+            Date.UTC(year, month - 1, lastDayOfPreviousMonth.getDate() - i + 1)
           ),
           isOutOfMonth: true,
         })
@@ -291,7 +289,7 @@ export const createCalendar = (config?: CalendarConfig) => {
       // Add the days of the current month.
       for (let i = 1; i <= lastDay.getDate(); i++) {
         data.push({
-          date: new Date(year, month, i),
+          date: new Date(Date.UTC(year, month, i)),
           isOutOfMonth: false,
         })
       }
@@ -300,7 +298,7 @@ export const createCalendar = (config?: CalendarConfig) => {
       const nextMonthDaysToAdd = 42 - data.length
       for (let i = 1; i <= nextMonthDaysToAdd; i++) {
         data.push({
-          date: new Date(year, month + 1, i),
+          date: new Date(Date.UTC(year, month + 1, i)),
           isOutOfMonth: true,
         })
       }
