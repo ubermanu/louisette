@@ -1,6 +1,6 @@
 import { generateId } from '$lib/helpers.js'
 import type { Action } from 'svelte/action'
-import { derived, get, writable } from 'svelte/store'
+import { derived, get, readonly, writable } from 'svelte/store'
 
 export type CollapsibleConfig = {
   expanded?: boolean
@@ -89,7 +89,7 @@ export const createCollapsible = (config: CollapsibleConfig) => {
   })
 
   return {
-    expanded: expanded$,
+    expanded: readonly(expanded$),
     disabled: disabled$,
     triggerProps,
     contentProps,
