@@ -31,10 +31,7 @@ export function delegate(node: HTMLElement, eventsMap: DelegateEventMap) {
       const handler = (event: Event) => {
         const path = event.composedPath()
         const target = path.find(
-          (node) =>
-            node instanceof HTMLElement &&
-            node.matches &&
-            node.matches(selector)
+          (node) => node instanceof HTMLElement && node.matches(selector)
         )
         if (target) {
           callback(event)

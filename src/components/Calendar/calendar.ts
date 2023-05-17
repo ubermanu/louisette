@@ -20,6 +20,10 @@ export type CalendarDay = {
   dayProps: Record<string, any>
 }
 
+/** Returns a date in the format YYYY-MM-DD */
+const dateToKey = (date: Date) => date.toISOString().slice(0, 10)
+const keyToDate = (key: string) => new Date(key)
+
 export const createCalendar = (config?: CalendarConfig) => {
   const {
     month,
@@ -79,6 +83,13 @@ export const createCalendar = (config?: CalendarConfig) => {
   const goToDate = (date: Date) => {
     month$.set(date.getMonth())
     year$.set(date.getFullYear())
+
+    // Focus the date cell in the calendar
+    rootNode
+      ?.querySelector<HTMLElement>(
+        `[data-calendar-day="${date.toISOString().slice(0, 10)}"]`
+      )
+      ?.focus()
   }
 
   const goToToday = () => {
@@ -124,13 +135,88 @@ export const createCalendar = (config?: CalendarConfig) => {
     }
   }
 
-  const onDayClick = (event: MouseEvent) => {}
+  // TODO: Add support for selecting multiple dates (e.g. for a range)
+  const onDayClick = (event: MouseEvent) => {
+    const target = event.target as HTMLElement
+    const key = target.dataset.calendarDay || ''
 
-  const onDayKeyDown = (event: KeyboardEvent) => {
-    // TODO: Implement
+    if (!key) return
+
+    const parts = key.split('-')
+    const date = new Date(+parts[0], +parts[1] - 1, +parts[2])
+
+    goToDate(date)
+    selected$.set([key])
   }
 
+  // TODO: keyboard navigation
+  const onDayKeyDown = (event: KeyboardEvent) => {
+    const target = event.target as HTMLElement
+    const key = target.dataset.calendarDay || ''
+
+    if (!key) return
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      selected$.set([key])
+    }
+
+    const date = keyToDate(key)
+
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      goToDate(
+        new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1)
+      )
+    }
+
+    if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      goToDate(
+        new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1)
+      )
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      goToDate(
+        new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7)
+      )
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      goToDate(
+        new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7)
+      )
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault()
+      goToDate(new Date(date.getFullYear(), date.getMonth(), 1))
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault()
+      goToDate(new Date(date.getFullYear(), date.getMonth() + 1, 0))
+    }
+
+    if (event.key === 'PageUp') {
+      event.preventDefault()
+      goToPrevMonth()
+    }
+
+    if (event.key === 'PageDown') {
+      event.preventDefault()
+      goToNextMonth()
+    }
+  }
+
+  let rootNode: HTMLElement | null = null
+
   const useCalendar: Action = (node) => {
+    rootNode = node
+
     const events = {
       click: {
         '[data-calendar-prev-month]': onPrevMonthClick,
@@ -170,7 +256,7 @@ export const createCalendar = (config?: CalendarConfig) => {
     month: number,
     year: number,
     startWeekday: number = 0
-  ) => {
+  ): CalendarDay[] => {
     if (year === -1 || month === -1) {
       return []
     }
@@ -231,7 +317,7 @@ export const createCalendar = (config?: CalendarConfig) => {
           'aria-selected': $selected.includes(key) ? 'true' : undefined,
           'aria-disabled': $disabled.includes(key) ? 'true' : undefined,
           'aria-current': isSameDay(new Date(), date) ? 'date' : undefined,
-          tabIndex: -1,
+          tabIndex: !isOutOfMonth && $selected.includes(key) ? 0 : -1,
         },
       }
     })
@@ -257,6 +343,20 @@ export const createCalendar = (config?: CalendarConfig) => {
     }
   )
 
+  // TODO: Set disabled according to min and max.
+  const prevButtonProps = derived([month$, year$], ([month, year]) => {
+    return {
+      'data-calendar-prev-month': '',
+    }
+  })
+
+  // TODO: Set disabled according to min and max.
+  const nextButtonProps = derived([month$, year$], ([month, year]) => {
+    return {
+      'data-calendar-next-month': '',
+    }
+  })
+
   return {
     month: month$,
     year: year$,
@@ -266,6 +366,8 @@ export const createCalendar = (config?: CalendarConfig) => {
     weekdays,
     days,
     useCalendar,
+    prevButtonProps,
+    nextButtonProps,
     goToPrevMonth,
     goToNextMonth,
     goToPrevYear,

@@ -15,11 +15,11 @@
 
 <div data-testid="calendar" use:useCalendar>
   <div>
-    <button type="button" data-testid="prev-month" {...$nextButtonProps}>
+    <button type="button" data-testid="prev-month" {...$prevButtonProps}>
       Prev
     </button>
     <div data-testid="title">{$title}</div>
-    <button type="button" data-testid="next-month" {...$prevButtonProps}>
+    <button type="button" data-testid="next-month" {...$nextButtonProps}>
       Next
     </button>
   </div>
