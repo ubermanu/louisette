@@ -75,6 +75,16 @@ describe('Calendar', async () => {
     expect(getByTestId('weekday-7').textContent?.trim()).toBe('Sat')
   })
 
+  test('Have the first day of the month focusable if no day is selected', async () => {
+    const { getByTestId } = render(CalendarTest, {
+      props: {
+        defaults: { month: 4, year: 2000 },
+      },
+    })
+
+    expect(getByTestId('day-2').getAttribute('tabindex')).toBe('0')
+  })
+
   test('Keyboard navigation works', async () => {
     const { getByTestId } = render(CalendarTest, {
       props: {

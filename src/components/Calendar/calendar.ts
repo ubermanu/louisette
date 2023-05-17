@@ -43,12 +43,9 @@ export const createCalendar = (config?: CalendarConfig) => {
 
   // Contains the dates that are selected (in the format YYYY-MM-DD)
   const selected$ = writable(
-    (selected
-      ? Array.isArray(selected)
-        ? selected
-        : [selected]
-      : [today]
-    ).map((date) => new Date(date).toISOString().slice(0, 10))
+    (selected ? (Array.isArray(selected) ? selected : [selected]) : []).map(
+      (date) => new Date(date).toISOString().slice(0, 10)
+    )
   )
 
   // Contains the dates that are disabled (in the format YYYY-MM-DD)
@@ -285,9 +282,13 @@ export const createCalendar = (config?: CalendarConfig) => {
       }
 
       const lastDay = new Date(year, month + 1, 0)
+      let firstDayOfMonth: Date
 
       // Add the days of the current month.
       for (let i = 1; i <= lastDay.getDate(); i++) {
+        if (i === 1) {
+          firstDayOfMonth = new Date(Date.UTC(year, month, i))
+        }
         data.push({
           date: new Date(Date.UTC(year, month, i)),
           isOutOfMonth: false,
@@ -305,6 +306,19 @@ export const createCalendar = (config?: CalendarConfig) => {
 
       return data.map(({ date, isOutOfMonth }) => {
         const key = date.toISOString().slice(0, 10)
+
+        // If the day is disabled, it cannot be focused.
+        // If the day is out of month, it cannot be focused.
+        // If the day is selected, make it focusable.
+        // If there are no selected days, and the month is the current month, make the current day focusable.
+        // Otherwise, make the first day of the month focusable.
+        const isFocusable = (date: Date) => {
+          if (disabled.includes(key) || isOutOfMonth) return false
+          if (selected.length > 0) return selected.includes(key)
+          if (isSameMonth(new Date(), date)) return isSameDay(new Date(), date)
+          return isSameDay(firstDayOfMonth!, date)
+        }
+
         return {
           date,
           isOutOfMonth,
@@ -314,7 +328,7 @@ export const createCalendar = (config?: CalendarConfig) => {
             'aria-selected': selected.includes(key) ? 'true' : undefined,
             'aria-disabled': disabled.includes(key) ? 'true' : undefined,
             'aria-current': isSameDay(new Date(), date) ? 'date' : undefined,
-            tabIndex: !isOutOfMonth && selected.includes(key) ? 0 : -1,
+            tabIndex: isFocusable(date) ? 0 : -1,
           },
         }
       })
@@ -360,5 +374,12 @@ const isSameDay = (date1: Date, date2: Date) => {
     date1.getFullYear() === date2.getFullYear() &&
     date1.getMonth() === date2.getMonth() &&
     date1.getDate() === date2.getDate()
+  )
+}
+
+const isSameMonth = (date1: Date, date2: Date) => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth()
   )
 }
