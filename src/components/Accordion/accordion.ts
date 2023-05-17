@@ -75,8 +75,19 @@ export const createAccordion = (config: AccordionConfig) => {
     })
   }
 
-  // TODO: implement
-  const expandAll = () => {}
+  const expandAll = () => {
+    const triggers = rootNode?.querySelectorAll(
+      '[data-accordion-trigger]'
+    ) as NodeListOf<HTMLElement>
+
+    const $disabled = get(disabled$)
+
+    const keys = Array.from(triggers)
+      .map((trigger) => trigger.dataset.accordionTrigger || '')
+      .filter((key) => key && !$disabled.includes(key))
+
+    expanded$.set(keys)
+  }
 
   const collapseAll = () => {
     expanded$.set([])
