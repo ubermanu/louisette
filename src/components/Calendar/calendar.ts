@@ -20,10 +20,6 @@ export type CalendarDay = {
   dayProps: Record<string, any>
 }
 
-/** Returns a date in the format YYYY-MM-DD */
-const dateToKey = (date: Date) => date.toISOString().slice(0, 10)
-const keyToDate = (key: string) => new Date(key)
-
 export const createCalendar = (config?: CalendarConfig) => {
   const {
     month,
@@ -171,7 +167,7 @@ export const createCalendar = (config?: CalendarConfig) => {
       selected$.set([key])
     }
 
-    const date = keyToDate(key)
+    const date = new Date(key)
 
     if (event.key === 'ArrowLeft') {
       event.preventDefault()
@@ -260,14 +256,6 @@ export const createCalendar = (config?: CalendarConfig) => {
   selected$.subscribe(() => {
     onSelectionChange?.()
   })
-
-  const isSameDay = (date1: Date, date2: Date) => {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    )
-  }
 
   const days: Readable<CalendarDay[]> = derived(
     [month$, year$, selected$, disabled$, firstDayOfWeek$],
@@ -367,4 +355,12 @@ export const createCalendar = (config?: CalendarConfig) => {
     goToDate,
     goToToday,
   }
+}
+
+const isSameDay = (date1: Date, date2: Date) => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  )
 }
