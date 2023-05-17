@@ -49,8 +49,7 @@ export const createLink = (config: LinkConfig) => {
     const target = get(target$)
 
     if (href.startsWith('#')) {
-      const element = document.querySelector(href)
-      element?.scrollIntoView()
+      document.querySelector(href)?.scrollIntoView()
       return
     }
 
