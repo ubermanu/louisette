@@ -105,5 +105,11 @@ describe('Calendar', async () => {
 
     await fireEvent.keyDown(getByTestId('day-8'), { key: 'ArrowDown' })
     expect(document.activeElement).toBe(getByTestId('day-15'))
+
+    await fireEvent.keyDown(getByTestId('day-15'), { key: 'Home' })
+    expect(document.activeElement).toBe(getByTestId('day-2'))
+
+    await fireEvent.keyDown(getByTestId('day-2'), { key: 'End' })
+    expect(document.activeElement).toBe(getByTestId('day-32'))
   })
 })

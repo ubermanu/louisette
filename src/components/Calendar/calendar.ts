@@ -169,39 +169,47 @@ export const createCalendar = (config?: CalendarConfig) => {
     if (event.key === 'ArrowLeft') {
       event.preventDefault()
       goToDate(
-        new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1)
+        new Date(
+          Date.UTC(date.getFullYear(), date.getMonth(), date.getDate() - 1)
+        )
       )
     }
 
     if (event.key === 'ArrowRight') {
       event.preventDefault()
       goToDate(
-        new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1)
+        new Date(
+          Date.UTC(date.getFullYear(), date.getMonth(), date.getDate() + 1)
+        )
       )
     }
 
     if (event.key === 'ArrowUp') {
       event.preventDefault()
       goToDate(
-        new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7)
+        new Date(
+          Date.UTC(date.getFullYear(), date.getMonth(), date.getDate() - 7)
+        )
       )
     }
 
     if (event.key === 'ArrowDown') {
       event.preventDefault()
       goToDate(
-        new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7)
+        new Date(
+          Date.UTC(date.getFullYear(), date.getMonth(), date.getDate() + 7)
+        )
       )
     }
 
     if (event.key === 'Home') {
       event.preventDefault()
-      goToDate(new Date(date.getFullYear(), date.getMonth(), 1))
+      goToDate(new Date(Date.UTC(date.getFullYear(), date.getMonth(), 1)))
     }
 
     if (event.key === 'End') {
       event.preventDefault()
-      goToDate(new Date(date.getFullYear(), date.getMonth() + 1, 0))
+      goToDate(new Date(Date.UTC(date.getFullYear(), date.getMonth() + 1, 0)))
     }
 
     if (event.key === 'PageUp') {
