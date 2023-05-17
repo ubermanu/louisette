@@ -62,4 +62,26 @@ describe('Calendar', async () => {
     expect(getByTestId('day-14').getAttribute('aria-selected')).toBeFalsy()
     expect(getByTestId('day-15').getAttribute('aria-selected')).toBe('true')
   })
+
+  test('Keyboard navigation works', async () => {
+    const { getByTestId } = render(CalendarTest, {
+      props: {
+        defaults: { month: 4, year: 2023 },
+      },
+    })
+
+    await fireEvent.focus(getByTestId('day-15'))
+
+    await fireEvent.keyDown(getByTestId('day-15'), { key: 'ArrowLeft' })
+    expect(document.activeElement).toBe(getByTestId('day-14'))
+
+    await fireEvent.keyDown(getByTestId('day-14'), { key: 'ArrowRight' })
+    expect(document.activeElement).toBe(getByTestId('day-15'))
+
+    await fireEvent.keyDown(getByTestId('day-15'), { key: 'ArrowUp' })
+    expect(document.activeElement).toBe(getByTestId('day-8'))
+
+    await fireEvent.keyDown(getByTestId('day-8'), { key: 'ArrowDown' })
+    expect(document.activeElement).toBe(getByTestId('day-15'))
+  })
 })
