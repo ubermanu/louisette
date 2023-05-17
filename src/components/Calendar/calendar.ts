@@ -15,7 +15,6 @@ export type CalendarConfig = {
 
 export type CalendarDay = {
   date: Date
-  isWeekend: boolean
   isOutOfMonth: boolean
   dayProps: Record<string, any>
 }
@@ -310,7 +309,6 @@ export const createCalendar = (config?: CalendarConfig) => {
       return {
         date,
         isOutOfMonth,
-        isWeekend: isWeekend(date),
         dayProps: {
           'data-calendar-day': key,
           'aria-label': date.toDateString(),
@@ -321,11 +319,6 @@ export const createCalendar = (config?: CalendarConfig) => {
         },
       }
     })
-  }
-
-  // TODO: Check according to locale.
-  const isWeekend = (date: Date) => {
-    return date.getDay() === 0 || date.getDay() === 6
   }
 
   const isSameDay = (date1: Date, date2: Date) => {
