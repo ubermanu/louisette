@@ -45,4 +45,21 @@ describe('Calendar', async () => {
 
     expect(getByTestId('day-1').textContent?.trim()).toBe('28')
   })
+
+  test('Clicking on a day selects it', async () => {
+    const { getByTestId } = render(CalendarTest, {
+      props: {
+        defaults: { month: 4, year: 2023 },
+      },
+    })
+
+    await fireEvent.click(getByTestId('day-14'))
+
+    expect(getByTestId('day-14').getAttribute('aria-selected')).toBe('true')
+
+    await fireEvent.click(getByTestId('day-15'))
+
+    expect(getByTestId('day-14').getAttribute('aria-selected')).toBeFalsy()
+    expect(getByTestId('day-15').getAttribute('aria-selected')).toBe('true')
+  })
 })
