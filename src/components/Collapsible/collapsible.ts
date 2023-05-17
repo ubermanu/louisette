@@ -85,9 +85,7 @@ export const createCollapsible = (config: CollapsibleConfig) => {
 
   // TODO: Unsubscribe
   expanded$.subscribe((expanded) => {
-    if (typeof onExpandedChange === 'function') {
-      onExpandedChange(expanded)
-    }
+    onExpandedChange?.(expanded)
   })
 
   return {
