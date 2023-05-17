@@ -1,10 +1,12 @@
 import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 
+export type PressEvent = Event & { pointerType: string }
+
 export type ButtonConfig = {
   disabled?: boolean
-  onPressStart?: (e: Event & { pointerType: string }) => void
-  onPressEnd?: (e: Event & { pointerType: string }) => void
+  onPressStart?: (event: PressEvent) => void
+  onPressEnd?: (event: PressEvent) => void
 }
 
 export const createButton = (config: ButtonConfig) => {
