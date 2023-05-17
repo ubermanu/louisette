@@ -15,7 +15,7 @@ export const createLink = (config: LinkConfig) => {
 
   const disabled$ = writable(disabled || false)
   const href$ = writable(href || '')
-  const target$ = writable(target || '')
+  const target$ = writable(target || '_self')
 
   const linkProps = derived(disabled$, (disabled) => ({
     role: 'link',
