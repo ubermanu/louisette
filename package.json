@@ -43,8 +43,5 @@
   },
   "peerDependencies": {
     "svelte": "^3.54.0"
-  },
-  "dependencies": {
-    "@lukeed/uuid": "^2.0.1"
   }
 }
