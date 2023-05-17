@@ -1,0 +1,186 @@
+import { generateId } from '$lib/helpers.js'
+import type { Action } from 'svelte/action'
+import { derived, get, readonly, writable } from 'svelte/store'
+
+export type AccordionConfig = {
+  expanded?: string[] | string
+  disabled?: string[]
+  multiple?: boolean
+}
+
+export const createAccordion = (config: AccordionConfig) => {
+  const { multiple, expanded, disabled } = {
+    multiple: false,
+    ...config,
+  }
+
+  const multiple$ = writable(multiple || false)
+  const expanded$ = writable(
+    expanded ? (Array.isArray(expanded) ? expanded : [expanded]) : []
+  )
+  const disabled$ = writable(disabled || [])
+
+  const baseId = generateId()
+  const getTriggerId = (key: string) => `${baseId}-trigger-${key}`
+  const getContentId = (key: string) => `${baseId}-content-${key}`
+
+  const triggerProps = derived(
+    [expanded$, disabled$],
+    ([expanded, disabled]) => {
+      return (key: string) => ({
+        id: getTriggerId(key),
+        role: 'button',
+        'aria-controls': getContentId(key),
+        'aria-expanded': expanded.includes(key),
+        'aria-disabled': disabled.includes(key),
+        tabIndex: disabled.includes(key) ? -1 : 0,
+        'data-accordion-trigger': key,
+      })
+    }
+  )
+
+  const contentProps = derived([expanded$], ([expanded]) => {
+    return (key: string) => ({
+      id: getContentId(key),
+      role: 'region',
+      'aria-labelledby': getTriggerId(key),
+      'aria-hidden': !expanded.includes(key),
+      'data-accordion-content': key,
+    })
+  })
+
+  const expand = (key: string) => {
+    if (get(disabled$).includes(key)) return
+    expanded$.update((expanded) => {
+      if (expanded.includes(key)) return expanded
+      return multiple ? [...expanded, key] : [key]
+    })
+  }
+
+  const collapse = (key: string) => {
+    if (get(disabled$).includes(key)) return
+    expanded$.update((expanded) => {
+      if (!expanded.includes(key)) return expanded
+      return expanded.filter((e) => e !== key)
+    })
+  }
+
+  const toggle = (key: string) => {
+    if (get(disabled$).includes(key)) return
+    expanded$.update((expanded) => {
+      if (expanded.includes(key)) {
+        return expanded.filter((e) => e !== key)
+      }
+      return multiple ? [...expanded, key] : [key]
+    })
+  }
+
+  // TODO: implement
+  const expandAll = () => {}
+
+  const collapseAll = () => {
+    expanded$.set([])
+  }
+
+  let rootNode: HTMLElement | null = null
+
+  function getTrigger(event: Event) {
+    const path = event.composedPath()
+    const node = path.find(
+      (el) =>
+        el instanceof HTMLElement && el.hasAttribute('data-accordion-trigger')
+    )
+    return node as HTMLElement | undefined
+  }
+
+  const useAccordion: Action = (node) => {
+    const triggers = node.querySelectorAll(
+      '[data-accordion-trigger]'
+    ) as NodeListOf<HTMLElement>
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', onTriggerClick)
+      trigger.addEventListener('keydown', onTriggerKeyDown)
+    })
+
+    return {
+      destroy() {
+        triggers.forEach((trigger) => {
+          trigger.removeEventListener('click', onTriggerClick)
+          trigger.removeEventListener('keydown', onTriggerKeyDown)
+        })
+      },
+    }
+  }
+
+  const onTriggerClick = (event: MouseEvent) => {
+    event.preventDefault()
+    const key = getTrigger(event)?.dataset.accordionTrigger || ''
+    if (!key) return
+    toggle(key)
+  }
+
+  const onTriggerKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      const trigger = event.currentTarget as HTMLElement
+      const key = trigger.dataset.accordionTrigger
+      if (!key) return
+      toggle(key)
+    }
+
+    const key = getTrigger(event)?.dataset.accordionTrigger || ''
+    if (!key) return
+
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      collapse(key)
+    }
+
+    // TODO: implement
+    if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      // accordion.getPrevEnabledTrigger(id)?.element?.focus()
+    }
+
+    // TODO: implement
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      // accordion.getNextEnabledTrigger(id)?.element?.focus()
+    }
+
+    // TODO: implement
+    if (event.key === 'Home') {
+      event.preventDefault()
+      // accordion.getFirstEnabledTrigger()?.element?.focus()
+    }
+
+    // TODO: implement
+    if (event.key === 'End') {
+      event.preventDefault()
+      // accordion.getLastEnabledTrigger()?.element?.focus()
+    }
+  }
+
+  // TODO: Unsubscribe
+  // When multiple is set to false, only one panel can be expanded at a time.
+  multiple$.subscribe((multiple) => {
+    if (!multiple) {
+      expanded$.update((expanded) => expanded.slice(0, 1))
+    }
+  })
+
+  return {
+    multiple: multiple$,
+    expanded: readonly(expanded$),
+    disabled: disabled$,
+    triggerProps,
+    contentProps,
+    useAccordion,
+    expand,
+    collapse,
+    toggle,
+    expandAll,
+    collapseAll,
+  }
+}
