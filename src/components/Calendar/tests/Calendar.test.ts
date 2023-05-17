@@ -63,6 +63,22 @@ describe('Calendar', async () => {
     expect(getByTestId('day-15').getAttribute('aria-selected')).toBe('true')
   })
 
+  test('Renders the weekdays in the correct order', async () => {
+    const { getByTestId } = render(CalendarTest, {
+      props: {
+        defaults: { month: 4, year: 2023, lang: 'en' },
+      },
+    })
+
+    expect(getByTestId('weekday-0').textContent?.trim()).toBe('Sun')
+    expect(getByTestId('weekday-1').textContent?.trim()).toBe('Mon')
+    expect(getByTestId('weekday-2').textContent?.trim()).toBe('Tue')
+    expect(getByTestId('weekday-3').textContent?.trim()).toBe('Wed')
+    expect(getByTestId('weekday-4').textContent?.trim()).toBe('Thu')
+    expect(getByTestId('weekday-5').textContent?.trim()).toBe('Fri')
+    expect(getByTestId('weekday-6').textContent?.trim()).toBe('Sat')
+  })
+
   test('Keyboard navigation works', async () => {
     const { getByTestId } = render(CalendarTest, {
       props: {

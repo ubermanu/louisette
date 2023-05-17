@@ -25,8 +25,8 @@
   </div>
   <div>
     <div data-testid="weekdays">
-      {#each $weekdays as weekday}
-        <div data-testid="weekday">{weekday}</div>
+      {#each $weekdays as weekday, i}
+        <div data-testid="weekday-{i + 1}">{weekday.slice(0, 3)}</div>
       {/each}
     </div>
     <div
