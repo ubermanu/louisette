@@ -20,10 +20,13 @@ export const createListbox = (config?: ListboxConfig) => {
   const { selected, disabled, multiple, orientation } = { ...config }
 
   const selected$ = writable(
-    Array.isArray(selected) ? selected : selected ? [selected] : []
+    (selected ? (Array.isArray(selected) ? selected : [selected]) : []).slice(
+      0,
+      multiple ? undefined : 1
+    )
   )
   const disabled$ = writable(
-    Array.isArray(disabled) ? disabled : disabled ? [disabled] : []
+    disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []
   )
   const multiple$ = writable(multiple || false)
   const orientation$ = writable(orientation || 'vertical')

@@ -57,6 +57,24 @@ describe('Listbox', async () => {
     expect(getByTestId('option-1').getAttribute('aria-selected')).toBe('true')
   })
 
+  test('Only one option can be selected at a time', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        defaults: {
+          selected: ['one', 'two'],
+        },
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    expect(getByTestId('option-1').getAttribute('aria-selected')).toBe('true')
+    expect(getByTestId('option-2').getAttribute('aria-selected')).toBe('false')
+  })
+
   test('Render a multiselect listbox with options and selected options', async () => {
     const { getByTestId } = render(ListboxTest, {
       props: {
