@@ -12,7 +12,7 @@ export type HoverConfig = {
   onHoverEnd?: (event?: HoverEvent) => void
 }
 
-const useHover = (config?: HoverConfig) => {
+export const useHover = (config?: HoverConfig) => {
   const { onHoverStart, onHoverEnd } = { ...config }
 
   const hovering$ = writable(false)
