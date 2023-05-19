@@ -1,23 +1,24 @@
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
 
-// TODO: Add support for indeterminate state
 export type CheckboxConfig = {
   checked?: boolean
   disabled?: boolean
+  indeterminate?: boolean
 }
 
 export const createCheckbox = (config?: CheckboxConfig) => {
-  const { checked, disabled } = { ...config }
+  const { checked, disabled, indeterminate } = { ...config }
 
-  const checked$ = writable(checked || false)
+  const checked$ = writable(indeterminate ? false : checked || false)
   const disabled$ = writable(disabled || false)
+  const indeterminate$ = writable(indeterminate || false)
 
   const checkboxProps = derived(
-    [checked$, disabled$],
-    ([checked, disabled]) => ({
+    [checked$, disabled$, indeterminate$],
+    ([checked, disabled, indeterminate]) => ({
       role: 'checkbox',
-      'aria-checked': checked,
+      'aria-checked': indeterminate ? 'mixed' : checked,
       'aria-disabled': disabled,
       tabIndex: disabled ? -1 : 0,
     })
@@ -25,14 +26,30 @@ export const createCheckbox = (config?: CheckboxConfig) => {
 
   const check = () => {
     checked$.set(true)
+    indeterminate$.set(false)
+  }
+
+  const partiallyCheck = () => {
+    indeterminate$.set(true)
+    checked$.set(false)
   }
 
   const uncheck = () => {
     checked$.set(false)
+    indeterminate$.set(false)
   }
 
   const toggle = () => {
-    checked$.update((c) => !c)
+    const checked = get(checked$)
+    const indeterminate = get(indeterminate$)
+
+    if (checked) {
+      uncheck()
+    } else if (indeterminate) {
+      check()
+    } else {
+      check()
+    }
   }
 
   const onCheckboxClick = (event: MouseEvent) => {
@@ -69,10 +86,12 @@ export const createCheckbox = (config?: CheckboxConfig) => {
 
   return {
     checked: readonly(checked$),
+    indeterminate: readonly(indeterminate$),
     disabled: disabled$,
     checkboxProps,
     useCheckbox,
     check,
+    partiallyCheck,
     uncheck,
     toggle,
   }

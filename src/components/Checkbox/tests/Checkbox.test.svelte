@@ -3,10 +3,13 @@
 
   export let defaults = {}
 
-  const { checked, checkboxProps, useCheckbox } = createCheckbox(defaults)
+  const { checked, indeterminate, checkboxProps, useCheckbox } =
+    createCheckbox(defaults)
 </script>
 
 <div use:useCheckbox {...$checkboxProps} data-testid="checkbox">
-  <div data-testid="checkmark">{$checked ? '✔' : '❌'}</div>
+  <div data-testid="checkmark">
+    {$indeterminate ? '-' : $checked ? '✓' : ' '}
+  </div>
   Click me
 </div>

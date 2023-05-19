@@ -54,4 +54,29 @@ describe('Checkbox', async () => {
     await fireEvent.keyDown(getByTestId('checkbox'), { key: 'Delete' })
     expect(getByTestId('checkbox').getAttribute('aria-checked')).toBe('false')
   })
+
+  test('Render as indeterminate', async () => {
+    const { getByTestId } = render(CheckboxTest, {
+      props: { defaults: { indeterminate: true } },
+    })
+
+    expect(getByTestId('checkbox').getAttribute('aria-checked')).toBe('mixed')
+  })
+
+  test('Render as indeterminate and checked', async () => {
+    const { getByTestId } = render(CheckboxTest, {
+      props: { defaults: { indeterminate: true, checked: true } },
+    })
+
+    expect(getByTestId('checkbox').getAttribute('aria-checked')).toBe('mixed')
+  })
+
+  test('Clicking on the indeterminate checkbox toggles its state', async () => {
+    const { getByTestId } = render(CheckboxTest, {
+      props: { defaults: { indeterminate: true } },
+    })
+
+    await fireEvent.click(getByTestId('checkbox'))
+    expect(getByTestId('checkbox').getAttribute('aria-checked')).toBe('true')
+  })
 })
