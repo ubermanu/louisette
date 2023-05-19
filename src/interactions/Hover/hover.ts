@@ -8,8 +8,8 @@ export type HoverEvent = {
 }
 
 export type HoverConfig = {
-  onHoverStart?: (event: HoverEvent) => void
-  onHoverEnd?: (event: HoverEvent) => void
+  onHoverStart?: (event?: HoverEvent) => void
+  onHoverEnd?: (event?: HoverEvent) => void
 }
 
 const useHover = (config?: HoverConfig) => {

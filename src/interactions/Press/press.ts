@@ -16,22 +16,22 @@ export type PressEvent = {
 
 export type PressConfig = {
   /** Handler that is called when the press is released over the target. */
-  onPress?: (event: PressEvent) => void
+  onPress?: (event?: PressEvent) => void
 
   /** Handler that is called when a press interaction starts. */
-  onPressStart?: (event: PressEvent) => void
+  onPressStart?: (event?: PressEvent) => void
 
   /**
    * Handler that is called when a press interaction ends, either over the
    * target or when the pointer leaves the target.
    */
-  onPressEnd?: (event: PressEvent) => void
+  onPressEnd?: (event?: PressEvent) => void
 
   /**
    * Handler that is called when a press is released over the target, regardless
    * of whether it started on the target or not.
    */
-  onPressUp?: (event: PressEvent) => void
+  onPressUp?: (event?: PressEvent) => void
 }
 
 const controlKeys = new Set(['Enter', ' '])
