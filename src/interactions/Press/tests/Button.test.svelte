@@ -5,11 +5,11 @@
   const dispatch = createEventDispatcher()
 
   const { pressEvents } = usePress({
+    onPress: ({ pointerType }) => dispatch('press', { pointerType }),
     onPressStart: ({ pointerType }) => dispatch('press:start', { pointerType }),
     onPressEnd: ({ pointerType }) => dispatch('press:end', { pointerType }),
     onPressUp: ({ pointerType }) => dispatch('press:up', { pointerType }),
-    onPressChange: ({ pointerType }) =>
-      dispatch('press:change', { pointerType }),
+    onPressChange: (pressed) => dispatch('press:change', { pressed }),
   })
 </script>
 

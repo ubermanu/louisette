@@ -8,6 +8,7 @@ describe('Press', async () => {
     expect(getByTestId('button')).toBeTruthy()
   })
 
+  const onPress = vi.fn()
   const onPressStart = vi.fn()
   const onPressEnd = vi.fn()
   const onPressUp = vi.fn()
@@ -20,6 +21,7 @@ describe('Press', async () => {
   test('Pressing the button with the keyboard fires the press events', async () => {
     const { getByTestId, component } = render(ButtonTest)
 
+    component.$on('press', onPress)
     component.$on('press:start', onPressStart)
     component.$on('press:end', onPressEnd)
     component.$on('press:up', onPressUp)
@@ -30,6 +32,7 @@ describe('Press', async () => {
     expect(onPressChange).toHaveBeenCalledTimes(1)
 
     await fireEvent.keyUp(getByTestId('button'), { key: 'Enter' })
+    expect(onPress).toHaveBeenCalledTimes(1)
     expect(onPressEnd).toHaveBeenCalledTimes(1)
     expect(onPressUp).toHaveBeenCalledTimes(1)
     expect(onPressChange).toHaveBeenCalledTimes(2)
@@ -38,6 +41,7 @@ describe('Press', async () => {
   test('Pressing the button with the mouse fires the press events', async () => {
     const { getByTestId, component } = render(ButtonTest)
 
+    component.$on('press', onPress)
     component.$on('press:start', onPressStart)
     component.$on('press:end', onPressEnd)
     component.$on('press:up', onPressUp)
@@ -48,6 +52,7 @@ describe('Press', async () => {
     expect(onPressChange).toHaveBeenCalledTimes(1)
 
     await fireEvent.mouseUp(getByTestId('button'), { button: 0 })
+    expect(onPress).toHaveBeenCalledTimes(1)
     expect(onPressEnd).toHaveBeenCalledTimes(1)
     expect(onPressUp).toHaveBeenCalledTimes(1)
     expect(onPressChange).toHaveBeenCalledTimes(2)
