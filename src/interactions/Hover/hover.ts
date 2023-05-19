@@ -35,7 +35,7 @@ const useHover = (config?: HoverConfig) => {
     })
   }
 
-  const hoverRef: Action = (node) => {
+  const hoverEvents: Action = (node) => {
     if (onHoverStart) {
       node.addEventListener('pointerenter', onPointerEnter)
     }
@@ -54,6 +54,6 @@ const useHover = (config?: HoverConfig) => {
 
   return {
     hovering: readonly(hovering$),
-    hoverRef,
+    hoverEvents,
   }
 }
