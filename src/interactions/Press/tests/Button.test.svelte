@@ -1,15 +1,22 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte'
+  import { createEventDispatcher, onDestroy } from 'svelte'
   import { usePress } from '../press'
 
   const dispatch = createEventDispatcher()
 
-  const { pressEvents } = usePress({
+  const { pressed, pressEvents } = usePress({
     onPress: ({ pointerType }) => dispatch('press', { pointerType }),
     onPressStart: ({ pointerType }) => dispatch('press:start', { pointerType }),
     onPressEnd: ({ pointerType }) => dispatch('press:end', { pointerType }),
     onPressUp: ({ pointerType }) => dispatch('press:up', { pointerType }),
-    onPressChange: (pressed) => dispatch('press:change', { pressed }),
+  })
+
+  const unsubscribe = pressed.subscribe((isPressed) => {
+    dispatch('press:change', { isPressed })
+  })
+
+  onDestroy(() => {
+    unsubscribe()
   })
 </script>
 

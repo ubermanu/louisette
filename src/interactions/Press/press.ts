@@ -32,9 +32,6 @@ export type PressConfig = {
    * of whether it started on the target or not.
    */
   onPressUp?: (event: PressEvent) => void
-
-  /** Handler that is called when the press state changes. */
-  onPressChange?: (pressed: boolean) => void
 }
 
 const controlKeys = new Set(['Enter', ' '])
@@ -55,7 +52,7 @@ const createEvent = (
 })
 
 export const usePress = (config?: PressConfig) => {
-  const { onPress, onPressStart, onPressEnd, onPressChange, onPressUp } = {
+  const { onPress, onPressStart, onPressEnd, onPressUp } = {
     ...config,
   }
 
@@ -104,12 +101,12 @@ export const usePress = (config?: PressConfig) => {
   }
 
   const pressEvents: Action = (node) => {
-    if (onPressStart || onPressChange) {
+    if (onPressStart) {
       node.addEventListener('keydown', onButtonKeyDown)
       node.addEventListener('mousedown', onButtonMouseDown)
     }
 
-    if (onPressEnd || onPressChange) {
+    if (onPressEnd) {
       node.addEventListener('keyup', onButtonKeyUp)
       node.addEventListener('mouseleave', onButtonMouseLeave)
       document.addEventListener('mouseup', onDocumentMouseUp)
@@ -130,10 +127,6 @@ export const usePress = (config?: PressConfig) => {
       },
     }
   }
-
-  pressed$.subscribe((pressed) => {
-    onPressChange?.(pressed)
-  })
 
   return {
     pressed: readonly(pressed$),
