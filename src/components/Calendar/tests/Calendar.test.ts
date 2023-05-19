@@ -130,4 +130,15 @@ describe('Calendar', async () => {
 
     expect(document.activeElement?.textContent?.trim()).toBe('9')
   })
+
+  test('The first day of the month is focusable, if the selected day is not in the current month', async () => {
+    const { getByTestId } = render(CalendarTest, {
+      props: {
+        defaults: { month: 1, year: 2020, selected: '2020-01-31' },
+      },
+    })
+
+    expect(getByTestId('day-6').getAttribute('tabindex')).toBe('-1') // 2020-01-31
+    expect(getByTestId('day-7').getAttribute('tabindex')).toBe('0') // 2020-02-01
+  })
 })

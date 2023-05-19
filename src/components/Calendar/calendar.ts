@@ -329,17 +329,24 @@ export const createCalendar = (config?: CalendarConfig) => {
         })
       }
 
+      // Get the selected days in the current month.
+      const selectedDays = selected
+        .map((key) => key.split('-'))
+        .filter(([y, m]) => Number(y) === year && Number(m) === month + 1)
+        .map(([, , d]) => Number(d))
+
       return data.map(({ date, isOutOfMonth }) => {
         const key = date.toISOString().slice(0, 10)
+        const day = date.getDate()
 
         // If the day is disabled, it cannot be focused.
         // If the day is out of month, it cannot be focused.
-        // If the day is selected, make it focusable.
+        // If the day is selected, and in the current month, it can be focused.
         // If there are no selected days, and the month is the current month, make the current day focusable.
         // Otherwise, make the first day of the month focusable.
         const isFocusable = (date: Date) => {
           if (disabled.includes(key) || isOutOfMonth) return false
-          if (selected.length > 0) return selected.includes(key)
+          if (selectedDays.length > 0) return selectedDays.includes(day)
           if (isSameMonth(new Date(), date)) return isSameDay(new Date(), date)
           return isSameDay(firstDayOfMonth!, date)
         }
