@@ -353,6 +353,7 @@ export const createCalendar = (config?: CalendarConfig) => {
             'aria-selected': selected.includes(key) ? 'true' : undefined,
             'aria-disabled': disabled.includes(key) ? 'true' : undefined,
             'aria-current': isSameDay(new Date(), date) ? 'date' : undefined,
+            'aria-hidden': isOutOfMonth ? 'true' : undefined,
             tabIndex: isFocusable(date) ? 0 : -1,
           },
         }
