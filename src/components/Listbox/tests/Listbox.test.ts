@@ -93,4 +93,59 @@ describe('Listbox', async () => {
     expect(getByTestId('option-1').getAttribute('aria-checked')).toBe('true')
     expect(getByTestId('option-3').getAttribute('aria-checked')).toBe('true')
   })
+
+  test('If no selected, the first option should be focusable', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    expect(getByTestId('option-1').getAttribute('tabIndex')).toBe('0')
+    expect(getByTestId('option-2').getAttribute('tabIndex')).toBe('-1')
+    expect(getByTestId('option-3').getAttribute('tabIndex')).toBe('-1')
+  })
+
+  test('If selected, the selected option should be focusable', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        defaults: {
+          selected: ['two'],
+        },
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    expect(getByTestId('option-1').getAttribute('tabIndex')).toBe('-1')
+    expect(getByTestId('option-2').getAttribute('tabIndex')).toBe('0')
+    expect(getByTestId('option-3').getAttribute('tabIndex')).toBe('-1')
+  })
+
+  test('If multiple selected, the first selected option should be focusable', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        defaults: {
+          multiple: true,
+          selected: ['two', 'three'],
+        },
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    expect(getByTestId('option-1').getAttribute('tabIndex')).toBe('-1')
+    expect(getByTestId('option-2').getAttribute('tabIndex')).toBe('0')
+    expect(getByTestId('option-3').getAttribute('tabIndex')).toBe('-1')
+  })
 })
