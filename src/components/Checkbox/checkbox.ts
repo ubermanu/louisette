@@ -59,16 +59,10 @@ export const createCheckbox = (config?: CheckboxConfig) => {
   }
 
   const onCheckboxKeyDown = (event: KeyboardEvent) => {
-    if (['Enter', ' '].includes(event.key)) {
+    if (event.key === ' ') {
       event.preventDefault()
       if (get(disabled$)) return
       toggle()
-    }
-
-    if (event.key === 'Delete') {
-      event.preventDefault()
-      if (get(disabled$)) return
-      uncheck()
     }
   }
 

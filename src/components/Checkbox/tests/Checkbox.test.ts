@@ -36,22 +36,13 @@ describe('Checkbox', async () => {
     expect(getByTestId('checkbox').getAttribute('aria-checked')).toBe('false')
   })
 
-  test('Pressing enter or space on the checkbox toggles its state', async () => {
+  test('Pressing space on the checkbox toggles its state', async () => {
     const { getByTestId } = render(CheckboxTest)
 
-    await fireEvent.keyDown(getByTestId('checkbox'), { key: 'Enter' })
+    await fireEvent.keyDown(getByTestId('checkbox'), { key: ' ' })
     expect(getByTestId('checkbox').getAttribute('aria-checked')).toBe('true')
 
     await fireEvent.keyDown(getByTestId('checkbox'), { key: ' ' })
-    expect(getByTestId('checkbox').getAttribute('aria-checked')).toBe('false')
-  })
-
-  test('Pressing delete on the checkbox unchecks it', async () => {
-    const { getByTestId } = render(CheckboxTest, {
-      props: { defaults: { checked: true } },
-    })
-
-    await fireEvent.keyDown(getByTestId('checkbox'), { key: 'Delete' })
     expect(getByTestId('checkbox').getAttribute('aria-checked')).toBe('false')
   })
 
