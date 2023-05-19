@@ -1,48 +1,42 @@
 import { derived, readonly, writable } from 'svelte/store'
-import {
-  createButton,
-  type ButtonConfig,
-  type PressEvent,
-} from '../Button/button.js'
+import type { PressEvent } from '../../interactions/Press/press.js'
+import { createButton, type ButtonConfig } from '../Button/button.js'
 
 export type ToggleButtonConfig = ButtonConfig & {
   checked?: boolean
 }
 
-export const createToggleButton = (config: ToggleButtonConfig) => {
-  const { checked, onPressEnd } = {
-    checked: false,
-    ...config,
-  }
+export const createToggleButton = (config?: ToggleButtonConfig) => {
+  const { checked, onPress, ...buttonConfig } = { ...config }
 
   const checked$ = writable(checked || false)
 
-  // Toggle the checked state on press end (keyboard + mouse)
-  const onToggleButtonPressEnd = (event: PressEvent) => {
-    checked$.update((c) => !c)
-    onPressEnd?.(event)
-  }
-
   const {
-    buttonProps,
+    buttonProps: buttonProps$,
     disabled: disabled$,
     ...rest
   } = createButton({
-    onPressEnd: onToggleButtonPressEnd,
-    ...config,
+    ...buttonConfig,
+    onPress: (event?: PressEvent) => {
+      checked$.update((c) => !c)
+      onPress?.(event)
+    },
   })
 
+  // Update the aria-pressed attribute based on the checked state
   const toggleButtonProps = derived(
-    [buttonProps, checked$],
-    ([props, pressed]) => ({
+    [buttonProps$, checked$],
+    ([props, checked]) => ({
       ...props,
-      'aria-pressed': pressed,
+      'aria-pressed': checked,
     })
   )
 
-  // TODO: Unsubscribe
+  // Uncheck the button when disabled
   disabled$.subscribe((disabled) => {
-    if (disabled) checked$.set(false)
+    if (disabled) {
+      checked$.set(false)
+    }
   })
 
   return {

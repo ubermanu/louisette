@@ -101,18 +101,18 @@ export const usePress = (config?: PressConfig) => {
   }
 
   const pressEvents: Action = (node) => {
-    if (onPressStart) {
+    if (onPressStart || onPress) {
       node.addEventListener('keydown', onButtonKeyDown)
       node.addEventListener('mousedown', onButtonMouseDown)
     }
 
-    if (onPressEnd) {
+    if (onPressEnd || onPress) {
       node.addEventListener('keyup', onButtonKeyUp)
       node.addEventListener('mouseleave', onButtonMouseLeave)
       document.addEventListener('mouseup', onDocumentMouseUp)
     }
 
-    if (onPressUp) {
+    if (onPressUp || onPress) {
       node.addEventListener('mouseup', onButtonMouseUp)
     }
 

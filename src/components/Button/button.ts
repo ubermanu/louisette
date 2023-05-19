@@ -1,19 +1,20 @@
-import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
-
-export type PressEvent = Event & { pointerType: string }
+import {
+  usePress,
+  type PressConfig,
+  type PressEvent,
+} from '../../interactions/Press/press.js'
 
 export type ButtonConfig = {
   disabled?: boolean
-  onPressStart?: (event: PressEvent) => void
-  onPressEnd?: (event: PressEvent) => void
+  onPress?: PressConfig['onPress']
+  onPressStart?: PressConfig['onPressStart']
+  onPressEnd?: PressConfig['onPressEnd']
+  onPressUp?: PressConfig['onPressUp']
 }
 
 export const createButton = (config: ButtonConfig) => {
-  const { disabled, onPressStart, onPressEnd } = {
-    disabled: false,
-    ...config,
-  }
+  const { disabled } = { ...config }
 
   const disabled$ = writable(disabled || false)
 
@@ -23,55 +24,29 @@ export const createButton = (config: ButtonConfig) => {
     tabIndex: disabled ? -1 : 0,
   }))
 
-  const controlKeys = new Set(['Enter', ' '])
-
-  const onButtonKeyDown = (event: KeyboardEvent) => {
-    if (controlKeys.has(event.key)) {
-      event.preventDefault()
-      if (get(disabled$)) return
-      onPressStart?.({ ...event, pointerType: 'keyboard' })
+  // Guard against handlers being called when disabled.
+  const whenEnabled = (handler: ((event?: PressEvent) => void) | undefined) => {
+    if (handler) {
+      return (event?: PressEvent) => {
+        if (get(disabled$)) return
+        handler(event)
+      }
     }
   }
 
-  const onButtonKeyUp = (event: KeyboardEvent) => {
-    if (controlKeys.has(event.key)) {
-      event.preventDefault()
-      if (get(disabled$)) return
-      onPressEnd?.({ ...event, pointerType: 'keyboard' })
-    }
-  }
+  const { onPress, onPressStart, onPressEnd, onPressUp } = { ...config }
 
-  const onButtonMouseDown = (event: MouseEvent) => {
-    if (event.button !== 0) return
-    if (get(disabled$)) return
-    onPressStart?.({ ...event, pointerType: 'mouse' })
-  }
-
-  const onButtonMouseUp = (event: MouseEvent) => {
-    if (event.button !== 0) return
-    if (get(disabled$)) return
-    onPressEnd?.({ ...event, pointerType: 'mouse' })
-  }
-
-  const useButton: Action = (node) => {
-    node.addEventListener('keydown', onButtonKeyDown)
-    node.addEventListener('keyup', onButtonKeyUp)
-    node.addEventListener('mousedown', onButtonMouseDown)
-    node.addEventListener('mouseup', onButtonMouseUp)
-
-    return {
-      destroy() {
-        node.removeEventListener('keydown', onButtonKeyDown)
-        node.removeEventListener('keyup', onButtonKeyUp)
-        node.removeEventListener('mousedown', onButtonMouseDown)
-        node.removeEventListener('mouseup', onButtonMouseUp)
-      },
-    }
-  }
+  const { pressed, pressEvents } = usePress({
+    onPress: whenEnabled(onPress),
+    onPressStart: whenEnabled(onPressStart),
+    onPressEnd: whenEnabled(onPressEnd),
+    onPressUp: whenEnabled(onPressUp),
+  })
 
   return {
+    pressed,
     disabled: disabled$,
     buttonProps,
-    useButton,
+    useButton: pressEvents,
   }
 }
