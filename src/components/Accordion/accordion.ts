@@ -1,4 +1,4 @@
-import { generateId } from '$lib/helpers.js'
+import { delegate, generateId } from '$lib/helpers.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
 
@@ -108,21 +108,20 @@ export const createAccordion = (config: AccordionConfig) => {
   const useAccordion: Action = (node) => {
     rootNode = node
 
-    const triggers = node.querySelectorAll(
-      '[data-accordion-trigger]'
-    ) as NodeListOf<HTMLElement>
+    const events = {
+      keydown: {
+        '[data-accordion-trigger]': onTriggerKeyDown,
+      },
+      click: {
+        '[data-accordion-trigger]': onTriggerClick,
+      },
+    }
 
-    triggers.forEach((trigger) => {
-      trigger.addEventListener('click', onTriggerClick)
-      trigger.addEventListener('keydown', onTriggerKeyDown)
-    })
+    const removeListeners = delegate(node, events)
 
     return {
       destroy() {
-        triggers.forEach((trigger) => {
-          trigger.removeEventListener('click', onTriggerClick)
-          trigger.removeEventListener('keydown', onTriggerKeyDown)
-        })
+        removeListeners()
       },
     }
   }
