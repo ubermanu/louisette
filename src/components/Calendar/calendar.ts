@@ -103,7 +103,7 @@ export const createCalendar = (config?: CalendarConfig) => {
   const title = derived([month$, year$], ([month, year]) => {
     const date = new Date(year, month)
     const formatter = new Intl.DateTimeFormat('en', { month: 'long' })
-    return formatter.format(date)
+    return formatter.format(date) + ' ' + year
   })
 
   /**
