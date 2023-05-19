@@ -1,12 +1,9 @@
 import type { Action } from 'svelte/action'
 import { get, readonly, writable } from 'svelte/store'
 
-// TODO: Add support for touch events.
-export type PointerType = 'mouse' | 'keyboard'
-
 export type PressEvent = {
   type: 'pressstart' | 'pressend' | 'pressup' | 'press'
-  pointerType: PointerType
+  pointerType: 'mouse' | 'keyboard' | 'touch' | 'pen' | string
   target: EventTarget | null
   shiftKey: boolean
   ctrlKey: boolean
@@ -40,7 +37,7 @@ const controlKeys = new Set(['Enter', ' '])
 const createEvent = (
   event: MouseEvent | KeyboardEvent,
   type: PressEvent['type'],
-  pointerType: PointerType
+  pointerType: PressEvent['pointerType']
 ): PressEvent => ({
   type,
   pointerType,
@@ -74,28 +71,31 @@ export const usePress = (config?: PressConfig) => {
     onPressUp?.(createEvent(event, 'pressup', 'keyboard'))
   }
 
-  const onButtonMouseDown = (event: MouseEvent) => {
-    if (event.button !== 0 || get(pressed$)) return
+  const onButtonPointerDown = (event: PointerEvent) => {
+    if (event.button !== 0 && event.pointerType === 'mouse') return
+    if (get(pressed$)) return
     pressed$.set(true)
-    onPressStart?.(createEvent(event, 'pressstart', 'mouse'))
+    onPressStart?.(createEvent(event, 'pressstart', event.pointerType))
   }
 
-  const onButtonMouseUp = (event: MouseEvent) => {
-    if (event.button !== 0) return
+  const onButtonPointerUp = (event: PointerEvent) => {
+    if (event.button !== 0 && event.pointerType === 'mouse') return
     if (get(pressed$)) {
-      onPress?.(createEvent(event, 'press', 'mouse'))
+      onPress?.(createEvent(event, 'press', event.pointerType))
     }
-    onPressUp?.(createEvent(event, 'pressup', 'mouse'))
+    onPressUp?.(createEvent(event, 'pressup', event.pointerType))
   }
 
-  const onDocumentMouseUp = (event: MouseEvent) => {
-    if (event.button !== 0 || !get(pressed$)) return
+  const onDocumentPointerUp = (event: PointerEvent) => {
+    if (event.button !== 0 && event.pointerType === 'mouse') return
+    if (!get(pressed$)) return
     pressed$.set(false)
     onPressEnd?.(createEvent(event, 'pressend', 'mouse'))
   }
 
-  const onButtonMouseLeave = (event: MouseEvent) => {
-    if (event.button !== 0 || !get(pressed$)) return
+  const onButtonPointerLeave = (event: PointerEvent) => {
+    if (event.button !== 0 && event.pointerType === 'mouse') return
+    if (!get(pressed$)) return
     pressed$.set(false)
     onPressEnd?.(createEvent(event, 'pressend', 'mouse'))
   }
@@ -103,27 +103,27 @@ export const usePress = (config?: PressConfig) => {
   const pressEvents: Action = (node) => {
     if (onPressStart || onPress) {
       node.addEventListener('keydown', onButtonKeyDown)
-      node.addEventListener('mousedown', onButtonMouseDown)
+      node.addEventListener('pointerdown', onButtonPointerDown)
     }
 
     if (onPressEnd || onPress) {
       node.addEventListener('keyup', onButtonKeyUp)
-      node.addEventListener('mouseleave', onButtonMouseLeave)
-      document.addEventListener('mouseup', onDocumentMouseUp)
+      node.addEventListener('pointerup', onButtonPointerUp)
+      node.addEventListener('pointerleave', onButtonPointerLeave)
     }
 
     if (onPressUp || onPress) {
-      node.addEventListener('mouseup', onButtonMouseUp)
+      document.addEventListener('pointerup', onDocumentPointerUp)
     }
 
     return {
       destroy() {
         node.removeEventListener('keydown', onButtonKeyDown)
         node.removeEventListener('keyup', onButtonKeyUp)
-        node.removeEventListener('mousedown', onButtonMouseDown)
-        node.removeEventListener('mouseup', onButtonMouseUp)
-        node.removeEventListener('mouseleave', onButtonMouseLeave)
-        document.removeEventListener('mouseup', onDocumentMouseUp)
+        node.removeEventListener('pointerdown', onButtonPointerDown)
+        node.removeEventListener('pointerup', onButtonPointerUp)
+        node.removeEventListener('pointerleave', onButtonPointerLeave)
+        document.removeEventListener('pointerup', onDocumentPointerUp)
       },
     }
   }

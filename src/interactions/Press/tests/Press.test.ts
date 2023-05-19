@@ -47,11 +47,17 @@ describe('Press', async () => {
     component.$on('press:up', onPressUp)
     component.$on('press:change', onPressChange)
 
-    await fireEvent.mouseDown(getByTestId('button'), { button: 0 })
+    await fireEvent.pointerDown(getByTestId('button'), {
+      button: 0,
+      pointerType: 'mouse',
+    })
     expect(onPressStart).toHaveBeenCalledTimes(1)
     expect(onPressChange).toHaveBeenCalledTimes(1)
 
-    await fireEvent.mouseUp(getByTestId('button'), { button: 0 })
+    await fireEvent.pointerUp(getByTestId('button'), {
+      button: 0,
+      pointerType: 'mouse',
+    })
     expect(onPress).toHaveBeenCalledTimes(1)
     expect(onPressEnd).toHaveBeenCalledTimes(1)
     expect(onPressUp).toHaveBeenCalledTimes(1)
