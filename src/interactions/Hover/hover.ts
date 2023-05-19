@@ -36,13 +36,8 @@ const useHover = (config?: HoverConfig) => {
   }
 
   const hoverEvents: Action = (node) => {
-    if (onHoverStart) {
-      node.addEventListener('pointerenter', onPointerEnter)
-    }
-
-    if (onHoverEnd) {
-      node.addEventListener('pointerleave', onPointerLeave)
-    }
+    node.addEventListener('pointerenter', onPointerEnter)
+    node.addEventListener('pointerleave', onPointerLeave)
 
     return {
       destroy() {

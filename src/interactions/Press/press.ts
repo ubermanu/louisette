@@ -101,20 +101,12 @@ export const usePress = (config?: PressConfig) => {
   }
 
   const pressEvents: Action = (node) => {
-    if (onPressStart || onPress) {
-      node.addEventListener('keydown', onButtonKeyDown)
-      node.addEventListener('pointerdown', onButtonPointerDown)
-    }
-
-    if (onPressEnd || onPress) {
-      node.addEventListener('keyup', onButtonKeyUp)
-      node.addEventListener('pointerup', onButtonPointerUp)
-      node.addEventListener('pointerleave', onButtonPointerLeave)
-    }
-
-    if (onPressUp || onPress) {
-      document.addEventListener('pointerup', onDocumentPointerUp)
-    }
+    node.addEventListener('keydown', onButtonKeyDown)
+    node.addEventListener('pointerdown', onButtonPointerDown)
+    node.addEventListener('keyup', onButtonKeyUp)
+    node.addEventListener('pointerup', onButtonPointerUp)
+    node.addEventListener('pointerleave', onButtonPointerLeave)
+    document.addEventListener('pointerup', onDocumentPointerUp)
 
     return {
       destroy() {

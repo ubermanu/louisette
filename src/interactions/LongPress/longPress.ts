@@ -37,7 +37,6 @@ export const useLongPress = (config?: LongPressConfig) => {
 
   let timer: number | undefined
 
-  // FIXME: Release the pressed state when the long press is fulfilled
   const onPressStart = (event: PressEvent) => {
     if (timer) return
     onLongPressStart?.({ ...event, type: 'longpressstart' })
