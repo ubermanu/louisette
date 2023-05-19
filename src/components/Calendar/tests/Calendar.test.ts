@@ -112,4 +112,22 @@ describe('Calendar', async () => {
     await fireEvent.keyDown(getByTestId('day-2'), { key: 'End' })
     expect(document.activeElement).toBe(getByTestId('day-32'))
   })
+
+  test('PageUp and PageDown keys jump to the previous and next month, same day', async () => {
+    const { getByTestId } = render(CalendarTest, {
+      props: {
+        defaults: { month: 1, year: 2020 },
+      },
+    })
+
+    await fireEvent.focus(getByTestId('day-15'))
+
+    await fireEvent.keyDown(getByTestId('day-15'), { key: 'PageUp' })
+
+    expect(document.activeElement?.textContent?.trim()).toBe('9')
+
+    await fireEvent.keyDown(document.activeElement!, { key: 'PageDown' })
+
+    expect(document.activeElement?.textContent?.trim()).toBe('9')
+  })
 })

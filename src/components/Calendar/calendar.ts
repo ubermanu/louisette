@@ -1,4 +1,5 @@
 import { delegate } from '$lib/helpers.js'
+import { tick } from 'svelte'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable, type Readable } from 'svelte/store'
 
@@ -81,12 +82,14 @@ export const createCalendar = (config?: CalendarConfig) => {
     month$.set(date.getMonth())
     year$.set(date.getFullYear())
 
-    // Focus the date cell in the calendar
-    rootNode
-      ?.querySelector<HTMLElement>(
-        `[data-calendar-day="${date.toISOString().slice(0, 10)}"]`
-      )
-      ?.focus()
+    tick().then(() => {
+      // Focus the date cell in the calendar
+      rootNode
+        ?.querySelector<HTMLElement>(
+          `[data-calendar-day="${date.toISOString().slice(0, 10)}"]`
+        )
+        ?.focus()
+    })
   }
 
   const goToToday = () => {
@@ -215,13 +218,21 @@ export const createCalendar = (config?: CalendarConfig) => {
     // TODO: ensure that the day is preserved
     if (event.key === 'PageUp') {
       event.preventDefault()
-      goToPrevMonth()
+      goToDate(
+        new Date(
+          Date.UTC(date.getFullYear(), date.getMonth() - 1, date.getDate())
+        )
+      )
     }
 
     // TODO: ensure that the day is preserved
     if (event.key === 'PageDown') {
       event.preventDefault()
-      goToNextMonth()
+      goToDate(
+        new Date(
+          Date.UTC(date.getFullYear(), date.getMonth() + 1, date.getDate())
+        )
+      )
     }
   }
 
