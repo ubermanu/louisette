@@ -13,9 +13,7 @@ export type HoverConfig = {
 }
 
 const useHover = (config?: HoverConfig) => {
-  const { onHoverStart, onHoverEnd } = {
-    ...config,
-  }
+  const { onHoverStart, onHoverEnd } = { ...config }
 
   const hovering$ = writable(false)
 
