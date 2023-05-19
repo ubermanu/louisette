@@ -57,16 +57,20 @@ export const createCalendar = (config?: CalendarConfig) => {
   )
 
   const goToPrevMonth = () => {
-    month$.update((m) => (m - 1) % 12)
-    if (get(month$) === 11) {
+    if (get(month$) === 0) {
       year$.update((y) => y - 1)
+      month$.set(11)
+    } else {
+      month$.update((m) => (m - 1) % 12)
     }
   }
 
   const goToNextMonth = () => {
-    month$.update((m) => (m + 1) % 12)
-    if (get(month$) === 0) {
+    if (get(month$) === 11) {
       year$.update((y) => y + 1)
+      month$.set(0)
+    } else {
+      month$.update((m) => (m + 1) % 12)
     }
   }
 
