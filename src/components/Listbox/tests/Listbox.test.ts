@@ -190,6 +190,24 @@ describe('Listbox', async () => {
     expect(getByTestId('option-2').getAttribute('aria-checked')).toBe('true')
   })
 
+  test('Clicking on a disabled option should not select it', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        defaults: {
+          disabled: ['one'],
+        },
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    await fireEvent.click(getByTestId('option-1'))
+    expect(getByTestId('option-1').getAttribute('aria-selected')).toBe('false')
+  })
+
   test('Pressing space on an option should select it', async () => {
     const { getByTestId } = render(ListboxTest, {
       props: {
