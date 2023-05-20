@@ -1,4 +1,4 @@
-import { render } from '@testing-library/svelte'
+import { fireEvent, render } from '@testing-library/svelte'
 import { describe, expect, test } from 'vitest'
 
 import ListboxTest from './Listbox.test.svelte'
@@ -147,5 +147,46 @@ describe('Listbox', async () => {
     expect(getByTestId('option-1').getAttribute('tabIndex')).toBe('-1')
     expect(getByTestId('option-2').getAttribute('tabIndex')).toBe('0')
     expect(getByTestId('option-3').getAttribute('tabIndex')).toBe('-1')
+  })
+
+  test('Clicking an option should select it', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    await fireEvent.click(getByTestId('option-1'))
+    expect(getByTestId('option-1').getAttribute('aria-selected')).toBe('true')
+
+    await fireEvent.click(getByTestId('option-2'))
+    expect(getByTestId('option-1').getAttribute('aria-selected')).toBe('false')
+    expect(getByTestId('option-2').getAttribute('aria-selected')).toBe('true')
+  })
+
+  test('Clicking many options should select them, if multiple', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        defaults: {
+          multiple: true,
+        },
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    await fireEvent.click(getByTestId('option-1'))
+    expect(getByTestId('option-1').getAttribute('aria-checked')).toBe('true')
+
+    await fireEvent.click(getByTestId('option-2'))
+    expect(getByTestId('option-1').getAttribute('aria-checked')).toBe('true')
+    expect(getByTestId('option-2').getAttribute('aria-checked')).toBe('true')
   })
 })

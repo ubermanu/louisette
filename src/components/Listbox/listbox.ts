@@ -132,7 +132,7 @@ export const createListbox = (config?: ListboxConfig) => {
   }
 
   let rootNode: HTMLElement | undefined
-  let lastSelected: string | undefined
+  let lastSelectedKey: string | undefined
 
   const onOptionKeyDown = (event: KeyboardEvent) => {
     const key = (event.target as HTMLElement).dataset.listboxOption as string
