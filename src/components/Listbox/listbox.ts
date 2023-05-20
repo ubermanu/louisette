@@ -40,29 +40,36 @@ export const createListbox = (config?: ListboxConfig) => {
     })
   )
 
+  // The key of the first rendered option (not disabled)
+  let firstOptionKey: string | undefined
+
   const optionProps = derived(
     [selected$, disabled$, multiple$],
     ([selected, disabled, multiple]) => {
-      // TODO: If no selected, the first option should be focusable
-
       // If disabled, should not be focusable
       // If selected, should be focusable (if single select)
       // If selected and 1st enabled option, should be focusable (if multiple select)
       // If not selected and 1st enabled option, should be focusable
       const isFocusable = (key: string) => {
         if (disabled.includes(key)) return false
-        if (!multiple && selected.includes(key)) return true
-        if (multiple && selected.length > 0 && selected[0] === key) return true
-        return false
+        if (!multiple && selected.length > 0) return selected.includes(key)
+        if (multiple && selected.length > 0) return selected[0] === key
+        return firstOptionKey === key
       }
 
-      return (key: string) => ({
-        role: 'option',
-        [multiple ? 'aria-checked' : 'aria-selected']: selected.includes(key),
-        'aria-disabled': disabled.includes(key),
-        tabIndex: isFocusable(key) ? 0 : -1,
-        'data-listbox-option': key,
-      })
+      return (key: string) => {
+        if (!firstOptionKey && !disabled.includes(key)) {
+          firstOptionKey = key
+        }
+
+        return {
+          role: 'option',
+          [multiple ? 'aria-checked' : 'aria-selected']: selected.includes(key),
+          'aria-disabled': disabled.includes(key),
+          tabIndex: isFocusable(key) ? 0 : -1,
+          'data-listbox-option': key,
+        }
+      }
     }
   )
 
