@@ -244,4 +244,28 @@ describe('Listbox', async () => {
     expect(getByTestId('option-1').getAttribute('aria-checked')).toBe('true')
     expect(getByTestId('option-2').getAttribute('aria-checked')).toBe('true')
   })
+
+  test('Handles keyboard navigation', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    await fireEvent.keyDown(getByTestId('option-1'), { key: 'ArrowDown' })
+    expect(document.activeElement).toBe(getByTestId('option-2'))
+
+    await fireEvent.keyDown(getByTestId('option-2'), { key: 'ArrowDown' })
+    expect(document.activeElement).toBe(getByTestId('option-3'))
+
+    await fireEvent.keyDown(getByTestId('option-3'), { key: 'Home' })
+    expect(document.activeElement).toBe(getByTestId('option-1'))
+
+    await fireEvent.keyDown(getByTestId('option-1'), { key: 'End' })
+    expect(document.activeElement).toBe(getByTestId('option-3'))
+  })
 })
