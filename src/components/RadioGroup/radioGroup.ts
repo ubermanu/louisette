@@ -1,3 +1,4 @@
+import { delegate } from '$lib/helpers.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, readonly, writable } from 'svelte/store'
 
@@ -100,6 +101,14 @@ export const createRadioGroup = (config?: RadioGroupConfig) => {
       },
       keydown: {
         '[data-radio-group-radio]': onRadioKeyDown,
+      },
+    }
+
+    const removeListeners = delegate(node, events)
+
+    return {
+      destroy() {
+        removeListeners()
       },
     }
   }
