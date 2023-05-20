@@ -189,4 +189,41 @@ describe('Listbox', async () => {
     expect(getByTestId('option-1').getAttribute('aria-checked')).toBe('true')
     expect(getByTestId('option-2').getAttribute('aria-checked')).toBe('true')
   })
+
+  test('Pressing space on an option should select it', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    await fireEvent.keyDown(getByTestId('option-1'), { key: ' ' })
+    expect(getByTestId('option-1').getAttribute('aria-selected')).toBe('true')
+  })
+
+  test('Pressing space on options should select them, if multiple', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        defaults: {
+          multiple: true,
+        },
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    await fireEvent.keyDown(getByTestId('option-1'), { key: ' ' })
+    expect(getByTestId('option-1').getAttribute('aria-checked')).toBe('true')
+
+    await fireEvent.keyDown(getByTestId('option-2'), { key: ' ' })
+    expect(getByTestId('option-1').getAttribute('aria-checked')).toBe('true')
+    expect(getByTestId('option-2').getAttribute('aria-checked')).toBe('true')
+  })
 })
