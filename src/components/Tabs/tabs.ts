@@ -13,7 +13,7 @@ export type TabsConfig = {
   orientation?: 'horizontal' | 'vertical'
 
   /** The behavior of the tabs. */
-  behavior: 'auto' | 'manual'
+  behavior?: 'auto' | 'manual'
 }
 
 export const createTabs = (config?: TabsConfig) => {
@@ -37,17 +37,17 @@ export const createTabs = (config?: TabsConfig) => {
     ([active, disabled]) =>
       (key: string) => ({
         role: 'tab',
-        'aria-selected': active === key,
-        'aria-disabled': disabled.includes(key),
+        'aria-selected': active === String(key),
+        'aria-disabled': disabled.includes(String(key)),
         'data-tabs-tab': key,
-        tabIndex: active === key ? 0 : -1,
+        tabIndex: active === String(key) ? 0 : -1,
       })
   )
 
   const panelProps = derived([active$], ([active]) => (key: string) => ({
     role: 'tabpanel',
     'data-tabs-panel': key,
-    inert: active !== key ? '' : undefined,
+    inert: active !== String(key) ? '' : undefined,
   }))
 
   // TODO: Select the first enabled tab if no active tab
@@ -73,12 +73,17 @@ export const createTabs = (config?: TabsConfig) => {
       open(key)
     }
 
+    const tabs = Array.from(
+      rootNode?.querySelectorAll('[data-tabs-tab]') || []
+    ) as HTMLElement[]
+
     if (
       (event.key === 'ArrowLeft' && $orientation === 'horizontal') ||
       (event.key === 'ArrowUp' && $orientation === 'vertical')
     ) {
       event.preventDefault()
-      // TODO: Focus the previous enabled tab
+      const prevIndex = tabs.indexOf(event.target as HTMLElement) - 1
+      tabs[prevIndex]?.focus()
     }
 
     if (
@@ -86,17 +91,18 @@ export const createTabs = (config?: TabsConfig) => {
       (event.key === 'ArrowDown' && $orientation === 'vertical')
     ) {
       event.preventDefault()
-      // TODO: Focus the next enabled tab
+      const nextIndex = tabs.indexOf(event.target as HTMLElement) + 1
+      tabs[nextIndex]?.focus()
     }
 
     if (event.key === 'Home') {
       event.preventDefault()
-      // TODO: Focus the first enabled tab
+      tabs[0]?.focus()
     }
 
     if (event.key === 'End') {
       event.preventDefault()
-      // TODO: Focus the last enabled tab
+      tabs[tabs.length - 1]?.focus()
     }
   }
 
@@ -140,6 +146,7 @@ export const createTabs = (config?: TabsConfig) => {
     listProps,
     tabProps,
     panelProps,
+    useTabs,
     open,
   }
 }
