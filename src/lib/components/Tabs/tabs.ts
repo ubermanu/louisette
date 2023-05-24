@@ -32,16 +32,26 @@ export const createTabs = (config?: TabsConfig) => {
     'aria-orientation': orientation,
   }))
 
+  let defaultActive = active || ''
+
   const tabAttrs = derived(
     [active$, disabled$],
     ([active, disabled]) =>
-      (key: string) => ({
-        role: 'tab',
-        'aria-selected': active === String(key),
-        'aria-disabled': disabled.includes(String(key)),
-        'data-tabs-tab': key,
-        tabIndex: active === String(key) ? 0 : -1,
-      })
+      (key: string) => {
+        // TODO: Check if there is a better way to do this
+        if (!defaultActive && !disabled.includes(String(key))) {
+          defaultActive = String(key)
+          active$.set(defaultActive)
+        }
+
+        return {
+          role: 'tab',
+          'aria-selected': active === String(key),
+          'aria-disabled': disabled.includes(String(key)),
+          'data-tabs-tab': key,
+          tabIndex: active === String(key) ? 0 : -1,
+        }
+      }
   )
 
   const panelAttrs = derived([active$], ([active]) => (key: string) => ({
@@ -125,7 +135,7 @@ export const createTabs = (config?: TabsConfig) => {
       keydown: {
         '[data-tabs-tab]': onTabKeyDown,
       },
-      focus: {
+      focusin: {
         '[data-tabs-tab]': onTabFocus,
       },
     }

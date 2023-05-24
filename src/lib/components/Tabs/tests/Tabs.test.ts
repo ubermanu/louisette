@@ -39,4 +39,18 @@ describe('Tabs', async () => {
 
     expect(getByTestId('tab-2').getAttribute('aria-selected')).toBe('true')
   })
+
+  test('If no active tab by default, the first one is selected', async () => {
+    const { getByTestId } = render(TabsTest, {
+      props: {
+        items: [
+          { id: 1, title: 'One', content: 'one' },
+          { id: 2, title: 'Two', content: 'two' },
+          { id: 3, title: 'Three', content: 'three' },
+        ],
+      },
+    })
+
+    expect(getByTestId('tab-1').getAttribute('aria-selected')).toBe('true')
+  })
 })
