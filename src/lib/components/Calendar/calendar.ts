@@ -338,6 +338,7 @@ export const createCalendar = (config?: CalendarConfig) => {
       return data.map(({ date, isOutOfMonth }) => {
         const key = date.toISOString().slice(0, 10)
         const day = date.getDate()
+        const isToday = isSameDay(new Date(), date)
 
         // If the day is disabled, it cannot be focused.
         // If the day is out of month, it cannot be focused.
@@ -353,13 +354,17 @@ export const createCalendar = (config?: CalendarConfig) => {
 
         return {
           date,
+          key,
           isOutOfMonth,
+          isToday,
+          isSelected: selected.includes(key),
+          isDisabled: disabled.includes(key),
           dayAttrs: {
             'data-calendar-day': key,
             'aria-label': date.toDateString(),
             'aria-selected': selected.includes(key) ? 'true' : undefined,
             'aria-disabled': disabled.includes(key) ? 'true' : undefined,
-            'aria-current': isSameDay(new Date(), date) ? 'date' : undefined,
+            'aria-current': isToday ? 'date' : undefined,
             'aria-hidden': isOutOfMonth ? 'true' : undefined,
             tabIndex: isFocusable(date) ? 0 : -1,
           },
