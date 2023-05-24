@@ -12,7 +12,7 @@ export const createToggleButton = (config?: ToggleButtonConfig) => {
   const checked$ = writable(checked || false)
 
   const {
-    buttonProps: buttonProps$,
+    buttonAttrs: buttonAttrs$,
     disabled: disabled$,
     ...rest
   } = createButton({
@@ -24,10 +24,10 @@ export const createToggleButton = (config?: ToggleButtonConfig) => {
   })
 
   // Update the aria-pressed attribute based on the checked state
-  const toggleButtonProps = derived(
-    [buttonProps$, checked$],
-    ([props, checked]) => ({
-      ...props,
+  const toggleButtonAttrs = derived(
+    [buttonAttrs$, checked$],
+    ([Attrs, checked]) => ({
+      ...Attrs,
       'aria-pressed': checked,
     })
   )
@@ -42,7 +42,7 @@ export const createToggleButton = (config?: ToggleButtonConfig) => {
   return {
     checked: readonly(checked$),
     disabled: disabled$,
-    buttonProps: toggleButtonProps,
+    buttonAttrs: toggleButtonAttrs,
     ...rest,
   }
 }

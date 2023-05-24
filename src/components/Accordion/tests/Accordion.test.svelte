@@ -4,7 +4,7 @@
   export let items: { id: number; label: string; content: string }[] = []
   export let defaults = {}
 
-  const { useAccordion, triggerProps, contentProps } = createAccordion(defaults)
+  const { useAccordion, triggerAttrs, contentAttrs } = createAccordion(defaults)
 </script>
 
 <div data-testid="accordion" use:useAccordion>
@@ -12,13 +12,13 @@
     <div data-testid="accordion-item-{item.id}">
       <div
         data-testid="accordion-item-{item.id}-trigger"
-        {...$triggerProps(item.id)}
+        {...$triggerAttrs(item.id)}
       >
         {item.label}
       </div>
       <div
         data-testid="accordion-item-{item.id}-content"
-        {...$contentProps(item.id)}
+        {...$contentAttrs(item.id)}
       >
         {item.content}
       </div>

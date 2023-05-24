@@ -1,11 +1,11 @@
 <script lang="ts">
   import { createToolbar } from '../toolbar.js'
 
-  const { useToolbar, toolbarProps, itemProps } = createToolbar()
+  const { useToolbar, toolbarAttrs, itemAttrs } = createToolbar()
 </script>
 
-<div use:useToolbar {...$toolbarProps} data-testid="toolbar">
-  <button {...$itemProps('bold')} data-testid="bold">B</button>
-  <button {...$itemProps('italic')} data-testid="italic">I</button>
-  <button {...$itemProps('underline')} data-testid="underline">U</button>
+<div use:useToolbar {...$toolbarAttrs} data-testid="toolbar">
+  <button {...$itemAttrs('bold')} data-testid="bold">B</button>
+  <button {...$itemAttrs('italic')} data-testid="italic">I</button>
+  <button {...$itemAttrs('underline')} data-testid="underline">U</button>
 </div>

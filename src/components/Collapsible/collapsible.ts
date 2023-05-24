@@ -21,7 +21,7 @@ export const createCollapsible = (config: CollapsibleConfig) => {
   const triggerId = generateId()
   const contentId = generateId()
 
-  const triggerProps = derived(
+  const triggerAttrs = derived(
     [expanded$, disabled$],
     ([expanded, disabled]) => ({
       id: triggerId,
@@ -33,7 +33,7 @@ export const createCollapsible = (config: CollapsibleConfig) => {
     })
   )
 
-  const contentProps = derived([expanded$], ([expanded]) => ({
+  const contentAttrs = derived([expanded$], ([expanded]) => ({
     id: contentId,
     role: 'region',
     'aria-labelledby': triggerId,
@@ -91,8 +91,8 @@ export const createCollapsible = (config: CollapsibleConfig) => {
   return {
     expanded: readonly(expanded$),
     disabled: disabled$,
-    triggerProps,
-    contentProps,
+    triggerAttrs,
+    contentAttrs,
     useTriggerCollapsible,
     expand,
     toggle,

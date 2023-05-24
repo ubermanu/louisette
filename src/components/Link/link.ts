@@ -17,7 +17,7 @@ export const createLink = (config: LinkConfig) => {
   const href$ = writable(href || '')
   const target$ = writable(target || '_self')
 
-  const linkProps = derived(disabled$, (disabled) => ({
+  const linkAttrs = derived(disabled$, (disabled) => ({
     role: 'link',
     'aria-disabled': disabled,
     tabIndex: disabled ? -1 : 0,
@@ -72,7 +72,7 @@ export const createLink = (config: LinkConfig) => {
     href: href$,
     target: target$,
     disabled: disabled$,
-    linkProps,
+    linkAttrs,
     useLink,
   }
 }

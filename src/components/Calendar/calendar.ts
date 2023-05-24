@@ -18,7 +18,7 @@ export type CalendarConfig = {
 export type CalendarDay = {
   date: Date
   isOutOfMonth: boolean
-  dayProps: Record<string, any>
+  dayAttrs: Record<string, any>
 }
 
 export const createCalendar = (config?: CalendarConfig) => {
@@ -354,7 +354,7 @@ export const createCalendar = (config?: CalendarConfig) => {
         return {
           date,
           isOutOfMonth,
-          dayProps: {
+          dayAttrs: {
             'data-calendar-day': key,
             'aria-label': date.toDateString(),
             'aria-selected': selected.includes(key) ? 'true' : undefined,
@@ -369,14 +369,14 @@ export const createCalendar = (config?: CalendarConfig) => {
   )
 
   // TODO: Set disabled according to min and max.
-  const prevButtonProps = derived([month$, year$], ([month, year]) => {
+  const prevButtonAttrs = derived([month$, year$], ([month, year]) => {
     return {
       'data-calendar-prev-month': '',
     }
   })
 
   // TODO: Set disabled according to min and max.
-  const nextButtonProps = derived([month$, year$], ([month, year]) => {
+  const nextButtonAttrs = derived([month$, year$], ([month, year]) => {
     return {
       'data-calendar-next-month': '',
     }
@@ -391,8 +391,8 @@ export const createCalendar = (config?: CalendarConfig) => {
     weekdays,
     days,
     useCalendar,
-    prevButtonProps,
-    nextButtonProps,
+    prevButtonAttrs,
+    nextButtonAttrs,
     goToPrevMonth,
     goToNextMonth,
     goToPrevYear,

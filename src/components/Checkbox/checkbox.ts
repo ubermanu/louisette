@@ -14,7 +14,7 @@ export const createCheckbox = (config?: CheckboxConfig) => {
   const disabled$ = writable(disabled || false)
   const indeterminate$ = writable(indeterminate || false)
 
-  const checkboxProps = derived(
+  const checkboxAttrs = derived(
     [checked$, disabled$, indeterminate$],
     ([checked, disabled, indeterminate]) => ({
       role: 'checkbox',
@@ -82,7 +82,7 @@ export const createCheckbox = (config?: CheckboxConfig) => {
     checked: readonly(checked$),
     indeterminate: readonly(indeterminate$),
     disabled: disabled$,
-    checkboxProps,
+    checkboxAttrs,
     useCheckbox,
     check,
     partiallyCheck,

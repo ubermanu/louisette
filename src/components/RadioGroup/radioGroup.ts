@@ -15,13 +15,13 @@ export const createRadioGroup = (config?: RadioGroupConfig) => {
     disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []
   )
 
-  const groupProps = readable({
+  const groupAttrs = readable({
     role: 'radiogroup',
   })
 
   let firstRadioKey: string | undefined
 
-  const radioProps = derived([selected$, disabled$], ([selected, disabled]) => {
+  const radioAttrs = derived([selected$, disabled$], ([selected, disabled]) => {
     const isFocusable = (key: string) => {
       if (disabled.includes(key)) return false
       if (selected === key) return true
@@ -116,8 +116,8 @@ export const createRadioGroup = (config?: RadioGroupConfig) => {
   return {
     selected: readonly(selected$),
     disabled: disabled$,
-    groupProps,
-    radioProps,
+    groupAttrs,
+    radioAttrs,
     useRadioGroup,
     select,
   }

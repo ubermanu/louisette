@@ -24,7 +24,7 @@ export const createAccordion = (config: AccordionConfig) => {
   const getTriggerId = (key: string) => `${baseId}-trigger-${key}`
   const getContentId = (key: string) => `${baseId}-content-${key}`
 
-  const triggerProps = derived(
+  const triggerAttrs = derived(
     [expanded$, disabled$],
     ([expanded, disabled]) => {
       return (key: string) => ({
@@ -39,7 +39,7 @@ export const createAccordion = (config: AccordionConfig) => {
     }
   )
 
-  const contentProps = derived([expanded$], ([expanded]) => {
+  const contentAttrs = derived([expanded$], ([expanded]) => {
     return (key: string) => ({
       id: getContentId(key),
       role: 'region',
@@ -279,8 +279,8 @@ export const createAccordion = (config: AccordionConfig) => {
     multiple: multiple$,
     expanded: readonly(expanded$),
     disabled: disabled$,
-    triggerProps,
-    contentProps,
+    triggerAttrs,
+    contentAttrs,
     useAccordion,
     expand,
     collapse,

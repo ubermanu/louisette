@@ -12,12 +12,12 @@ export const createToolbar = (config?: ToolbarConfig) => {
   const orientation$ = writable(orientation || 'horizontal')
   const focused$ = writable('')
 
-  const toolbarProps = derived([orientation$], ([orientation]) => ({
+  const toolbarAttrs = derived([orientation$], ([orientation]) => ({
     role: 'toolbar',
     'aria-orientation': orientation,
   }))
 
-  const itemProps = readable((key: string) => ({
+  const itemAttrs = readable((key: string) => ({
     'data-toolbar-item': key,
     tabIndex: -1,
     inert: '',
@@ -87,8 +87,8 @@ export const createToolbar = (config?: ToolbarConfig) => {
 
   return {
     orientation: orientation$,
-    toolbarProps,
-    itemProps,
+    toolbarAttrs,
+    itemAttrs,
     useToolbar,
   }
 }

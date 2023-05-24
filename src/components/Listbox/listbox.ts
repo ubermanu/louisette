@@ -31,7 +31,7 @@ export const createListbox = (config?: ListboxConfig) => {
   const multiple$ = writable(multiple || false)
   const orientation$ = writable(orientation || 'vertical')
 
-  const listboxProps = derived(
+  const listboxAttrs = derived(
     [multiple$, orientation$],
     ([multiple, orientation]) => ({
       role: 'listbox',
@@ -43,7 +43,7 @@ export const createListbox = (config?: ListboxConfig) => {
   // The key of the first rendered option (not disabled)
   let firstOptionKey: string | undefined
 
-  const optionProps = derived(
+  const optionAttrs = derived(
     [selected$, disabled$, multiple$],
     ([selected, disabled, multiple]) => {
       // If disabled, should not be focusable
@@ -73,7 +73,7 @@ export const createListbox = (config?: ListboxConfig) => {
     }
   )
 
-  const groupProps = derived([selected$, disabled$], ([selected, disabled]) => {
+  const groupAttrs = derived([selected$, disabled$], ([selected, disabled]) => {
     return (key: string) => ({
       role: 'group',
       'data-listbox-group': key,
@@ -260,9 +260,9 @@ export const createListbox = (config?: ListboxConfig) => {
   return {
     selected: readonly(selected$),
     disabled: disabled$,
-    listboxProps,
-    optionProps,
-    groupProps,
+    listboxAttrs,
+    optionAttrs,
+    groupAttrs,
     useListbox,
     select,
     unselect,

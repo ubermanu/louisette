@@ -4,14 +4,14 @@
   export let defaults = {}
 
   const collapsible = createCollapsible(defaults)
-  const { useTriggerCollapsible, triggerProps, contentProps } = collapsible
+  const { useTriggerCollapsible, triggerAttrs, contentAttrs } = collapsible
 </script>
 
 <div data-testid="collapsible">
-  <div data-testid="trigger" use:useTriggerCollapsible {...$triggerProps}>
+  <div data-testid="trigger" use:useTriggerCollapsible {...$triggerAttrs}>
     Trigger
   </div>
-  <div data-testid="content" {...$contentProps}>
+  <div data-testid="content" {...$contentAttrs}>
     <p>Content</p>
   </div>
 </div>

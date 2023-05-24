@@ -5,8 +5,8 @@
 
   const {
     useCalendar,
-    nextButtonProps,
-    prevButtonProps,
+    nextButtonAttrs,
+    prevButtonAttrs,
     title,
     days,
     weekdays,
@@ -15,11 +15,11 @@
 
 <div data-testid="calendar" use:useCalendar>
   <div>
-    <button type="button" data-testid="prev-month" {...$prevButtonProps}>
+    <button type="button" data-testid="prev-month" {...$prevButtonAttrs}>
       Prev
     </button>
     <div data-testid="title">{$title}</div>
-    <button type="button" data-testid="next-month" {...$nextButtonProps}>
+    <button type="button" data-testid="next-month" {...$nextButtonAttrs}>
       Next
     </button>
   </div>
@@ -34,7 +34,7 @@
       style="display: grid; grid-template-columns: repeat(7, 1fr);"
     >
       {#each $days as day, i}
-        <div data-testid="day-{i + 1}" {...day.dayProps}>
+        <div data-testid="day-{i + 1}" {...day.dayAttrs}>
           {day.date.getDate()}
         </div>
       {/each}

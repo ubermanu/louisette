@@ -27,12 +27,12 @@ export const createTabs = (config?: TabsConfig) => {
   const orientation$ = writable(orientation || 'horizontal')
   const behavior$ = writable(behavior || 'auto')
 
-  const listProps = derived([orientation$], ([orientation]) => ({
+  const listAttrs = derived([orientation$], ([orientation]) => ({
     role: 'tablist',
     'aria-orientation': orientation,
   }))
 
-  const tabProps = derived(
+  const tabAttrs = derived(
     [active$, disabled$],
     ([active, disabled]) =>
       (key: string) => ({
@@ -44,7 +44,7 @@ export const createTabs = (config?: TabsConfig) => {
       })
   )
 
-  const panelProps = derived([active$], ([active]) => (key: string) => ({
+  const panelAttrs = derived([active$], ([active]) => (key: string) => ({
     role: 'tabpanel',
     'data-tabs-panel': key,
     inert: active !== String(key) ? '' : undefined,
@@ -143,9 +143,9 @@ export const createTabs = (config?: TabsConfig) => {
     active: readonly(active$),
     disabled: disabled$,
     orientation: orientation$,
-    listProps,
-    tabProps,
-    panelProps,
+    listAttrs,
+    tabAttrs,
+    panelAttrs,
     useTabs,
     open,
   }

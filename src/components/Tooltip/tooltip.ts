@@ -6,14 +6,14 @@ export const createTooltip = () => {
   const tooltipId = generateId()
   const opened$ = writable(false)
 
-  const tooltipProps = derived(opened$, (opened) => ({
+  const tooltipAttrs = derived(opened$, (opened) => ({
     id: tooltipId,
     role: 'tooltip',
     inert: !opened,
     'aria-hidden': !opened ? 'true' : undefined,
   }))
 
-  const triggerProps = readable({
+  const triggerAttrs = readable({
     'aria-describedby': tooltipId,
   })
 
@@ -66,8 +66,8 @@ export const createTooltip = () => {
 
   return {
     opened: readonly(opened$),
-    tooltipProps,
-    triggerProps,
+    tooltipAttrs,
+    triggerAttrs,
     triggerEvents,
     open,
     close,

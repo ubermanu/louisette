@@ -12,7 +12,7 @@ export const createSwitch = (config?: SwitchConfig) => {
   const active$ = writable(active || false)
   const disabled$ = writable(disabled || false)
 
-  const switchProps = derived([active$, disabled$], ([active, disabled]) => ({
+  const switchAttrs = derived([active$, disabled$], ([active, disabled]) => ({
     role: 'switch',
     'aria-checked': active,
     'aria-disabled': disabled,
@@ -61,7 +61,7 @@ export const createSwitch = (config?: SwitchConfig) => {
   return {
     active: readonly(active$),
     disabled: disabled$,
-    switchProps,
+    switchAttrs,
     useSwitch,
     activate,
     deactivate,

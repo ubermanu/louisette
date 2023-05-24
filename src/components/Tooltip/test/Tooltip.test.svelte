@@ -1,9 +1,9 @@
 <script lang="ts">
   import { createTooltip } from '../tooltip.js'
 
-  const { triggerEvents, triggerProps, tooltipProps } = createTooltip()
+  const { triggerEvents, triggerAttrs, tooltipAttrs } = createTooltip()
 </script>
 
-<div use:triggerEvents {...$triggerProps}>Hover me!</div>
+<div use:triggerEvents {...$triggerAttrs}>Hover me!</div>
 
-<div {...$tooltipProps}>The content of the tooltip</div>
+<div {...$tooltipAttrs}>The content of the tooltip</div>

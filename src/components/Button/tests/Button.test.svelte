@@ -4,7 +4,7 @@
   export let defaults = {}
 
   const button = createButton(defaults)
-  const { useButton, buttonProps } = button
+  const { useButton, buttonAttrs } = button
 </script>
 
-<div data-testid="button" use:useButton {...$buttonProps}>Button</div>
+<div data-testid="button" use:useButton {...$buttonAttrs}>Button</div>

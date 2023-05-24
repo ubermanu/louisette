@@ -18,7 +18,7 @@ export const createButton = (config: ButtonConfig) => {
 
   const disabled$ = writable(disabled || false)
 
-  const buttonProps = derived([disabled$], ([disabled]) => ({
+  const buttonAttrs = derived([disabled$], ([disabled]) => ({
     role: 'button',
     'aria-disabled': disabled,
     tabIndex: disabled ? -1 : 0,
@@ -46,7 +46,7 @@ export const createButton = (config: ButtonConfig) => {
   return {
     pressed,
     disabled: disabled$,
-    buttonProps,
+    buttonAttrs,
     useButton: pressEvents,
   }
 }

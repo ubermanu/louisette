@@ -4,12 +4,12 @@
   export let defaults = {}
   export let items: { id: number; label: string; value: string }[] = []
 
-  const { useListbox, listboxProps, optionProps } = createListbox(defaults)
+  const { useListbox, listboxAttrs, optionAttrs } = createListbox(defaults)
 </script>
 
-<div use:useListbox {...$listboxProps} data-testid="listbox">
+<div use:useListbox {...$listboxAttrs} data-testid="listbox">
   {#each items as item, i}
-    <div {...$optionProps(item.value)} data-testid="option-{item.id}">
+    <div {...$optionAttrs(item.value)} data-testid="option-{item.id}">
       {item.label}
     </div>
   {/each}
