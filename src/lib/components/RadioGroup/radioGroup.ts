@@ -46,13 +46,23 @@ export const createRadioGroup = (config?: RadioGroupConfig) => {
     selected$.set(key)
   }
 
+  const resolveRadioElement = (event: Event) => {
+    const path = event.composedPath()
+    const node = path.find(
+      (el) =>
+        el instanceof HTMLElement && el.hasAttribute('data-radio-group-radio')
+    )
+    return node as HTMLElement | undefined
+  }
+
   const onRadioClick = (event: MouseEvent) => {
-    const key = (event.target as HTMLElement).dataset.radioGroupRadio || ''
-    select(key)
+    const target = resolveRadioElement(event)
+    select(target?.dataset.radioGroupRadio || '')
   }
 
   const onRadioKeyDown = (event: KeyboardEvent) => {
-    const key = (event.target as HTMLElement).dataset.radioGroupRadio || ''
+    const target = resolveRadioElement(event)
+    const key = target?.dataset.radioGroupRadio || ''
 
     if (event.key === ' ') {
       event.preventDefault()
