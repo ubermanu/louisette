@@ -8,7 +8,7 @@ export type AccordionConfig = {
   multiple?: boolean
 }
 
-export const createAccordion = (config: AccordionConfig) => {
+export const createAccordion = (config?: AccordionConfig) => {
   const { multiple, expanded, disabled } = {
     multiple: false,
     ...config,
