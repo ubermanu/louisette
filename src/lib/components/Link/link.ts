@@ -45,7 +45,10 @@ export const createLink = (config: LinkConfig) => {
     const href = get(href$)
     const target = get(target$)
 
-    if (href.startsWith('#')) {
+    if (href === '#') {
+      // TODO: Scroll to top
+      return
+    } else if (href.startsWith('#')) {
       document.querySelector(href)?.scrollIntoView()
       return
     }
