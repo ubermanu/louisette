@@ -7,7 +7,7 @@ export type CollapsibleConfig = {
   disabled?: boolean
 }
 
-export const createCollapsible = (config: CollapsibleConfig) => {
+export const createCollapsible = (config?: CollapsibleConfig) => {
   const { expanded, disabled } = { ...config }
 
   const expanded$ = writable(expanded || false)
