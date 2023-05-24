@@ -7,6 +7,7 @@
   })
 </script>
 
+<!-- svelte-ignore a11y-img-redundant-alt -->
 <img
   use:link
   {...$linkAttrs}
