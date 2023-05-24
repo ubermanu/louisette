@@ -263,7 +263,7 @@ export const createListbox = (config?: ListboxConfig) => {
     listboxAttrs,
     optionAttrs,
     groupAttrs,
-    useListbox,
+    listbox: useListbox,
     select,
     unselect,
     toggle,

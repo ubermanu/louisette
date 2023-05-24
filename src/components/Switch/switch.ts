@@ -2,8 +2,8 @@ import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
 
 export type SwitchConfig = {
-  active: false
-  disabled: false
+  active?: false
+  disabled?: false
 }
 
 export const createSwitch = (config?: SwitchConfig) => {
@@ -62,7 +62,7 @@ export const createSwitch = (config?: SwitchConfig) => {
     active: readonly(active$),
     disabled: disabled$,
     switchAttrs,
-    useSwitch,
+    switch: useSwitch,
     activate,
     deactivate,
     toggle,

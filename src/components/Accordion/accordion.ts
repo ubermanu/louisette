@@ -281,7 +281,7 @@ export const createAccordion = (config: AccordionConfig) => {
     disabled: disabled$,
     triggerAttrs,
     contentAttrs,
-    useAccordion,
+    accordion: useAccordion,
     expand,
     collapse,
     toggle,

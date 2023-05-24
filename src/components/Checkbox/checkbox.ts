@@ -83,7 +83,7 @@ export const createCheckbox = (config?: CheckboxConfig) => {
     indeterminate: readonly(indeterminate$),
     disabled: disabled$,
     checkboxAttrs,
-    useCheckbox,
+    checkbox: useCheckbox,
     check,
     partiallyCheck,
     uncheck,

@@ -50,7 +50,7 @@ export const createTooltip = () => {
   }
 
   // TODO: The tooltip should keep open when the mouse is over the tooltip
-  const triggerEvents: Action = (node) => {
+  const useTrigger: Action = (node) => {
     node.addEventListener('pointerenter', onTriggerPointerEnter)
     node.addEventListener('keydown', onTriggerKeyDown)
     node.addEventListener('focus', onTriggerFocus)
@@ -68,7 +68,7 @@ export const createTooltip = () => {
     opened: readonly(opened$),
     tooltipAttrs,
     triggerAttrs,
-    triggerEvents,
+    trigger: useTrigger,
     open,
     close,
   }

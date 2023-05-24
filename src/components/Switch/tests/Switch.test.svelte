@@ -3,9 +3,9 @@
 
   export let defaults = {}
 
-  const { active, switchAttrs, useSwitch } = createSwitch(defaults)
+  const { switch: switchRef, active, switchAttrs } = createSwitch(defaults)
 </script>
 
-<div use:useSwitch {...$switchAttrs} data-testid="switch">
+<div use:switchRef {...$switchAttrs} data-testid="switch">
   Switch is {#if $active}on{:else}off{/if}
 </div>

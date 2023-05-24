@@ -4,10 +4,10 @@
   export let items: { id: number; label: string; content: string }[] = []
   export let defaults = {}
 
-  const { useAccordion, triggerAttrs, contentAttrs } = createAccordion(defaults)
+  const { accordion, triggerAttrs, contentAttrs } = createAccordion(defaults)
 </script>
 
-<div data-testid="accordion" use:useAccordion>
+<div data-testid="accordion" use:accordion>
   {#each items as item}
     <div data-testid="accordion-item-{item.id}">
       <div

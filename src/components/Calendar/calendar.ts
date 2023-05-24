@@ -390,7 +390,7 @@ export const createCalendar = (config?: CalendarConfig) => {
     title,
     weekdays,
     days,
-    useCalendar,
+    calendar: useCalendar,
     prevButtonAttrs,
     nextButtonAttrs,
     goToPrevMonth,

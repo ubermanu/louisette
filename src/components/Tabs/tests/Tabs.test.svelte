@@ -4,10 +4,10 @@
   export let defaults = {}
   export let items: { id: number; title: string; content: string }[] = []
 
-  const { useTabs, listAttrs, tabAttrs, panelAttrs } = createTabs(defaults)
+  const { tabs, listAttrs, tabAttrs, panelAttrs } = createTabs(defaults)
 </script>
 
-<div use:useTabs data-testid="tabs">
+<div use:tabs data-testid="tabs">
   {#if items.length > 0}
     <div {...$listAttrs} data-testid="list">
       {#each items as item}

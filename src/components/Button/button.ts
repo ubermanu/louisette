@@ -47,6 +47,6 @@ export const createButton = (config: ButtonConfig) => {
     pressed,
     disabled: disabled$,
     buttonAttrs,
-    useButton: pressEvents,
+    button: pressEvents,
   }
 }

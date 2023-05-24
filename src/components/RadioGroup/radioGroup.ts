@@ -15,7 +15,7 @@ export const createRadioGroup = (config?: RadioGroupConfig) => {
     disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []
   )
 
-  const groupAttrs = readable({
+  const radioGroupAttrs = readable({
     role: 'radiogroup',
   })
 
@@ -116,9 +116,9 @@ export const createRadioGroup = (config?: RadioGroupConfig) => {
   return {
     selected: readonly(selected$),
     disabled: disabled$,
-    groupAttrs,
+    radioGroupAttrs,
     radioAttrs,
-    useRadioGroup,
+    radioGroup: useRadioGroup,
     select,
   }
 }

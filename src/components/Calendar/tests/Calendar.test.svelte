@@ -3,17 +3,11 @@
 
   export let defaults = {}
 
-  const {
-    useCalendar,
-    nextButtonAttrs,
-    prevButtonAttrs,
-    title,
-    days,
-    weekdays,
-  } = createCalendar(defaults)
+  const { calendar, nextButtonAttrs, prevButtonAttrs, title, days, weekdays } =
+    createCalendar(defaults)
 </script>
 
-<div data-testid="calendar" use:useCalendar>
+<div data-testid="calendar" use:calendar>
   <div>
     <button type="button" data-testid="prev-month" {...$prevButtonAttrs}>
       Prev

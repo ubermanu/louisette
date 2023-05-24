@@ -3,15 +3,12 @@ import { derived, get, writable } from 'svelte/store'
 
 export type LinkConfig = {
   disabled?: boolean
-  href?: string
+  href: string
   target?: string
 }
 
 export const createLink = (config: LinkConfig) => {
-  const { disabled, href, target } = {
-    disabled: false,
-    ...config,
-  }
+  const { disabled, href, target } = { ...config }
 
   const disabled$ = writable(disabled || false)
   const href$ = writable(href || '')
@@ -73,6 +70,6 @@ export const createLink = (config: LinkConfig) => {
     target: target$,
     disabled: disabled$,
     linkAttrs,
-    useLink,
+    link: useLink,
   }
 }

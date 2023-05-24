@@ -89,6 +89,6 @@ export const createToolbar = (config?: ToolbarConfig) => {
     orientation: orientation$,
     toolbarAttrs,
     itemAttrs,
-    useToolbar,
+    toolbar: useToolbar,
   }
 }

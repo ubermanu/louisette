@@ -5,15 +5,10 @@ import { derived, get, readonly, writable } from 'svelte/store'
 export type CollapsibleConfig = {
   expanded?: boolean
   disabled?: boolean
-  onExpandedChange?: (expanded: boolean) => void
 }
 
 export const createCollapsible = (config: CollapsibleConfig) => {
-  const { expanded, disabled, onExpandedChange } = {
-    expanded: false,
-    disabled: false,
-    ...config,
-  }
+  const { expanded, disabled } = { ...config }
 
   const expanded$ = writable(expanded || false)
   const disabled$ = writable(disabled || false)
@@ -71,7 +66,7 @@ export const createCollapsible = (config: CollapsibleConfig) => {
     toggle()
   }
 
-  const useTriggerCollapsible: Action = (node) => {
+  const useTrigger: Action = (node) => {
     node.addEventListener('keydown', onTriggerKeyDown)
     node.addEventListener('click', onTriggerClick)
 
@@ -83,17 +78,12 @@ export const createCollapsible = (config: CollapsibleConfig) => {
     }
   }
 
-  // TODO: Unsubscribe
-  expanded$.subscribe((expanded) => {
-    onExpandedChange?.(expanded)
-  })
-
   return {
     expanded: readonly(expanded$),
     disabled: disabled$,
     triggerAttrs,
     contentAttrs,
-    useTriggerCollapsible,
+    trigger: useTrigger,
     expand,
     toggle,
     collapse,

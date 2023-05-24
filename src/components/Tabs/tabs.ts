@@ -146,7 +146,7 @@ export const createTabs = (config?: TabsConfig) => {
     listAttrs,
     tabAttrs,
     panelAttrs,
-    useTabs,
+    tabs: useTabs,
     open,
   }
 }
