@@ -3,5 +3,35 @@
 @tailwind utilities;
 
 :focus-visible {
-  @apply outline-none outline-2 outline-offset-4 outline-accent-500 dark:outline-accent-400;
+  @apply outline-none outline-2 outline-accent-500 dark:outline-accent-400;
+}
+
+code[lang] {
+  @apply block whitespace-pre-wrap rounded-md bg-white p-4 font-mono text-xs shadow dark:bg-neutral-900;
+}
+
+code:not([lang]) {
+  @apply inline-block whitespace-pre-wrap rounded-sm bg-white p-1 font-mono text-xs shadow dark:bg-neutral-900;
+}
+
+h1 {
+  @apply mb-4 mt-6 text-3xl font-semibold;
+}
+
+h2 {
+  @apply mb-4 mt-6 text-2xl font-semibold;
+}
+
+p,
+code[lang] {
+  @apply mb-4;
+}
+
+p:last-child,
+code[lang]:last-child {
+  @apply mb-0;
+}
+
+a:not([class]) {
+  @apply rounded-sm text-accent-500 underline hover:text-accent-600 hover:no-underline dark:text-accent-400 dark:hover:text-accent-500;
 }
