@@ -15,7 +15,7 @@ export type ButtonConfig = {
 
 export type Button = ReturnType<typeof createButton>
 
-export const createButton = (config: ButtonConfig) => {
+export const createButton = (config?: ButtonConfig) => {
   const { disabled } = { ...config }
 
   const disabled$ = writable(disabled || false)
