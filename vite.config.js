@@ -8,11 +8,4 @@ export default defineConfig({
     globals: true,
     include: ['src/**/*.{test,spec}.{js,ts}'],
   },
-  resolve: {
-    alias: {
-      $components: '/src/components',
-      $interactions: '/src/interactions',
-      $lib: '/src/lib',
-    },
-  },
 })
