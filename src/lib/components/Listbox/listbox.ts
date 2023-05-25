@@ -16,6 +16,8 @@ export type ListboxConfig = {
   orientation?: 'horizontal' | 'vertical'
 }
 
+export type Listbox = ReturnType<typeof createListbox>
+
 export const createListbox = (config?: ListboxConfig) => {
   const { selected, disabled, multiple, orientation } = { ...config }
 

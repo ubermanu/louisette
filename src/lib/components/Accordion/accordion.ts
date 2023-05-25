@@ -8,6 +8,8 @@ export type AccordionConfig = {
   multiple?: boolean
 }
 
+export type Accordion = ReturnType<typeof createAccordion>
+
 export const createAccordion = (config?: AccordionConfig) => {
   const { multiple, expanded, disabled } = {
     multiple: false,

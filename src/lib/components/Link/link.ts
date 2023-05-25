@@ -7,6 +7,8 @@ export type LinkConfig = {
   target?: string
 }
 
+export type Link = ReturnType<typeof createLink>
+
 export const createLink = (config: LinkConfig) => {
   const { disabled, href, target } = { ...config }
 

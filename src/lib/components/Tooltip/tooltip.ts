@@ -2,6 +2,8 @@ import { generateId } from '$lib/helpers.js'
 import type { Action } from 'svelte/action'
 import { derived, readable, readonly, writable } from 'svelte/store'
 
+export type Tooltip = ReturnType<typeof createTooltip>
+
 export const createTooltip = () => {
   const tooltipId = generateId()
   const opened$ = writable(false)

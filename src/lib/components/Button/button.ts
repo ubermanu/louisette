@@ -13,6 +13,8 @@ export type ButtonConfig = {
   onPressUp?: PressConfig['onPressUp']
 }
 
+export type Button = ReturnType<typeof createButton>
+
 export const createButton = (config: ButtonConfig) => {
   const { disabled } = { ...config }
 

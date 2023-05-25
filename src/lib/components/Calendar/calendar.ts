@@ -21,6 +21,8 @@ export type CalendarDay = {
   dayAttrs: Record<string, any>
 }
 
+export type Calendar = ReturnType<typeof createCalendar>
+
 export const createCalendar = (config?: CalendarConfig) => {
   const {
     month,

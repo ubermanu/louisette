@@ -6,6 +6,8 @@ export type SwitchConfig = {
   disabled?: false
 }
 
+export type Switch = ReturnType<typeof createSwitch>
+
 export const createSwitch = (config?: SwitchConfig) => {
   const { active, disabled } = { ...config }
 

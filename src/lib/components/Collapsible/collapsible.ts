@@ -7,6 +7,8 @@ export type CollapsibleConfig = {
   disabled?: boolean
 }
 
+export type Collapsible = ReturnType<typeof createCollapsible>
+
 export const createCollapsible = (config?: CollapsibleConfig) => {
   const { expanded, disabled } = { ...config }
 

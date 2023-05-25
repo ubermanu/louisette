@@ -7,6 +7,8 @@ export type RadioGroupConfig = {
   disabled?: string | string[]
 }
 
+export type RadioGroup = ReturnType<typeof createRadioGroup>
+
 export const createRadioGroup = (config?: RadioGroupConfig) => {
   const { selected, disabled } = { ...config }
 

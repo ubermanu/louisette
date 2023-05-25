@@ -6,6 +6,8 @@ export type ToolbarConfig = {
   orientation?: 'horizontal' | 'vertical'
 }
 
+export type Toolbar = ReturnType<typeof createToolbar>
+
 export const createToolbar = (config?: ToolbarConfig) => {
   const { orientation } = { ...config }
 

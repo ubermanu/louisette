@@ -7,6 +7,8 @@ export type CheckboxConfig = {
   indeterminate?: boolean
 }
 
+export type Checkbox = ReturnType<typeof createCheckbox>
+
 export const createCheckbox = (config?: CheckboxConfig) => {
   const { checked, disabled, indeterminate } = { ...config }
 

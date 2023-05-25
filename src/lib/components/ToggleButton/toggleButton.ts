@@ -6,6 +6,8 @@ export type ToggleButtonConfig = ButtonConfig & {
   checked?: boolean
 }
 
+export type ToggleButton = ReturnType<typeof createToggleButton>
+
 export const createToggleButton = (config?: ToggleButtonConfig) => {
   const { checked, onPress, ...buttonConfig } = { ...config }
 

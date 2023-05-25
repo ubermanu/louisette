@@ -16,6 +16,8 @@ export type TabsConfig = {
   behavior?: 'auto' | 'manual'
 }
 
+export type Tabs = ReturnType<typeof createTabs>
+
 export const createTabs = (config?: TabsConfig) => {
   const { active, disabled, orientation, behavior } = { ...config }
 
