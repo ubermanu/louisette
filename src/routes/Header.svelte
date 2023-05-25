@@ -1,10 +1,11 @@
 <script>
+  import { base } from '$app/paths'
   import { Github } from 'lucide-svelte'
   import DarkMode from './DarkMode.svelte'
 </script>
 
 <div class="container mx-auto flex items-center gap-4 p-4 py-8">
-  <a class="mr-auto text-2xl" href="/">Louisette</a>
+  <a class="mr-auto text-2xl" href="{base}/">Louisette</a>
   <div class="flex gap-4">
     <a
       href="https://github.com/ubermanu/louisette"

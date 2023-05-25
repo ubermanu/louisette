@@ -30,6 +30,8 @@ jobs:
         run: pnpm install
       - name: Build
         run: pnpm build
+        env:
+          SVELTEKIT_BASE_URL: /${{ github.repository }}
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact

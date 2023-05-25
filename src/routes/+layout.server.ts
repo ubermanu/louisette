@@ -1,3 +1,4 @@
+import { base } from '$app/paths'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import type { LayoutServerLoad } from './$types.js'
@@ -13,7 +14,7 @@ export const load: LayoutServerLoad = async () => {
       name: folder.replace(/-/g, ' ').replace(/\w\S*/g, (txt) => {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
       }),
-      url: `/component/${folder}`,
+      url: `${base}/component/${folder}`,
     }
   })
 
