@@ -1,0 +1,28 @@
+<script lang="ts">
+  import Page from './example/+page.svelte'
+  import PageSource from './example/+page.svelte?raw'
+  import CollapsibleSource from './example/Collapsible.svelte?raw'
+</script>
+
+<h1>Collapsible</h1>
+
+<p>
+  The collapsible component allows the user to hide and show a section of the
+  page.
+</p>
+
+<h2>Example</h2>
+
+<Page />
+
+<h2>Sources</h2>
+
+<p>Page</p>
+<code lang="svelte">
+  {PageSource.replace('$lib', 'louisette')}
+</code>
+
+<p>Collapsible</p>
+<code lang="svelte">
+  {CollapsibleSource.replace('$lib', 'louisette')}
+</code>

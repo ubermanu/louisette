@@ -7,11 +7,11 @@
 </script>
 
 <div
-  class="max-w-xl rounded-lg border border-t-0 border-neutral-200 bg-white text-neutral-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
+  class="max-w-xl rounded-lg border border-neutral-200 bg-white text-neutral-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
 >
   <div
     use:trigger
-    class="space-between flex items-center rounded-lg p-4 font-semibold transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
+    class="space-between flex items-center rounded-lg p-4 font-semibold transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
     {...$triggerAttrs}
   >
     {heading}
