@@ -1,25 +1,18 @@
 <script lang="ts">
   import { createCalendar } from '$lib'
 
-  const {
-    calendar,
-    nextButtonAttrs,
-    prevButtonAttrs,
-    title,
-    days,
-    weekdays,
-    selected,
-  } = createCalendar()
+  const { calendar, nextButtonAttrs, prevButtonAttrs, title, days, weekdays } =
+    createCalendar()
 </script>
 
 <div
   use:calendar
-  class="flex max-w-md flex-col overflow-clip rounded-lg border border-t-0 border-neutral-200 bg-white p-4 text-neutral-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
+  class="flex max-w-md flex-col overflow-clip rounded-lg border border-neutral-200 bg-white p-4 text-neutral-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
 >
   <div class="mb-4 flex items-center justify-between">
     <button
       type="button"
-      class="mx-4 rounded-md p-2 text-center transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
+      class="mx-4 rounded-md p-2 text-center transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-700"
       {...$prevButtonAttrs}
       aria-label="Previous month"
     >
@@ -41,7 +34,7 @@
     <div class="flex-grow text-center font-bold">{$title}</div>
     <button
       type="button"
-      class="mx-4 rounded-md p-2 text-center transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
+      class="mx-4 rounded-md p-2 text-center transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-700"
       {...$nextButtonAttrs}
       aria-label="Next month"
     >
@@ -73,7 +66,7 @@
       {#each $days as day, i}
         <div
           role="gridcell"
-          class="w-full cursor-pointer select-none rounded-md p-2 text-center transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-blue-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
+          class="w-full cursor-pointer select-none rounded-md p-2 text-center transition-colors hover:bg-neutral-100 focus:outline-none dark:hover:bg-neutral-700"
           class:is-selected={day.isSelected}
           class:is-today={day.isToday}
           class:is-out-of-month={day.isOutOfMonth}
@@ -90,7 +83,7 @@
 
 <style lang="postcss">
   .is-selected {
-    @apply bg-blue-500 text-white;
+    @apply bg-accent-500 text-white !important;
   }
 
   .is-today {
