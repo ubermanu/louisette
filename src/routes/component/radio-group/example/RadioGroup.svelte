@@ -7,6 +7,6 @@
   setContext('radioGroup', radioGroupContext)
 </script>
 
-<div use:radioGroup {...$radioGroupAttrs} class="max-w-xl space-y-2 p-4">
+<div use:radioGroup {...$radioGroupAttrs} class="max-w-xl space-y-2">
   <slot />
 </div>

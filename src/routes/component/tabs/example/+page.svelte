@@ -6,15 +6,15 @@
 
 <Tabs>
   <svelte:fragment slot="tabs">
-    <Tab key="apple">🍎 Apples</Tab>
-    <Tab key="orange">🍊 Oranges</Tab>
+    <Tab key="apples">🍎 Apples</Tab>
+    <Tab key="oranges">🍊 Oranges</Tab>
     <Tab key="grapes">🍇 Grapes</Tab>
   </svelte:fragment>
-  <TabPanel key="apple">
+  <TabPanel key="apples">
     There are thousands of apple varieties, each with its own unique taste and
     texture. Apples come in a range of colors, including red, green, and yellow.
   </TabPanel>
-  <TabPanel key="orange">
+  <TabPanel key="oranges">
     They belong to the citrus family and have a refreshing, tangy flavor.
     Oranges come in various varieties, such as navel oranges and Valencia
     oranges.

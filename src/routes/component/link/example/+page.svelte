@@ -13,5 +13,5 @@
   {...$linkAttrs}
   src="https://placekitten.com/200/300"
   alt="An image of a kitten"
-  class="m-2 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+  class="w-[10rem] cursor-pointer rounded-sm focus:outline-none focus-visible:ring focus-visible:ring-accent-500"
 />

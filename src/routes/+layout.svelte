@@ -9,10 +9,10 @@
 >
   <Header />
   <div class="container mx-auto flex max-w-6xl flex-grow gap-6 px-4">
-    <div class="hidden w-2/5 min-w-[300px] lg:block">
+    <div class="hidden min-w-[300px] lg:block">
       <Sidebar />
     </div>
-    <div class="ml-0 flex flex-grow flex-col">
+    <div class="flex flex-grow flex-col pb-8">
       <slot />
     </div>
   </div>
