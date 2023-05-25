@@ -30,6 +30,7 @@
   "prettier": "@ubermanu/prettier-config",
   "devDependencies": {
     "@sveltejs/adapter-auto": "^2.0.1",
+    "@sveltejs/adapter-static": "^2.0.2",
     "@sveltejs/kit": "^1.5.0",
     "@sveltejs/package": "^2.0.0",
     "@testing-library/svelte": "^3.2.2",
