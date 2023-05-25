@@ -2,8 +2,8 @@ import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
 
 export type SwitchConfig = {
-  active?: false
-  disabled?: false
+  active?: boolean
+  disabled?: boolean
 }
 
 export type Switch = ReturnType<typeof createSwitch>
