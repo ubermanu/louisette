@@ -11,7 +11,7 @@
 >
   <div
     use:trigger
-    class="space-between flex items-center rounded-lg p-4 font-semibold transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
+    class="space-between flex items-center rounded-lg p-4 font-semibold transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:bg-neutral-100 focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700 dark:focus-visible:bg-neutral-700"
     {...$triggerAttrs}
   >
     {heading}
