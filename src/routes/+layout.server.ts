@@ -21,3 +21,5 @@ export const load: LayoutServerLoad = async () => {
     components,
   }
 }
+
+export const prerender = true
