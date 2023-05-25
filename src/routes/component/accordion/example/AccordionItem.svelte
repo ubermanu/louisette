@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Accordion } from '$lib'
   import { getContext } from 'svelte'
 
   export let heading: string
@@ -6,7 +7,8 @@
   // Generate a random key for this accordion item
   const key = Math.random().toString(36).substring(7)
 
-  const { triggerAttrs, contentAttrs, expanded } = getContext('accordion')
+  const { triggerAttrs, contentAttrs, expanded } =
+    getContext<Accordion>('accordion')
 </script>
 
 <div

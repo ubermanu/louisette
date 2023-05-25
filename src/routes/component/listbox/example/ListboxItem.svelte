@@ -1,9 +1,10 @@
 <script lang="ts">
+  import type { Listbox } from '$lib'
   import { getContext } from 'svelte'
 
   export let value: string
 
-  const { optionAttrs, selected } = getContext('listbox')
+  const { optionAttrs, selected } = getContext<Listbox>('listbox')
 </script>
 
 <div

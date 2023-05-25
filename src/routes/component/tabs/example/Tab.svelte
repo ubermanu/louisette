@@ -1,9 +1,10 @@
 <script lang="ts">
+  import type { Tabs } from '$lib'
   import { getContext } from 'svelte'
 
   export let key: string
 
-  const { tabAttrs, active } = getContext('tabs')
+  const { tabAttrs, active } = getContext<Tabs>('tabs')
 </script>
 
 <div
