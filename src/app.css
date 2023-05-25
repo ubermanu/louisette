@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:focus-visible {
+  @apply outline-none outline-2 outline-offset-4 outline-accent-500 dark:outline-accent-400;
+}

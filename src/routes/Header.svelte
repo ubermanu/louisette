@@ -9,7 +9,7 @@
     <a
       href="https://github.com/ubermanu/louisette"
       target="_blank"
-      class="flex items-center gap-2 transition-colors duration-200 hover:text-accent-500 dark:hover:text-accent-400"
+      class="flex items-center gap-2 rounded-sm transition-colors duration-200 hover:text-accent-500 dark:hover:text-accent-400"
     >
       <Github /> <span class="hidden md:inline">GitHub</span>
     </a>
