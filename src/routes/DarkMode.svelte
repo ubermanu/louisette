@@ -47,7 +47,7 @@
 <button
   use:switchRef
   {...$switchAttrs}
-  class="rounded-sm outline-none transition-colors duration-200 hover:text-accent-500"
+  class="rounded p-2 transition-colors duration-200 hover:text-accent-500"
 >
   <svelte:component this={$active ? Moon : Sun} />
 </button>

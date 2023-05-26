@@ -9,7 +9,7 @@
   use:button
   {...$buttonAttrs}
   class:is-checked={$checked}
-  class="inline-flex w-auto select-none items-center gap-2 rounded-md bg-accent px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-accent-400 focus-visible:ring-4 focus-visible:ring-accent focus-visible:ring-opacity-75 dark:hover:bg-accent-400"
+  class="inline-flex w-auto select-none items-center gap-2 rounded-md bg-accent px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-accent-400 focus-visible:ring focus-visible:ring-accent focus-visible:ring-opacity-50 dark:hover:bg-accent-400"
   on:click
   on:keydown
   on:keypress

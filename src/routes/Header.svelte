@@ -4,13 +4,13 @@
   import DarkMode from './DarkMode.svelte'
 </script>
 
-<div class="container mx-auto flex items-center gap-4 p-4 py-8">
-  <a class="mr-auto text-2xl" href="{base}/">Louisette</a>
+<div class="container mx-auto flex max-w-6xl items-center gap-4 p-4 py-4">
+  <a class="mr-auto rounded p-4 text-2xl" href="{base}/">Louisette</a>
   <div class="flex gap-4">
     <a
       href="https://github.com/ubermanu/louisette"
       target="_blank"
-      class="flex items-center gap-2 rounded-sm transition-colors duration-200 hover:text-accent-500 dark:hover:text-accent-400"
+      class="flex items-center gap-2 rounded p-2 transition-colors duration-200 hover:text-accent-500 dark:hover:text-accent-400"
     >
       <Github /> <span class="hidden md:inline">GitHub</span>
     </a>

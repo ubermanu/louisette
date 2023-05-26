@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :focus-visible {
-  @apply outline-none ring ring-accent-500 ring-opacity-50 dark:ring-accent-400;
+  @apply outline-none ring ring-accent-500 ring-opacity-50;
 }
 
 code[lang] {
