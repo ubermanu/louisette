@@ -8,7 +8,7 @@
 </script>
 
 <div
-  class="cursor-pointer rounded-md p-2 transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
+  class="cursor-pointer rounded-md p-2 transition-colors hover:bg-neutral-200 focus:outline-none focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
   class:is-selected={$selected.includes(value)}
   {...$optionAttrs(value)}
 >
@@ -17,6 +17,6 @@
 
 <style lang="postcss">
   .is-selected {
-    @apply bg-neutral-300 dark:bg-neutral-700;
+    @apply bg-accent-200 dark:bg-accent-700;
   }
 </style>
