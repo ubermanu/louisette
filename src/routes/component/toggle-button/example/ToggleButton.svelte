@@ -5,7 +5,7 @@
   const { button, buttonAttrs, checked } = createToggleButton()
 </script>
 
-<button
+<div
   use:button
   {...$buttonAttrs}
   class:is-checked={$checked}
@@ -17,7 +17,7 @@
 >
   <svelte:component this={$checked ? CheckCircle : Circle} class="h-5 w-5" />
   <slot />
-</button>
+</div>
 
 <style lang="postcss">
   .is-checked {
