@@ -1,6 +1,19 @@
 {
   "name": "louisette",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "keywords": [
+    "louisette",
+    "headless",
+    "components",
+    "primitives",
+    "svelte"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ubermanu/louisette.git"
+  },
+  "license": "MIT",
+  "author": "Emmanuel Vodor <manu@paca.happy-dev.fr>",
   "type": "module",
   "exports": {
     ".": {
