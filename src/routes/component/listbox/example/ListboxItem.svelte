@@ -17,6 +17,6 @@
 
 <style lang="postcss">
   .is-selected {
-    @apply bg-neutral-100 dark:bg-neutral-700;
+    @apply bg-neutral-300 dark:bg-neutral-700;
   }
 </style>
