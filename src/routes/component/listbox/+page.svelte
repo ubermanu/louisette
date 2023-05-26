@@ -12,6 +12,16 @@
   list of choices.
 </p>
 
+<p>
+  <a
+    href="https://www.w3.org/WAI/ARIA/apg/patterns/listbox/"
+    target="_blank"
+    rel="noopener"
+  >
+    WAI-ARIA: Listbox Pattern
+  </a>
+</p>
+
 <h2>Example</h2>
 
 <Page />

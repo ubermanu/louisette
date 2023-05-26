@@ -11,6 +11,16 @@
   deactivating a feature.
 </p>
 
+<p>
+  <a
+    href="https://www.w3.org/WAI/ARIA/apg/patterns/switch/"
+    target="_blank"
+    rel="noopener"
+  >
+    WAI-ARIA: Switch Pattern
+  </a>
+</p>
+
 <h2>Example</h2>
 
 <Page />

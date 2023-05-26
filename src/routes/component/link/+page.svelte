@@ -7,6 +7,23 @@
 
 <p>The link component is used to navigate between pages.</p>
 
+<p>
+  <a
+    href="https://www.w3.org/WAI/ARIA/apg/patterns/link/"
+    target="_blank"
+    rel="noopener"
+  >
+    WAI-ARIA: Link Pattern
+  </a>
+</p>
+
+<blockquote class="warning">
+  <p>
+    You probably don't need this primitive. Use the native <code>&lt;a&gt;</code
+    > element instead.
+  </p>
+</blockquote>
+
 <h2>Example</h2>
 
 <Page />

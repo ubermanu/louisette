@@ -13,8 +13,12 @@
 </p>
 
 <p>
-  <a href="https://www.w3.org/WAI/ARIA/apg/patterns/accordion/" target="_blank">
-    WAI-ARIA
+  <a
+    href="https://www.w3.org/WAI/ARIA/apg/patterns/accordion/"
+    target="_blank"
+    rel="noopener"
+  >
+    WAI-ARIA: Accordion Pattern
   </a>
 </p>
 

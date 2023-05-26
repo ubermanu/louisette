@@ -9,6 +9,16 @@
 
 <p>A radio group is a group of radio buttons that are related to each other.</p>
 
+<p>
+  <a
+    href="https://www.w3.org/WAI/ARIA/apg/patterns/radio/"
+    target="_blank"
+    rel="noopener"
+  >
+    WAI-ARIA: Radio Group Pattern
+  </a>
+</p>
+
 <h2>Example</h2>
 
 <Page />

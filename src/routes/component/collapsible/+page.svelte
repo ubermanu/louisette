@@ -11,6 +11,16 @@
   page.
 </p>
 
+<p>
+  <a
+    href="https://www.w3.org/WAI/ARIA/apg/patterns/disclosure/"
+    target="_blank"
+    rel="noopener"
+  >
+    WAIA-ARIA: Disclosure Pattern
+  </a>
+</p>
+
 <h2>Example</h2>
 
 <Page />

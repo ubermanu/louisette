@@ -8,10 +8,21 @@
 
 <p>Transforms any HTML element into a button.</p>
 
+<p>
+  <a
+    href="https://www.w3.org/WAI/ARIA/apg/patterns/button/"
+    target="_blank"
+    rel="noopener"
+  >
+    WAI-ARIA: Button Pattern
+  </a>
+</p>
+
 <blockquote class="warning">
   <p>
-    There are a lot chances that you don't need this component. You should
-    obviously use a normal <code>button</code> element.
+    You probably don't need this primitive. Use the native <code
+      >&lt;button&gt;</code
+    > element instead.
   </p>
 </blockquote>
 

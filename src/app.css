@@ -37,7 +37,7 @@ code[lang]:last-child {
 }
 
 a:not([class]) {
-  @apply rounded-sm text-accent-500 underline hover:text-accent-600 hover:no-underline dark:text-accent-400 dark:hover:text-accent-500;
+  @apply rounded-sm text-accent-500 underline underline-offset-4 hover:text-accent-600 hover:no-underline dark:text-accent-400 dark:hover:text-accent-500;
 }
 
 blockquote.warning {
