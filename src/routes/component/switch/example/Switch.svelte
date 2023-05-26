@@ -11,7 +11,7 @@
   class:is-active={$active}
 >
   <div
-    class="transition-margin mx-1 h-4 w-4 rounded-full bg-neutral-700 shadow-md duration-300 ease-in-out dark:bg-neutral-300"
+    class=" mx-1 h-4 w-4 transform rounded-full bg-neutral-700 shadow-md duration-300 ease-in-out dark:bg-neutral-300"
     class:translate-x-6={$active}
   />
 </div>
