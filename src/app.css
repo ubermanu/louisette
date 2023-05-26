@@ -11,7 +11,7 @@ code[lang] {
 }
 
 code:not([lang]) {
-  @apply inline-block whitespace-pre-wrap rounded-sm bg-white p-1 font-mono text-xs shadow dark:bg-neutral-900 dark:text-neutral-100;
+  @apply inline-block whitespace-pre-wrap rounded-sm  bg-neutral-900 p-1 font-mono text-xs text-neutral-100 shadow;
 }
 
 h1 {
