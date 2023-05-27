@@ -1,5 +1,6 @@
 <script>
   import '../app.css'
+  import '../highlight.less'
   import Header from './Header.svelte'
   import Sidebar from './Sidebar.svelte'
 </script>

@@ -3,6 +3,7 @@
   import PageSource from './example/+page.svelte?raw'
   import RadioGroupSource from './example/RadioGroup.svelte?raw'
   import RadioSource from './example/Radio.svelte?raw'
+  import Snippet from '../../Snippet.svelte'
 </script>
 
 <h1>RadioGroup</h1>
@@ -26,16 +27,10 @@
 <h2>Sources</h2>
 
 <p>Page</p>
-<code lang="svelte">
-  {PageSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={PageSource} />
 
 <p>RadioGroup</p>
-<code lang="svelte">
-  {RadioGroupSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={RadioGroupSource} />
 
 <p>Radio</p>
-<code lang="svelte">
-  {RadioSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={RadioSource} />

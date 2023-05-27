@@ -3,6 +3,7 @@
   import PageSource from './example/+page.svelte?raw'
   import ListboxSource from './example/Listbox.svelte?raw'
   import ListboxItemSource from './example/ListboxItem.svelte?raw'
+  import Snippet from '../../Snippet.svelte'
 </script>
 
 <h1>Listbox</h1>
@@ -29,16 +30,10 @@
 <h2>Sources</h2>
 
 <p>Page</p>
-<code lang="svelte">
-  {PageSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={PageSource} />
 
 <p>Listbox</p>
-<code lang="svelte">
-  {ListboxSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={ListboxSource} />
 
 <p>ListboxItem</p>
-<code lang="svelte">
-  {ListboxItemSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={ListboxItemSource} />

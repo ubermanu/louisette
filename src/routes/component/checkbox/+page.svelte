@@ -2,6 +2,7 @@
   import Page from './example/+page.svelte'
   import PageSource from './example/+page.svelte?raw'
   import CheckboxSource from './example/Checkbox.svelte?raw'
+  import Snippet from '../../Snippet.svelte'
 </script>
 
 <h1>Checkbox</h1>
@@ -35,11 +36,7 @@
 <h2>Sources</h2>
 
 <p>Page</p>
-<code lang="svelte">
-  {PageSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={PageSource} />
 
 <p>Checkbox</p>
-<code lang="svelte">
-  {CheckboxSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={CheckboxSource} />

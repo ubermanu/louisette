@@ -1,6 +1,7 @@
 <script lang="ts">
   import Page from './example/+page.svelte'
   import PageSource from './example/+page.svelte?raw'
+  import Snippet from '../../Snippet.svelte'
 </script>
 
 <h1>Link</h1>
@@ -30,6 +31,4 @@
 
 <h2>Source</h2>
 
-<code lang="svelte">
-  {PageSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={PageSource} />

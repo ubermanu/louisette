@@ -2,6 +2,7 @@
   import Page from './example/+page.svelte'
   import PageSource from './example/+page.svelte?raw'
   import CollapsibleSource from './example/Collapsible.svelte?raw'
+  import Snippet from '../../Snippet.svelte'
 </script>
 
 <h1>Collapsible</h1>
@@ -28,11 +29,7 @@
 <h2>Sources</h2>
 
 <p>Page</p>
-<code lang="svelte">
-  {PageSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={PageSource} />
 
 <p>Collapsible</p>
-<code lang="svelte">
-  {CollapsibleSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={CollapsibleSource} />

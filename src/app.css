@@ -6,11 +6,15 @@
   @apply outline-none ring ring-accent-500 ring-opacity-50;
 }
 
-code[lang] {
-  @apply block whitespace-pre-wrap rounded-md bg-white p-4 font-mono text-xs shadow dark:bg-neutral-900;
+pre[data-language] {
+  @apply mb-4;
 }
 
-code:not([lang]) {
+pre[data-language] code {
+  @apply whitespace-pre-wrap rounded-md p-4 text-xs shadow;
+}
+
+code:not([class]) {
   @apply inline-block whitespace-pre-wrap rounded-sm  bg-neutral-900 p-1 font-mono text-xs text-neutral-100 shadow;
 }
 

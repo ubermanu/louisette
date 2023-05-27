@@ -2,6 +2,7 @@
   import Page from './example/+page.svelte'
   import PageSource from './example/+page.svelte?raw'
   import CalendarSource from './example/Calendar.svelte?raw'
+  import Snippet from '../../Snippet.svelte'
 </script>
 
 <h1>Calendar</h1>
@@ -15,11 +16,7 @@
 <h2>Sources</h2>
 
 <p>Page</p>
-<code lang="svelte">
-  {PageSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={PageSource} />
 
 <p>Calendar</p>
-<code lang="svelte">
-  {CalendarSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={CalendarSource} />

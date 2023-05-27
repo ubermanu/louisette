@@ -3,6 +3,7 @@
   import PageSource from './example/+page.svelte?raw'
   import AccordionSource from './example/Accordion.svelte?raw'
   import AccordionItemSource from './example/AccordionItem.svelte?raw'
+  import Snippet from '../../Snippet.svelte'
 </script>
 
 <h1>Accordion</h1>
@@ -29,16 +30,10 @@
 <h2>Sources</h2>
 
 <p>Page</p>
-<code lang="svelte">
-  {PageSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={PageSource} />
 
 <p>Accordion</p>
-<code lang="svelte">
-  {AccordionSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={AccordionSource} />
 
 <p>Accordion Item</p>
-<code lang="svelte">
-  {AccordionItemSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={AccordionItemSource} />

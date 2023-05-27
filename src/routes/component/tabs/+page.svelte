@@ -4,6 +4,7 @@
   import TabsSource from './example/Tabs.svelte?raw'
   import TabSource from './example/Tab.svelte?raw'
   import TabPanelSource from './example/TabPanel.svelte?raw'
+  import Snippet from '../../Snippet.svelte'
 </script>
 
 <h1>Tabs</h1>
@@ -30,21 +31,13 @@
 <h2>Sources</h2>
 
 <p>Page</p>
-<code lang="svelte">
-  {PageSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={PageSource} />
 
 <p>Tabs</p>
-<code lang="svelte">
-  {TabsSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={TabsSource} />
 
 <p>Tab</p>
-<code lang="svelte">
-  {TabSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={TabSource} />
 
 <p>TabPanel</p>
-<code lang="svelte">
-  {TabPanelSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={TabPanelSource} />
