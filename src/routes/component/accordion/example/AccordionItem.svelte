@@ -3,12 +3,22 @@
   import { getContext } from 'svelte'
 
   export let heading: string
+  export let disabled: boolean = false
+  export let open: boolean = false
 
   // Generate a random key for this accordion item
   const key = Math.random().toString(36).substring(7)
 
-  const { triggerAttrs, contentAttrs, expanded } =
+  const { triggerAttrs, contentAttrs, expanded, expand, disable } =
     getContext<Accordion>('accordion')
+
+  if (open) {
+    expand(key)
+  }
+
+  if (disabled) {
+    disable(key)
+  }
 </script>
 
 <div
@@ -17,6 +27,7 @@
   <div
     {...$triggerAttrs(key)}
     class="flex cursor-pointer select-none items-center rounded-sm px-5 py-4 font-semibold leading-5 transition-colors duration-200 ease-in-out hover:bg-neutral-100 focus-visible:bg-neutral-100 dark:hover:bg-neutral-700 dark:focus-visible:bg-neutral-700"
+    class:is-disabled={disabled}
   >
     {heading}
     <span class="ml-auto" class:rotate-180={$expanded.includes(key)}>
@@ -44,3 +55,9 @@
     <slot />
   </div>
 </div>
+
+<style lang="postcss">
+  .is-disabled {
+    @apply pointer-events-none opacity-50;
+  }
+</style>

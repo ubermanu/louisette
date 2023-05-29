@@ -34,6 +34,7 @@ export const createAccordion = (config?: AccordionConfig) => {
         'aria-expanded': expanded.includes(key),
         'aria-disabled': disabled.includes(key),
         tabIndex: disabled.includes(key) ? -1 : 0,
+        inert: disabled.includes(key) ? '' : undefined,
         'data-accordion-trigger': key,
       })
     }
@@ -45,6 +46,7 @@ export const createAccordion = (config?: AccordionConfig) => {
       role: 'region',
       'aria-labelledby': getTriggerId(key),
       'aria-hidden': !expanded.includes(key),
+      inert: !expanded.includes(key) ? '' : undefined,
       'data-accordion-content': key,
     })
   })
@@ -95,6 +97,22 @@ export const createAccordion = (config?: AccordionConfig) => {
   /** Collapses all accordion items. */
   const collapseAll = () => {
     expanded$.set([])
+  }
+
+  /** Disables the accordion item. */
+  const disable = (key: string) => {
+    disabled$.update((disabled) => {
+      if (disabled.includes(key)) return disabled
+      return [...disabled, key]
+    })
+  }
+
+  /** Enables the accordion item. */
+  const enable = (key: string) => {
+    disabled$.update((disabled) => {
+      if (!disabled.includes(key)) return disabled
+      return disabled.filter((e) => e !== key)
+    })
   }
 
   let rootNode: HTMLElement | null = null
@@ -192,7 +210,7 @@ export const createAccordion = (config?: AccordionConfig) => {
   return {
     multiple: multiple$,
     expanded: readonly(expanded$),
-    disabled: disabled$,
+    disabled: readonly(disabled$),
     triggerAttrs,
     contentAttrs,
     accordion: useAccordion,
@@ -201,5 +219,7 @@ export const createAccordion = (config?: AccordionConfig) => {
     toggle,
     expandAll,
     collapseAll,
+    disable,
+    enable,
   }
 }
