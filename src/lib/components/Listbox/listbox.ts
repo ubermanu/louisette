@@ -6,10 +6,10 @@ import { derived, get, readonly, writable } from 'svelte/store'
 
 export type ListboxConfig = {
   /** The key of the selected options. */
-  selected?: string | string[]
+  selected?: string[]
 
   /** The key of the disabled options. */
-  disabled?: string | string[]
+  disabled?: string[]
 
   /** If true, the listbox allows multiple selections. */
   multiple?: boolean
@@ -24,14 +24,9 @@ export const createListbox = (config?: ListboxConfig) => {
   const { selected, disabled, multiple, orientation } = { ...config }
 
   const selected$ = writable(
-    (selected ? (Array.isArray(selected) ? selected : [selected]) : []).slice(
-      0,
-      multiple ? undefined : 1
-    )
+    (selected || []).slice(0, multiple ? undefined : 1)
   )
-  const disabled$ = writable(
-    disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []
-  )
+  const disabled$ = writable(disabled || [])
   const multiple$ = writable(multiple || false)
   const orientation$ = writable(orientation || 'vertical')
 
