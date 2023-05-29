@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createCalendar } from '../calendar'
+  import { createCalendar } from '$lib'
 
   export let defaults = {}
 

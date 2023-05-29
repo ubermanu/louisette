@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createLink } from '../link.js'
+  import { createLink } from '$lib'
 
   const { link, linkAttrs } = createLink({
     href: '#',

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createCollapsible } from '../collapsible'
+  import { createCollapsible } from '$lib'
 
   export let defaults = {}
 

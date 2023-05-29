@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createCheckbox } from '../checkbox.js'
+  import { createCheckbox } from '$lib'
 
   export let defaults = {}
 

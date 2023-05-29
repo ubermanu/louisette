@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createListbox } from '../listbox'
+  import { createListbox } from '$lib'
 
   export let defaults = {}
   export let items: { id: number; label: string; value: string }[] = []

@@ -241,16 +241,14 @@ export const createListbox = (config?: ListboxConfig) => {
   const useListbox: Action = (node) => {
     rootNode = node
 
-    const events = {
+    const removeListeners = delegateEventListeners(node, {
       keydown: {
         '[data-listbox-option]': onOptionKeyDown,
       },
       click: {
         '[data-listbox-option]': onOptionClick,
       },
-    }
-
-    const removeListeners = delegateEventListeners(node, events)
+    })
 
     // If multiple is false, only one option can be selected
     const unsubscribe = multiple$.subscribe((multiple) => {

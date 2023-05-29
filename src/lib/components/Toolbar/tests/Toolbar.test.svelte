@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createToolbar } from '../toolbar.js'
+  import { createToolbar } from '$lib'
 
   const { toolbar, toolbarAttrs, itemAttrs } = createToolbar()
 </script>
