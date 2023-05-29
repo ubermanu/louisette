@@ -1,4 +1,5 @@
 import { delegateEventListeners } from '$lib/helpers.js'
+import { traveller } from '$lib/helpers/traveller.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, writable } from 'svelte/store'
 
@@ -28,16 +29,14 @@ export const createToolbar = (config?: ToolbarConfig) => {
   let rootNode: HTMLElement | null = null
 
   const onItemKeyDown = (event: KeyboardEvent) => {
-    const currentTarget = event.target as HTMLElement
+    const target = event.target as HTMLElement
 
-    const items = rootNode?.querySelectorAll(
-      '[data-toolbar-item]'
-    ) as NodeListOf<HTMLElement>
-    if (!items) return
+    if (!rootNode) {
+      console.warn('Toolbar root node not found.')
+      return
+    }
 
-    const currentIndex = Array.from(items).indexOf(currentTarget)
-    if (currentIndex === -1) return
-
+    const nodes = traveller(rootNode, '[data-toolbar-item]')
     const $orientation = get(orientation$)
 
     if (
@@ -45,8 +44,7 @@ export const createToolbar = (config?: ToolbarConfig) => {
       (event.key === 'ArrowUp' && $orientation === 'vertical')
     ) {
       event.preventDefault()
-      const prevIndex = currentIndex === 0 ? items.length - 1 : currentIndex - 1
-      items[prevIndex]?.focus()
+      nodes.previous(target)?.focus()
     }
 
     if (
@@ -54,31 +52,28 @@ export const createToolbar = (config?: ToolbarConfig) => {
       (event.key === 'ArrowDown' && $orientation === 'vertical')
     ) {
       event.preventDefault()
-      const nextIndex = currentIndex === items.length - 1 ? 0 : currentIndex + 1
-      items[nextIndex]?.focus()
+      nodes.next(target)?.focus()
     }
 
     if (event.key === 'Home') {
       event.preventDefault()
-      items[0]?.focus()
+      nodes.first()?.focus()
     }
 
     if (event.key === 'End') {
       event.preventDefault()
-      items[items.length - 1]?.focus()
+      nodes.last()?.focus()
     }
   }
 
   const useToolbar: Action = (node) => {
     rootNode = node
 
-    const events = {
+    const removeListeners = delegateEventListeners(node, {
       keydown: {
         '[data-toolbar-item]': onItemKeyDown,
       },
-    }
-
-    const removeListeners = delegateEventListeners(node, events)
+    })
 
     return {
       destroy() {

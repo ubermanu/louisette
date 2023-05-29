@@ -1,4 +1,5 @@
 import { delegateEventListeners } from '$lib/helpers.js'
+import { traveller } from '$lib/helpers/traveller.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
 
@@ -152,16 +153,26 @@ export const createListbox = (config?: ListboxConfig) => {
       }
     }
 
+    if (!rootNode) {
+      console.warn('The listbox root node is not defined.')
+      return
+    }
+
+    const $disabled = get(disabled$)
+
+    const nodes = traveller(rootNode, '[data-listbox--option]', (el) => {
+      return $disabled.includes(el.dataset.accordionTrigger as string)
+    })
+
     if (
       (event.key === 'ArrowDown' && $orientation === 'vertical') ||
       (event.key === 'ArrowRight' && $orientation === 'horizontal')
     ) {
       event.preventDefault()
-      const next = rootNode?.querySelector(`[data-listbox-option="${key}"]`)
-        ?.nextElementSibling as HTMLElement
+      const next = nodes.next(event.target as HTMLElement)
       next?.focus()
 
-      if (event.shiftKey && $multiple) {
+      if (next && event.shiftKey && $multiple) {
         select(next.dataset.listboxOption as string)
       }
     }
@@ -171,21 +182,17 @@ export const createListbox = (config?: ListboxConfig) => {
       (event.key === 'ArrowLeft' && $orientation === 'horizontal')
     ) {
       event.preventDefault()
-      const previous = rootNode?.querySelector(`[data-listbox-option="${key}"]`)
-        ?.previousElementSibling as HTMLElement
-
+      const previous = nodes.previous(event.target as HTMLElement)
       previous?.focus()
 
-      if (event.shiftKey && $multiple) {
+      if (previous && event.shiftKey && $multiple) {
         select(previous.dataset.listboxOption as string)
       }
     }
 
     if (event.key === 'Home') {
       event.preventDefault()
-      const first = rootNode?.querySelector(
-        `[data-listbox-option]`
-      ) as HTMLElement
+      const first = nodes.first()
 
       // Selects the focused option and all options up to the first option.
       if ($multiple && event.shiftKey && event.ctrlKey) {
@@ -197,9 +204,7 @@ export const createListbox = (config?: ListboxConfig) => {
 
     if (event.key === 'End') {
       event.preventDefault()
-      const last = rootNode?.querySelector(
-        `[data-listbox-option]:last-child`
-      ) as HTMLElement
+      const last = nodes.last()
 
       // Selects the focused option and all options up to the last option.
       if ($multiple && event.shiftKey && event.ctrlKey) {
@@ -212,9 +217,11 @@ export const createListbox = (config?: ListboxConfig) => {
     if ($multiple && event.key === 'a' && event.ctrlKey) {
       event.preventDefault()
 
-      const allKeys = Array.from(
-        rootNode?.querySelectorAll(`[data-listbox-option]`) ?? []
-      ).map((option) => (option as HTMLElement).dataset.listboxOption as string)
+      const allKeys = nodes
+        .all()
+        .map(
+          (option) => (option as HTMLElement).dataset.listboxOption as string
+        )
 
       if (allKeys.length === get(selected$).length) {
         unselectAll()
@@ -245,19 +252,20 @@ export const createListbox = (config?: ListboxConfig) => {
 
     const removeListeners = delegateEventListeners(node, events)
 
+    // If multiple is false, only one option can be selected
+    const unsubscribe = multiple$.subscribe((multiple) => {
+      if (!multiple) {
+        selected$.update((selected) => selected.slice(0, 1))
+      }
+    })
+
     return {
       destroy() {
         removeListeners()
+        unsubscribe()
       },
     }
   }
-
-  // If multiple is false, only one option can be selected
-  multiple$.subscribe((multiple) => {
-    if (!multiple) {
-      selected$.update((selected) => selected.slice(0, 1))
-    }
-  })
 
   return {
     selected: readonly(selected$),
