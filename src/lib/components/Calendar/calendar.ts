@@ -1,4 +1,4 @@
-import { delegate } from '$lib/helpers.js'
+import { delegateEventListeners } from '$lib/helpers.js'
 import { tick } from 'svelte'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable, type Readable } from 'svelte/store'
@@ -260,7 +260,7 @@ export const createCalendar = (config?: CalendarConfig) => {
       },
     }
 
-    const removeListeners = delegate(node, events)
+    const removeListeners = delegateEventListeners(node, events)
 
     return {
       destroy() {

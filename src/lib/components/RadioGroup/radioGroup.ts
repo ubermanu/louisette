@@ -1,4 +1,4 @@
-import { delegate } from '$lib/helpers.js'
+import { delegateEventListeners } from '$lib/helpers.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, readonly, writable } from 'svelte/store'
 
@@ -116,7 +116,7 @@ export const createRadioGroup = (config?: RadioGroupConfig) => {
       },
     }
 
-    const removeListeners = delegate(node, events)
+    const removeListeners = delegateEventListeners(node, events)
 
     return {
       destroy() {

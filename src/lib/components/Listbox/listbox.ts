@@ -1,4 +1,4 @@
-import { delegate } from '$lib/helpers.js'
+import { delegateEventListeners } from '$lib/helpers.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
 
@@ -243,7 +243,7 @@ export const createListbox = (config?: ListboxConfig) => {
       },
     }
 
-    const removeListeners = delegate(node, events)
+    const removeListeners = delegateEventListeners(node, events)
 
     return {
       destroy() {

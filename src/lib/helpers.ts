@@ -3,12 +3,6 @@ export function generateId() {
   return `l-${Math.random().toString(36).substring(2, 12)}`
 }
 
-export type DelegateEventMap = {
-  [event: string]: {
-    [selector: string]: (e?: Event | any) => void
-  }
-}
-
 /**
  * Attach event listeners to a node, delegating to a selector.
  *
@@ -23,7 +17,7 @@ export type DelegateEventMap = {
  * })
  * ```
  */
-export function delegate(node: HTMLElement, eventsMap: DelegateEventMap) {
+export function delegateEventListeners(node: HTMLElement, eventsMap: DelegateEventMap) {
   const unsubscribeFns: (() => void)[] = []
 
   for (const [event, selectors] of Object.entries(eventsMap)) {
@@ -44,5 +38,11 @@ export function delegate(node: HTMLElement, eventsMap: DelegateEventMap) {
 
   return () => {
     unsubscribeFns.forEach((fn) => fn())
+  }
+}
+
+type DelegateEventMap = {
+  [event: string]: {
+    [selector: string]: (e?: Event | any) => void
   }
 }

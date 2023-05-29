@@ -1,4 +1,4 @@
-import { delegate } from '$lib/helpers.js'
+import { delegateEventListeners } from '$lib/helpers.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, writable } from 'svelte/store'
 
@@ -78,7 +78,7 @@ export const createToolbar = (config?: ToolbarConfig) => {
       },
     }
 
-    const removeListeners = delegate(node, events)
+    const removeListeners = delegateEventListeners(node, events)
 
     return {
       destroy() {

@@ -1,4 +1,4 @@
-import { delegate, generateId } from '$lib/helpers.js'
+import { delegateEventListeners, generateId } from '$lib/helpers.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
 
@@ -119,7 +119,7 @@ export const createAccordion = (config?: AccordionConfig) => {
       },
     }
 
-    const removeListeners = delegate(node, events)
+    const removeListeners = delegateEventListeners(node, events)
 
     return {
       destroy() {
