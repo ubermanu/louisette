@@ -15,8 +15,9 @@ export const createCollapsible = (config?: CollapsibleConfig) => {
   const expanded$ = writable(expanded || false)
   const disabled$ = writable(disabled || false)
 
-  const triggerId = generateId()
-  const contentId = generateId()
+  const baseId = generateId()
+  const triggerId = `${baseId}-trigger`
+  const contentId = `${baseId}-content`
 
   const triggerAttrs = derived(
     [expanded$, disabled$],
@@ -35,6 +36,7 @@ export const createCollapsible = (config?: CollapsibleConfig) => {
     role: 'region',
     'aria-labelledby': triggerId,
     'aria-hidden': !expanded,
+    inert: !expanded ? '' : undefined,
   }))
 
   function toggle() {
