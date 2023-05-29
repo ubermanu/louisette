@@ -69,7 +69,7 @@ export const createRadioGroup = (config?: RadioGroupConfig) => {
     const $disabled = get(disabled$)
 
     const radios = traveller(rootNode, '[data-radio-group-radio]', (el) => {
-      return !$disabled.includes(el.dataset.radioGroupRadio as string)
+      return $disabled.includes(el.dataset.radioGroupRadio as string)
     })
 
     if (['ArrowDown', 'ArrowRight'].includes(event.key)) {
