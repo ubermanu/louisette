@@ -139,10 +139,11 @@ export const createListbox = (config?: ListboxConfig) => {
   let lastSelectedKey: string | undefined
 
   const onOptionKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
-    const key = event.delegateTarget.dataset.listboxOption as string
+    const target = event.delegateTarget
+    const key = target.dataset.listboxOption as string
 
-    const $multiple = get(multiple$),
-      $orientation = get(orientation$)
+    const $multiple = get(multiple$)
+    const $orientation = get(orientation$)
 
     if (event.key === ' ') {
       event.preventDefault()
@@ -161,7 +162,7 @@ export const createListbox = (config?: ListboxConfig) => {
 
     const $disabled = get(disabled$)
 
-    const nodes = traveller(rootNode, '[data-listbox--option]', (el) => {
+    const nodes = traveller(rootNode, '[data-listbox-option]', (el) => {
       return $disabled.includes(el.dataset.accordionTrigger as string)
     })
 
@@ -170,7 +171,7 @@ export const createListbox = (config?: ListboxConfig) => {
       (event.key === 'ArrowRight' && $orientation === 'horizontal')
     ) {
       event.preventDefault()
-      const next = nodes.next(event.target as HTMLElement)
+      const next = nodes.next(target)
       next?.focus()
 
       if (next && event.shiftKey && $multiple) {
@@ -183,7 +184,7 @@ export const createListbox = (config?: ListboxConfig) => {
       (event.key === 'ArrowLeft' && $orientation === 'horizontal')
     ) {
       event.preventDefault()
-      const previous = nodes.previous(event.target as HTMLElement)
+      const previous = nodes.previous(target)
       previous?.focus()
 
       if (previous && event.shiftKey && $multiple) {
