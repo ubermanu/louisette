@@ -1,9 +1,9 @@
-import { derived, get, writable } from 'svelte/store'
 import {
   usePress,
   type PressConfig,
   type PressEvent,
-} from '../../interactions/Press/press.js'
+} from '$lib/interactions/Press/press.js'
+import { derived, get, writable } from 'svelte/store'
 
 export type ButtonConfig = {
   disabled?: boolean

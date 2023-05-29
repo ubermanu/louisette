@@ -1,4 +1,5 @@
-import { delegateEventListeners } from '$lib/helpers.js'
+import type { DelegateEvent } from '$lib/helpers/events.js'
+import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, writable } from 'svelte/store'
@@ -28,8 +29,8 @@ export const createToolbar = (config?: ToolbarConfig) => {
 
   let rootNode: HTMLElement | null = null
 
-  const onItemKeyDown = (event: KeyboardEvent) => {
-    const target = event.target as HTMLElement
+  const onItemKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
+    const target = event.delegateTarget
 
     if (!rootNode) {
       console.warn('Toolbar root node not found.')

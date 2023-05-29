@@ -1,4 +1,5 @@
-import { delegateEventListeners } from '$lib/helpers.js'
+import type { DelegateEvent } from '$lib/helpers/events.js'
+import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
@@ -70,13 +71,12 @@ export const createTabs = (config?: TabsConfig) => {
     active$.set(key)
   }
 
-  const onTabClick = (event: MouseEvent) => {
-    const key = (event.target as HTMLElement).dataset.tabsTab || ''
-    open(key)
+  const onTabClick = (event: DelegateEvent<MouseEvent>) => {
+    open(event.delegateTarget.dataset.tabsTab as string)
   }
 
-  const onTabKeyDown = (event: KeyboardEvent) => {
-    const target = event.target as HTMLElement
+  const onTabKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
+    const target = event.delegateTarget
     const key = (event.target as HTMLElement).dataset.tabsTab || ''
 
     const $orientation = get(orientation$)

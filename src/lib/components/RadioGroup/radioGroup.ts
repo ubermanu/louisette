@@ -1,11 +1,12 @@
-import { delegateEventListeners } from '$lib/helpers.js'
+import type { DelegateEvent } from '$lib/helpers/events.js'
+import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, readonly, writable } from 'svelte/store'
 
 export type RadioGroupConfig = {
   selected?: string
-  disabled?: string | string[]
+  disabled?: string[]
 }
 
 export type RadioGroup = ReturnType<typeof createRadioGroup>
@@ -14,9 +15,7 @@ export const createRadioGroup = (config?: RadioGroupConfig) => {
   const { selected, disabled } = { ...config }
 
   const selected$ = writable(selected || '')
-  const disabled$ = writable(
-    disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []
-  )
+  const disabled$ = writable(disabled || [])
 
   const radioGroupAttrs = readable({
     role: 'radiogroup',
@@ -49,22 +48,12 @@ export const createRadioGroup = (config?: RadioGroupConfig) => {
     selected$.set(key)
   }
 
-  const resolveRadioElement = (event: Event) => {
-    const path = event.composedPath()
-    const node = path.find(
-      (el) =>
-        el instanceof HTMLElement && el.hasAttribute('data-radio-group-radio')
-    )
-    return node as HTMLElement | undefined
+  const onRadioClick = (event: DelegateEvent<MouseEvent>) => {
+    select(event.delegateTarget.dataset.radioGroupRadio as string)
   }
 
-  const onRadioClick = (event: MouseEvent) => {
-    const target = resolveRadioElement(event)
-    select(target?.dataset.radioGroupRadio || '')
-  }
-
-  const onRadioKeyDown = (event: KeyboardEvent) => {
-    const target = resolveRadioElement(event) as HTMLElement
+  const onRadioKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
+    const target = event.delegateTarget
     const key = target?.dataset.radioGroupRadio || ''
 
     if (event.key === ' ') {

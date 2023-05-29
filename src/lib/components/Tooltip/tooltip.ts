@@ -1,4 +1,4 @@
-import { generateId } from '$lib/helpers.js'
+import { generateId } from '$lib/helpers/uuid.js'
 import type { Action } from 'svelte/action'
 import { derived, readable, readonly, writable } from 'svelte/store'
 

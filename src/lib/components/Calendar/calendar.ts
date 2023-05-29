@@ -1,4 +1,5 @@
-import { delegateEventListeners } from '$lib/helpers.js'
+import type { DelegateEvent } from '$lib/helpers/events.js'
+import { delegateEventListeners } from '$lib/helpers/events.js'
 import { tick } from 'svelte'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable, type Readable } from 'svelte/store'
@@ -129,7 +130,7 @@ export const createCalendar = (config?: CalendarConfig) => {
     goToPrevMonth()
   }
 
-  const onPrevMonthKeyDown = (event: KeyboardEvent) => {
+  const onPrevMonthKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
       goToPrevMonth()
@@ -140,7 +141,7 @@ export const createCalendar = (config?: CalendarConfig) => {
     goToNextMonth()
   }
 
-  const onNextMonthKeyDown = (event: KeyboardEvent) => {
+  const onNextMonthKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
       goToNextMonth()
@@ -148,11 +149,9 @@ export const createCalendar = (config?: CalendarConfig) => {
   }
 
   // TODO: Add support for selecting multiple dates (e.g. for a range)
-  const onDayClick = (event: MouseEvent) => {
-    const target = event.target as HTMLElement
-    const key = target.dataset.calendarDay || ''
-
-    if (!key) return
+  const onDayClick = (event: DelegateEvent<MouseEvent>) => {
+    const target = event.delegateTarget
+    const key = target.dataset.calendarDay as string
 
     const parts = key.split('-')
     const date = new Date(+parts[0], +parts[1] - 1, +parts[2])
@@ -162,11 +161,9 @@ export const createCalendar = (config?: CalendarConfig) => {
   }
 
   // TODO: keyboard navigation
-  const onDayKeyDown = (event: KeyboardEvent) => {
-    const target = event.target as HTMLElement
-    const key = target.dataset.calendarDay || ''
-
-    if (!key) return
+  const onDayKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
+    const target = event.delegateTarget
+    const key = target.dataset.calendarDay as string
 
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
@@ -247,7 +244,7 @@ export const createCalendar = (config?: CalendarConfig) => {
   const useCalendar: Action = (node) => {
     rootNode = node
 
-    const events = {
+    const removeListeners = delegateEventListeners(node, {
       click: {
         '[data-calendar-prev-month]': onPrevMonthClick,
         '[data-calendar-next-month]': onNextMonthClick,
@@ -258,9 +255,7 @@ export const createCalendar = (config?: CalendarConfig) => {
         '[data-calendar-next-month]': onNextMonthKeyDown,
         '[data-calendar-day]': onDayKeyDown,
       },
-    }
-
-    const removeListeners = delegateEventListeners(node, events)
+    })
 
     return {
       destroy() {

@@ -1,4 +1,5 @@
-import { delegateEventListeners } from '$lib/helpers.js'
+import type { DelegateEvent } from '$lib/helpers/events.js'
+import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
@@ -137,8 +138,8 @@ export const createListbox = (config?: ListboxConfig) => {
   let rootNode: HTMLElement | undefined
   let lastSelectedKey: string | undefined
 
-  const onOptionKeyDown = (event: KeyboardEvent) => {
-    const key = (event.target as HTMLElement).dataset.listboxOption as string
+  const onOptionKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
+    const key = event.delegateTarget.dataset.listboxOption as string
 
     const $multiple = get(multiple$),
       $orientation = get(orientation$)
@@ -233,9 +234,8 @@ export const createListbox = (config?: ListboxConfig) => {
     // TODO: Implement typeahead (from interactions)
   }
 
-  const onOptionClick = (event: MouseEvent) => {
-    const key = (event.target as HTMLElement).dataset.listboxOption as string
-    toggle(key)
+  const onOptionClick = (event: DelegateEvent<MouseEvent>) => {
+    toggle(event.delegateTarget.dataset.listboxOption as string)
   }
 
   const useListbox: Action = (node) => {

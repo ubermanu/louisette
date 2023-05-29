@@ -1,10 +1,12 @@
-import { delegateEventListeners, generateId } from '$lib/helpers.js'
+import type { DelegateEvent } from '$lib/helpers/events.js'
+import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
+import { generateId } from '$lib/helpers/uuid.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
 
 export type AccordionConfig = {
-  expanded?: string[] | string
+  expanded?: string[]
   disabled?: string[]
   multiple?: boolean
 }
@@ -15,9 +17,7 @@ export const createAccordion = (config?: AccordionConfig) => {
   const { multiple, expanded, disabled } = { ...config }
 
   const multiple$ = writable(multiple || false)
-  const expanded$ = writable(
-    expanded ? (Array.isArray(expanded) ? expanded : [expanded]) : []
-  )
+  const expanded$ = writable(expanded || [])
   const disabled$ = writable(disabled || [])
 
   const baseId = generateId()
@@ -99,20 +99,10 @@ export const createAccordion = (config?: AccordionConfig) => {
 
   let rootNode: HTMLElement | null = null
 
-  // TODO: Handle the case where the accordion is inside another accordion
-  function getTrigger(event: Event) {
-    const path = event.composedPath()
-    const node = path.find(
-      (el) =>
-        el instanceof HTMLElement && el.hasAttribute('data-accordion-trigger')
-    )
-    return node as HTMLElement | undefined
-  }
-
   /** Toggles the accordion when the trigger is clicked. */
-  const onTriggerClick = (event: MouseEvent) => {
+  const onTriggerClick = (event: DelegateEvent<MouseEvent>) => {
     event.preventDefault()
-    toggle(getTrigger(event)?.dataset.accordionTrigger || '')
+    toggle(event.delegateTarget.dataset.accordionTrigger as string)
   }
 
   /**
@@ -125,8 +115,9 @@ export const createAccordion = (config?: AccordionConfig) => {
    * - Home: Focus the first accordion trigger
    * - End: Focus the last accordion trigger
    */
-  const onTriggerKeyDown = (event: KeyboardEvent) => {
-    const key = getTrigger(event)?.dataset.accordionTrigger || ''
+  const onTriggerKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
+    const target = event.delegateTarget
+    const key = target.dataset.accordionTrigger as string
 
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
@@ -151,12 +142,12 @@ export const createAccordion = (config?: AccordionConfig) => {
 
     if (event.key === 'ArrowUp') {
       event.preventDefault()
-      nodes.previous(getTrigger(event) as HTMLElement)?.focus()
+      nodes.previous(target)?.focus()
     }
 
     if (event.key === 'ArrowDown') {
       event.preventDefault()
-      nodes.next(getTrigger(event) as HTMLElement)?.focus()
+      nodes.next(target)?.focus()
     }
 
     if (event.key === 'Home') {

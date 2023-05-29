@@ -1,6 +1,9 @@
+import {
+  createButton,
+  type ButtonConfig,
+} from '$lib/components/Button/button.js'
+import type { PressEvent } from '$lib/interactions/Press/press.js'
 import { derived, readonly, writable } from 'svelte/store'
-import type { PressEvent } from '../../interactions/Press/press.js'
-import { createButton, type ButtonConfig } from '../Button/button.js'
 
 export type ToggleButtonConfig = ButtonConfig & {
   checked?: boolean

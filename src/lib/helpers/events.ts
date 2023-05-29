@@ -1,8 +1,3 @@
-/** Generates a small random HTML id */
-export function generateId() {
-  return `l-${Math.random().toString(36).substring(2, 12)}`
-}
-
 /**
  * Attach event listeners to a node, delegating to a selector.
  *
@@ -17,7 +12,10 @@ export function generateId() {
  * })
  * ```
  */
-export function delegateEventListeners(node: HTMLElement, eventsMap: DelegateEventMap) {
+export function delegateEventListeners(
+  node: HTMLElement,
+  eventsMap: DelegateEventMap
+) {
   const unsubscribeFns: (() => void)[] = []
 
   for (const [event, selectors] of Object.entries(eventsMap)) {
@@ -28,7 +26,9 @@ export function delegateEventListeners(node: HTMLElement, eventsMap: DelegateEve
           (node) => node instanceof HTMLElement && node.matches(selector)
         )
         if (target) {
-          callback(event)
+          const delegateEvent = event as DelegateEvent<Event>
+          delegateEvent.delegateTarget = target as HTMLElement
+          callback(delegateEvent)
         }
       }
       node.addEventListener(event, handler)
@@ -41,8 +41,13 @@ export function delegateEventListeners(node: HTMLElement, eventsMap: DelegateEve
   }
 }
 
+export type DelegateEvent<T> = {
+  delegateTarget: HTMLElement
+} & T
+
+// TODO: fix event type in handler
 type DelegateEventMap = {
   [event: string]: {
-    [selector: string]: (e?: Event | any) => void
+    [selector: string]: (event: DelegateEvent<unknown> | any) => void
   }
 }
