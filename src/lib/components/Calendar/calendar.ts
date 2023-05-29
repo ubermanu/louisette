@@ -7,8 +7,8 @@ import { derived, get, readonly, writable, type Readable } from 'svelte/store'
 export type CalendarConfig = {
   month?: number
   year?: number
-  selected?: string | string[] | Date | Date[]
-  disabled?: string | string[] | Date | Date[]
+  selected?: string[] | Date[]
+  disabled?: string[] | Date[]
   onMonthChange?: () => void
   onYearChange?: () => void
   onSelectionChange?: () => void
@@ -47,16 +47,12 @@ export const createCalendar = (config?: CalendarConfig) => {
 
   // Contains the dates that are selected (in the format YYYY-MM-DD)
   const selected$ = writable(
-    (selected ? (Array.isArray(selected) ? selected : [selected]) : []).map(
-      (date) => new Date(date).toISOString().slice(0, 10)
-    )
+    (selected || []).map((date) => new Date(date).toISOString().slice(0, 10))
   )
 
   // Contains the dates that are disabled (in the format YYYY-MM-DD)
   const disabled$ = writable(
-    (disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []).map(
-      (date) => new Date(date).toISOString().slice(0, 10)
-    )
+    (disabled || []).map((date) => new Date(date).toISOString().slice(0, 10))
   )
 
   const goToPrevMonth = () => {
@@ -101,6 +97,22 @@ export const createCalendar = (config?: CalendarConfig) => {
 
   const goToToday = () => {
     goToDate(today)
+  }
+
+  const disable = (date: string | Date) => {
+    const key = new Date(date).toISOString().slice(0, 10)
+    disabled$.update((disabled) => {
+      if (disabled.includes(key)) return disabled
+      return [...disabled, key]
+    })
+  }
+
+  const enable = (date: string | Date) => {
+    const key = new Date(date).toISOString().slice(0, 10)
+    disabled$.update((disabled) => {
+      if (!disabled.includes(key)) return disabled
+      return disabled.filter((d) => d !== key)
+    })
   }
 
   const title = derived([month$, year$], ([month, year]) => {
@@ -401,6 +413,8 @@ export const createCalendar = (config?: CalendarConfig) => {
     goToNextYear,
     goToDate,
     goToToday,
+    disable,
+    enable,
   }
 }
 
