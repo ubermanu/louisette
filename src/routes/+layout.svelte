@@ -2,19 +2,10 @@
   import '../app.css'
   import '../highlight.less'
   import Header from './Header.svelte'
-  import { page } from '$app/stores'
-  import Case from 'case'
-
-  $: subtitle = $page.url.pathname.split('/').filter(Boolean).pop() || ''
-  $: subtitle = Case.title(subtitle)
 </script>
 
 <svelte:head>
-  {#if subtitle.length > 0}
-    <title>Louisette | {subtitle}</title>
-  {:else}
-    <title>Louisette</title>
-  {/if}
+  <title>Louisette</title>
 </svelte:head>
 
 <main
