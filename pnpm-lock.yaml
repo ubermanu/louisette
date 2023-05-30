@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 devDependencies:
+  '@fontsource-variable/caveat':
+    specifier: ^5.0.1
+    version: 5.0.1
   '@sveltejs/adapter-auto':
     specifier: ^2.0.1
     version: 2.0.1(@sveltejs/kit@1.15.9)
@@ -315,6 +318,10 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@fontsource-variable/caveat@5.0.1:
+    resolution: {integrity: sha512-3RkMB0IPQx5/7xA11IZc9HxZ+ExR7WzYGWTSSFIVRedN7BvMRuxCsebKhi9q/FpPiv3TDJ1T0jfmFO07+ij1Lg==}
+    dev: true
 
   /@jest/schemas@29.4.3:
     resolution: {integrity: sha512-VLYKXQmtmuEz6IxJsrZwzG9NvtkQsWNnWMsKxqWNu3+CnfzJQhp0WDDKWLVV9hLKr0l3SLLFRqcYHjhtyuDVxg==}

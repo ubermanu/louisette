@@ -3,11 +3,13 @@
   import { Github } from 'lucide-svelte'
   import DarkMode from './DarkMode.svelte'
   import { globals } from 'svelte/internal'
+  import logo from '$images/louisette.svg'
 </script>
 
 <div class="container mx-auto flex max-w-6xl items-center gap-4 p-4 py-4">
-  <a class="mr-auto flex items-center rounded p-4" href="{base}/">
-    <span class="text-2xl">Louisette</span>
+  <a class="mr-auto flex items-center gap-2 rounded p-2" href="{base}/">
+    <img src={logo} alt class="h-9 w-9" />
+    <span class="font-serif text-3xl">Louisette</span>
     <span class="ml-2 rounded bg-accent-400 p-1 text-xs text-accent-900">
       {globals?.LOUISETTE_VERSION || 'dev'}
     </span>
