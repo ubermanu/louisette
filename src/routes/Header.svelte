@@ -2,7 +2,6 @@
   import { base } from '$app/paths'
   import { Github } from 'lucide-svelte'
   import DarkMode from './DarkMode.svelte'
-  import { globals } from 'svelte/internal'
   import logo from '$images/louisette.svg'
 </script>
 
@@ -11,7 +10,7 @@
     <img src={logo} alt class="h-9 w-9" />
     <span class="font-serif text-3xl">Louisette</span>
     <span class="ml-2 rounded bg-accent-400 p-1 text-xs text-accent-900">
-      {globals?.LOUISETTE_VERSION || 'dev'}
+      {LOUISETTE_VERSION}
     </span>
   </a>
   <div class="flex gap-4">
