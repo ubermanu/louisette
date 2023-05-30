@@ -25,6 +25,9 @@ devDependencies:
   autoprefixer:
     specifier: ^10.4.14
     version: 10.4.14(postcss@8.4.23)
+  case:
+    specifier: ^1.6.3
+    version: 1.6.3
   highlight.js:
     specifier: ^11.8.0
     version: 11.8.0
@@ -804,6 +807,11 @@ packages:
 
   /caniuse-lite@1.0.30001489:
     resolution: {integrity: sha512-x1mgZEXK8jHIfAxm+xgdpHpk50IN3z3q3zP261/WS+uvePxW8izXuCu6AHz0lkuYTlATDehiZ/tNyYBdSQsOUQ==}
+    dev: true
+
+  /case@1.6.3:
+    resolution: {integrity: sha512-mzDSXIPaFwVDvZAHqZ9VlbyF4yyXRuX6IvB06WvPYkqJVO24kX1PPhv9bfpKNFZyxYFmmgo03HUiD8iklmJYRQ==}
+    engines: {node: '>= 0.8.0'}
     dev: true
 
   /chai@4.3.7:

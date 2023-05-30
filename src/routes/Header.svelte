@@ -1,8 +1,9 @@
 <script>
   import { base } from '$app/paths'
-  import { Github } from 'lucide-svelte'
+  import { Github, Menu } from 'lucide-svelte'
   import DarkMode from './DarkMode.svelte'
   import logo from '$images/louisette.svg'
+  import { page } from '$app/stores'
 </script>
 
 <div class="container mx-auto flex max-w-6xl items-center gap-4 p-4 pb-0">
@@ -22,5 +23,10 @@
       <Github /> <span class="hidden md:inline">GitHub</span>
     </a>
     <DarkMode />
+    {#if $page.data.components}
+      <div class="cursor-pointer rounded p-2 md:hidden">
+        <Menu />
+      </div>
+    {/if}
   </div>
 </div>
