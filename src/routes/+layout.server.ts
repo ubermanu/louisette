@@ -7,7 +7,7 @@ export const load: LayoutServerLoad = async () => {
   const __dirname = path.dirname(import.meta.url.replace('file://', ''))
 
   // Get the list of components in the component folder
-  const folders = await fs.readdir(path.join(__dirname, './component'))
+  const folders = await fs.readdir(path.join(__dirname, './(docs)/component'))
 
   const components = folders.map((folder) => {
     return {
