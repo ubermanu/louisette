@@ -1,12 +1,12 @@
 <script>
   import { base } from '$app/paths'
-  import { Github, Menu } from 'lucide-svelte'
-  import DarkMode from './DarkMode.svelte'
   import logo from '$images/louisette.svg'
-  import { page } from '$app/stores'
+  import { Github } from 'lucide-svelte'
+  import DarkMode from './DarkMode.svelte'
+  import ToggleSidebar from './ToggleSidebar.svelte'
 </script>
 
-<div class="container mx-auto flex max-w-6xl items-center gap-4 p-4 pb-0">
+<div class="container mx-auto flex max-w-6xl items-center gap-4 p-4">
   <a class="mr-auto flex items-center gap-2 rounded p-2" href="{base}/">
     <img src={logo} alt class="h-9 w-9" />
     <span class="font-serif text-3xl">Louisette</span>
@@ -23,10 +23,6 @@
       <Github /> <span class="hidden md:inline">GitHub</span>
     </a>
     <DarkMode />
-    {#if $page.data.components}
-      <div class="cursor-pointer rounded p-2 md:hidden">
-        <Menu />
-      </div>
-    {/if}
+    <ToggleSidebar />
   </div>
 </div>
