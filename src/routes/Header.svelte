@@ -2,13 +2,14 @@
   import { base } from '$app/paths'
   import { Github } from 'lucide-svelte'
   import DarkMode from './DarkMode.svelte'
+  import { globals } from 'svelte/internal'
 </script>
 
 <div class="container mx-auto flex max-w-6xl items-center gap-4 p-4 py-4">
   <a class="mr-auto flex items-center rounded p-4" href="{base}/">
     <span class="text-2xl">Louisette</span>
     <span class="ml-2 rounded bg-accent-400 p-1 text-xs text-accent-900">
-      {LOUISETTE_VERSION}
+      {globals?.LOUISETTE_VERSION || 'dev'}
     </span>
   </a>
   <div class="flex gap-4">
