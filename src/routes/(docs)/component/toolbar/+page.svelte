@@ -3,6 +3,7 @@
   import PageSource from './example/+page.svelte?raw'
   import ToolbarSource from './example/Toolbar.svelte?raw'
   import ButtonSource from './example/Button.svelte?raw'
+  import SeparatorSource from './example/Separator.svelte?raw'
   import Snippet from '../../Snippet.svelte'
 </script>
 
@@ -40,3 +41,6 @@
 
 <p>Button</p>
 <Snippet code={ButtonSource} />
+
+<p>Separator</p>
+<Snippet code={SeparatorSource} />
