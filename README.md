@@ -21,8 +21,8 @@ npm install louisette
 </script>
 
 <div>
-  <button use:trigger {...triggerAttrs}>Toggle</button>
-  <div {...contentAttrs}>
+  <button use:trigger {...$triggerAttrs}>Toggle</button>
+  <div {...$contentAttrs}>
     <p>Content</p>
   </div>
 </div>
