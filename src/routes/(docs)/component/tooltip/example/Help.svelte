@@ -36,7 +36,7 @@
 <div
   bind:this={floatingEl}
   {...$tooltipAttrs}
-  class="absolute w-max rounded bg-white p-2 text-xs shadow"
+  class="absolute z-10 w-max rounded bg-white p-2 text-xs shadow max-md:max-w-xs"
   class:hidden={!$visible}
   style:left={position.x + 'px'}
   style:top={position.y + 'px'}
