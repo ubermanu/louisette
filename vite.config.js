@@ -12,4 +12,7 @@ export default defineConfig({
   define: {
     LOUISETTE_VERSION: JSON.stringify(version),
   },
+  optimizeDeps: {
+    entries: ['highlight.js'],
+  },
 })
