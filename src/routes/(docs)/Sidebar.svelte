@@ -41,7 +41,7 @@
   }
 
   .sidebar {
-    @apply w-full bg-white p-4 shadow-lg dark:bg-neutral-900 max-lg:fixed max-lg:left-0 max-lg:top-0 max-lg:z-10 max-lg:h-full max-lg:transition-transform max-lg:duration-300 max-lg:ease-in-out lg:block lg:max-h-fit lg:max-w-[300px] lg:overflow-y-auto lg:rounded-lg lg:shadow-none lg:dark:bg-neutral-900 lg:dark:text-neutral-100;
+    @apply w-full bg-white p-4 shadow-lg dark:bg-neutral-900 max-lg:fixed max-lg:left-0 max-lg:top-0 max-lg:z-10 max-lg:h-screen max-lg:overflow-y-scroll max-lg:transition-transform max-lg:duration-300 max-lg:ease-in-out lg:block lg:max-h-fit lg:max-w-[300px] lg:overflow-y-auto lg:rounded-lg lg:shadow-none lg:dark:bg-neutral-900 lg:dark:text-neutral-100;
   }
 
   :global(body.sidebar-shown) {
