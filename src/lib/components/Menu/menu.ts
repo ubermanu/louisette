@@ -5,6 +5,7 @@ import type { Action } from 'svelte/action'
 import { derived, get, readable, writable } from 'svelte/store'
 
 export type MenuConfig = {
+  submenu?: boolean
   disabled?: string[]
   orientation?: 'horizontal' | 'vertical'
 }
@@ -12,7 +13,7 @@ export type MenuConfig = {
 export type Menu = ReturnType<typeof createMenu>
 
 export const createMenu = (config?: MenuConfig) => {
-  const { disabled, orientation } = { ...config }
+  const { disabled, orientation, submenu = true } = { ...config }
 
   const disabled$ = writable(disabled || [])
   const orientation$ = writable(orientation || 'vertical')
@@ -80,6 +81,23 @@ export const createMenu = (config?: MenuConfig) => {
     ) {
       event.preventDefault()
       nodes.next(target)?.focus()
+    }
+
+    if (submenu) {
+      if (
+        event.key === 'Escape' ||
+        (event.key === 'ArrowLeft' && $orientation === 'vertical') ||
+        (event.key === 'ArrowUp' && $orientation === 'horizontal')
+      ) {
+        // TODO: Implement submenu behaviour (close submenu and focus parent)
+      }
+
+      if (
+        (event.key === 'ArrowRight' && $orientation === 'vertical') ||
+        (event.key === 'ArrowDown' && $orientation === 'horizontal')
+      ) {
+        // TODO: Implement submenu behaviour (open submenu)
+      }
     }
 
     if (event.key === 'Home') {

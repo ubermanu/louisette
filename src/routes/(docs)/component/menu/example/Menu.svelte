@@ -6,6 +6,10 @@
   setContext('menu', menuContext)
 </script>
 
-<div use:menu {...$menuAttrs}>
+<ul
+  use:menu
+  {...$menuAttrs}
+  class="flex w-fit min-w-[10rem] flex-col gap-1 rounded bg-white p-2 shadow dark:bg-neutral-900"
+>
   <slot />
-</div>
+</ul>

@@ -5,8 +5,10 @@
 </script>
 
 <Menu>
-  <MenuItem>Item 1</MenuItem>
-  <MenuItem>Item 2</MenuItem>
+  <MenuItem href="#">New file</MenuItem>
+  <MenuItem href="#">Save</MenuItem>
+  <MenuItem href="#">Save as...</MenuItem>
   <MenuDivider />
-  <MenuItem>Item 3</MenuItem>
+  <MenuItem href="#">Settings</MenuItem>
+  <MenuItem href="#">Exit</MenuItem>
 </Menu>
