@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createTooltip } from '../tooltip.js'
+  import { createTooltip } from '$lib'
 
   const { trigger, triggerAttrs, tooltipAttrs } = createTooltip()
 </script>

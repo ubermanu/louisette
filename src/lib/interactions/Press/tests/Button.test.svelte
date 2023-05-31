@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy } from 'svelte'
-  import { usePress } from '../press'
+  import { usePress } from '$lib'
 
   const dispatch = createEventDispatcher()
 

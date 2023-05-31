@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createSwitch } from '../switch.js'
+  import { createSwitch } from '$lib'
 
   export let defaults = {}
 

@@ -13,6 +13,10 @@ const config = {
     paths: {
       base: process.env.SVELTEKIT_BASE_URL || '',
     },
+
+    alias: {
+      $images: './src/images',
+    },
   },
 
   preprocess: vitePreprocess(),

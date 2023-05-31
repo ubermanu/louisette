@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createTabs } from '../tabs.js'
+  import { createTabs } from '$lib'
 
   export let defaults = {}
   export let items: { id: number; title: string; content: string }[] = []

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte'
-  import { useTypeAhead } from '../typeAhead.js'
+  import { useTypeAhead } from '$lib'
 
   const dispatch = createEventDispatcher()
 

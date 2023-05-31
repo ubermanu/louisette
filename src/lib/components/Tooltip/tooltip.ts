@@ -1,4 +1,4 @@
-import { generateId } from '$lib/helpers.js'
+import { generateId } from '$lib/helpers/uuid.js'
 import type { Action } from 'svelte/action'
 import { derived, readable, readonly, writable } from 'svelte/store'
 
@@ -6,49 +6,49 @@ export type Tooltip = ReturnType<typeof createTooltip>
 
 export const createTooltip = () => {
   const tooltipId = generateId()
-  const opened$ = writable(false)
+  const visible$ = writable(false)
 
-  const tooltipAttrs = derived(opened$, (opened) => ({
+  const tooltipAttrs = derived(visible$, (visible) => ({
     id: tooltipId,
     role: 'tooltip',
-    inert: !opened,
-    'aria-hidden': !opened ? 'true' : undefined,
+    inert: !visible ? '' : undefined,
+    'aria-hidden': !visible,
   }))
 
   const triggerAttrs = readable({
     'aria-describedby': tooltipId,
   })
 
-  const open = () => {
-    opened$.set(true)
+  const show = () => {
+    visible$.set(true)
   }
 
-  const close = () => {
-    opened$.set(false)
+  const hide = () => {
+    visible$.set(false)
   }
 
   const onTriggerPointerEnter = (event: PointerEvent) => {
-    open()
+    show()
     event.currentTarget?.addEventListener('pointerleave', onTriggerPointerLeave)
   }
 
   const onTriggerPointerLeave = () => {
-    close()
+    hide()
   }
 
   const onTriggerKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
-      close()
+      hide()
     }
   }
 
   const onTriggerFocus = (event: FocusEvent) => {
-    open()
+    show()
     event.currentTarget?.addEventListener('blur', onTriggerBlur)
   }
 
   const onTriggerBlur = () => {
-    close()
+    hide()
   }
 
   // TODO: The tooltip should keep open when the mouse is over the tooltip
@@ -67,11 +67,11 @@ export const createTooltip = () => {
   }
 
   return {
-    opened: readonly(opened$),
+    visible: readonly(visible$),
     tooltipAttrs,
     triggerAttrs,
     trigger: useTrigger,
-    open,
-    close,
+    show,
+    hide,
   }
 }

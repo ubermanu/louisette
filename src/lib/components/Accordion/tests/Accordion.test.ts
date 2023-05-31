@@ -206,8 +206,6 @@ describe('Accordion', async () => {
       },
     })
 
-    await fireEvent.focus(getByTestId('accordion-item-1-trigger'))
-
     await fireEvent.keyDown(getByTestId('accordion-item-1-trigger'), {
       key: 'ArrowDown',
     })
@@ -226,8 +224,6 @@ describe('Accordion', async () => {
         ],
       },
     })
-
-    await fireEvent.focus(getByTestId('accordion-item-3-trigger'))
 
     await fireEvent.keyDown(getByTestId('accordion-item-3-trigger'), {
       key: 'ArrowUp',
@@ -248,8 +244,6 @@ describe('Accordion', async () => {
       },
     })
 
-    await fireEvent.focus(getByTestId('accordion-item-3-trigger'))
-
     await fireEvent.keyDown(getByTestId('accordion-item-3-trigger'), {
       key: 'Home',
     })
@@ -268,8 +262,6 @@ describe('Accordion', async () => {
         ],
       },
     })
-
-    await fireEvent.focus(getByTestId('accordion-item-1-trigger'))
 
     await fireEvent.keyDown(getByTestId('accordion-item-1-trigger'), {
       key: 'End',

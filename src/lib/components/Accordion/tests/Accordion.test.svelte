@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createAccordion } from '../accordion'
+  import { createAccordion } from '$lib'
 
   export let items: { id: number; label: string; content: string }[] = []
   export let defaults = {}

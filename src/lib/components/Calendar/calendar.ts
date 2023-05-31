@@ -1,4 +1,5 @@
-import { delegate } from '$lib/helpers.js'
+import type { DelegateEvent } from '$lib/helpers/events.js'
+import { delegateEventListeners } from '$lib/helpers/events.js'
 import { tick } from 'svelte'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable, type Readable } from 'svelte/store'
@@ -6,8 +7,8 @@ import { derived, get, readonly, writable, type Readable } from 'svelte/store'
 export type CalendarConfig = {
   month?: number
   year?: number
-  selected?: string | string[] | Date | Date[]
-  disabled?: string | string[] | Date | Date[]
+  selected?: string[] | Date[]
+  disabled?: string[] | Date[]
   onMonthChange?: () => void
   onYearChange?: () => void
   onSelectionChange?: () => void
@@ -46,16 +47,12 @@ export const createCalendar = (config?: CalendarConfig) => {
 
   // Contains the dates that are selected (in the format YYYY-MM-DD)
   const selected$ = writable(
-    (selected ? (Array.isArray(selected) ? selected : [selected]) : []).map(
-      (date) => new Date(date).toISOString().slice(0, 10)
-    )
+    (selected || []).map((date) => new Date(date).toISOString().slice(0, 10))
   )
 
   // Contains the dates that are disabled (in the format YYYY-MM-DD)
   const disabled$ = writable(
-    (disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []).map(
-      (date) => new Date(date).toISOString().slice(0, 10)
-    )
+    (disabled || []).map((date) => new Date(date).toISOString().slice(0, 10))
   )
 
   const goToPrevMonth = () => {
@@ -102,6 +99,22 @@ export const createCalendar = (config?: CalendarConfig) => {
     goToDate(today)
   }
 
+  const disable = (date: string | Date) => {
+    const key = new Date(date).toISOString().slice(0, 10)
+    disabled$.update((disabled) => {
+      if (disabled.includes(key)) return disabled
+      return [...disabled, key]
+    })
+  }
+
+  const enable = (date: string | Date) => {
+    const key = new Date(date).toISOString().slice(0, 10)
+    disabled$.update((disabled) => {
+      if (!disabled.includes(key)) return disabled
+      return disabled.filter((d) => d !== key)
+    })
+  }
+
   const title = derived([month$, year$], ([month, year]) => {
     const date = new Date(year, month)
     const formatter = new Intl.DateTimeFormat('en', { month: 'long' })
@@ -129,7 +142,7 @@ export const createCalendar = (config?: CalendarConfig) => {
     goToPrevMonth()
   }
 
-  const onPrevMonthKeyDown = (event: KeyboardEvent) => {
+  const onPrevMonthKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
       goToPrevMonth()
@@ -140,7 +153,7 @@ export const createCalendar = (config?: CalendarConfig) => {
     goToNextMonth()
   }
 
-  const onNextMonthKeyDown = (event: KeyboardEvent) => {
+  const onNextMonthKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
       goToNextMonth()
@@ -148,11 +161,9 @@ export const createCalendar = (config?: CalendarConfig) => {
   }
 
   // TODO: Add support for selecting multiple dates (e.g. for a range)
-  const onDayClick = (event: MouseEvent) => {
-    const target = event.target as HTMLElement
-    const key = target.dataset.calendarDay || ''
-
-    if (!key) return
+  const onDayClick = (event: DelegateEvent<MouseEvent>) => {
+    const target = event.delegateTarget
+    const key = target.dataset.calendarDay as string
 
     const parts = key.split('-')
     const date = new Date(+parts[0], +parts[1] - 1, +parts[2])
@@ -162,11 +173,9 @@ export const createCalendar = (config?: CalendarConfig) => {
   }
 
   // TODO: keyboard navigation
-  const onDayKeyDown = (event: KeyboardEvent) => {
-    const target = event.target as HTMLElement
-    const key = target.dataset.calendarDay || ''
-
-    if (!key) return
+  const onDayKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
+    const target = event.delegateTarget
+    const key = target.dataset.calendarDay as string
 
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
@@ -247,7 +256,7 @@ export const createCalendar = (config?: CalendarConfig) => {
   const useCalendar: Action = (node) => {
     rootNode = node
 
-    const events = {
+    const removeListeners = delegateEventListeners(node, {
       click: {
         '[data-calendar-prev-month]': onPrevMonthClick,
         '[data-calendar-next-month]': onNextMonthClick,
@@ -258,9 +267,7 @@ export const createCalendar = (config?: CalendarConfig) => {
         '[data-calendar-next-month]': onNextMonthKeyDown,
         '[data-calendar-day]': onDayKeyDown,
       },
-    }
-
-    const removeListeners = delegate(node, events)
+    })
 
     return {
       destroy() {
@@ -406,6 +413,8 @@ export const createCalendar = (config?: CalendarConfig) => {
     goToNextYear,
     goToDate,
     goToToday,
+    disable,
+    enable,
   }
 }
 

@@ -134,7 +134,7 @@ describe('Calendar', async () => {
   test('The first day of the month is focusable, if the selected day is not in the current month', async () => {
     const { getByTestId } = render(CalendarTest, {
       props: {
-        defaults: { month: 1, year: 2020, selected: '2020-01-31' },
+        defaults: { month: 1, year: 2020, selected: ['2020-01-31'] },
       },
     })
 

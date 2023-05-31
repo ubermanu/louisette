@@ -1,6 +1,9 @@
-import { delegate } from '$lib/helpers.js'
+import type { DelegateEvent } from '$lib/helpers/events.js'
+import { delegateEventListeners } from '$lib/helpers/events.js'
+import { traveller } from '$lib/helpers/traveller.js'
+import { activeElement } from '$lib/stores/activeElement.js'
 import type { Action } from 'svelte/action'
-import { derived, get, readable, writable } from 'svelte/store'
+import { derived, get, writable } from 'svelte/store'
 
 export type ToolbarConfig = {
   orientation?: 'horizontal' | 'vertical'
@@ -12,32 +15,40 @@ export const createToolbar = (config?: ToolbarConfig) => {
   const { orientation } = { ...config }
 
   const orientation$ = writable(orientation || 'horizontal')
-  const focused$ = writable('')
 
   const toolbarAttrs = derived([orientation$], ([orientation]) => ({
     role: 'toolbar',
     'aria-orientation': orientation,
   }))
 
-  const itemAttrs = readable((key: string) => ({
-    'data-toolbar-item': key,
-    tabIndex: -1,
-    inert: '',
-  }))
+  // The last focused item key in the toolbar
+  const focused$ = writable<string | null>(null)
+
+  const itemAttrs = derived([focused$], ([focused]) => {
+    return (key: string) => {
+      // Find a prettier way to do this (causes a re-render)
+      if (!focused) {
+        focused$.set(key)
+      }
+      return {
+        'data-toolbar-item': key,
+        tabIndex: focused === key ? 0 : -1,
+      }
+    }
+  })
 
   let rootNode: HTMLElement | null = null
 
-  const onItemKeyDown = (event: KeyboardEvent) => {
-    const currentTarget = event.target as HTMLElement
+  const onItemKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
+    const target = event.delegateTarget
 
-    const items = rootNode?.querySelectorAll(
-      '[data-toolbar-item]'
-    ) as NodeListOf<HTMLElement>
-    if (!items) return
+    if (!rootNode) {
+      console.warn('Toolbar root node not found.')
+      return
+    }
 
-    const currentIndex = Array.from(items).indexOf(currentTarget)
-    if (currentIndex === -1) return
-
+    // TODO: Handle disabled items
+    const nodes = traveller(rootNode, '[data-toolbar-item]')
     const $orientation = get(orientation$)
 
     if (
@@ -45,8 +56,7 @@ export const createToolbar = (config?: ToolbarConfig) => {
       (event.key === 'ArrowUp' && $orientation === 'vertical')
     ) {
       event.preventDefault()
-      const prevIndex = currentIndex === 0 ? items.length - 1 : currentIndex - 1
-      items[prevIndex]?.focus()
+      nodes.previous(target)?.focus()
     }
 
     if (
@@ -54,35 +64,39 @@ export const createToolbar = (config?: ToolbarConfig) => {
       (event.key === 'ArrowDown' && $orientation === 'vertical')
     ) {
       event.preventDefault()
-      const nextIndex = currentIndex === items.length - 1 ? 0 : currentIndex + 1
-      items[nextIndex]?.focus()
+      nodes.next(target)?.focus()
     }
 
     if (event.key === 'Home') {
       event.preventDefault()
-      items[0]?.focus()
+      nodes.first()?.focus()
     }
 
     if (event.key === 'End') {
       event.preventDefault()
-      items[items.length - 1]?.focus()
+      nodes.last()?.focus()
     }
   }
 
   const useToolbar: Action = (node) => {
     rootNode = node
 
-    const events = {
+    const removeListeners = delegateEventListeners(node, {
       keydown: {
         '[data-toolbar-item]': onItemKeyDown,
       },
-    }
+    })
 
-    const removeListeners = delegate(node, events)
+    const unsubscribe = activeElement.subscribe((el) => {
+      if (rootNode && el && rootNode.contains(el)) {
+        focused$.set(el.dataset.toolbarItem || null)
+      }
+    })
 
     return {
       destroy() {
         removeListeners()
+        unsubscribe()
       },
     }
   }

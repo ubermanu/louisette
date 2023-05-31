@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createToggleButton } from '../toggleButton'
+  import { createToggleButton } from '$lib'
 
   export let defaults = {}
 

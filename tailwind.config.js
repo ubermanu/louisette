@@ -4,6 +4,9 @@ export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
     extend: {
+      fontFamily: {
+        serif: ['Caveat Variable', 'serif'],
+      },
       colors: {
         accent: {
           DEFAULT: '#da7c0f',

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createButton } from '../button'
+  import { createButton } from '$lib'
 
   export let defaults = {}
 

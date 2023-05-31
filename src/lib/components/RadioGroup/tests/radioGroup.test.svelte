@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createRadioGroup } from '../radioGroup.js'
+  import { createRadioGroup } from '$lib'
 
   export const defaults = {}
 
