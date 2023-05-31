@@ -43,6 +43,7 @@
   },
   "prettier": "@ubermanu/prettier-config",
   "devDependencies": {
+    "@floating-ui/dom": "^1.2.9",
     "@fontsource-variable/caveat": "^5.0.1",
     "@sveltejs/adapter-auto": "^2.0.1",
     "@sveltejs/adapter-static": "^2.0.2",

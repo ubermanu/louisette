@@ -1,6 +1,9 @@
 lockfileVersion: '6.0'
 
 devDependencies:
+  '@floating-ui/dom':
+    specifier: ^1.2.9
+    version: 1.2.9
   '@fontsource-variable/caveat':
     specifier: ^5.0.1
     version: 5.0.1
@@ -321,6 +324,16 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@floating-ui/core@1.2.6:
+    resolution: {integrity: sha512-EvYTiXet5XqweYGClEmpu3BoxmsQ4hkj3QaYA6qEnigCWffTP3vNRwBReTdrwDwo7OoJ3wM8Uoe9Uk4n+d4hfg==}
+    dev: true
+
+  /@floating-ui/dom@1.2.9:
+    resolution: {integrity: sha512-sosQxsqgxMNkV3C+3UqTS6LxP7isRLwX8WMepp843Rb3/b0Wz8+MdUkxJksByip3C2WwLugLHN1b4ibn//zKwQ==}
+    dependencies:
+      '@floating-ui/core': 1.2.6
+    dev: true
 
   /@fontsource-variable/caveat@5.0.1:
     resolution: {integrity: sha512-3RkMB0IPQx5/7xA11IZc9HxZ+ExR7WzYGWTSSFIVRedN7BvMRuxCsebKhi9q/FpPiv3TDJ1T0jfmFO07+ij1Lg==}
