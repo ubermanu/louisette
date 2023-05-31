@@ -1,5 +1,6 @@
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
+import { traveller } from '$lib/helpers/traveller.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, writable } from 'svelte/store'
 
@@ -34,11 +35,7 @@ export const createMenu = (config?: MenuConfig) => {
 
   const onItemClick = (event: DelegateEvent<MouseEvent>) => {
     const target = event.delegateTarget
-    const key = target?.dataset.menuItem || ''
-
-    if (!key) {
-      return
-    }
+    const key = target?.dataset.menuItem as string
 
     if (get(disabled$).includes(key)) {
       event.preventDefault()
@@ -48,11 +45,7 @@ export const createMenu = (config?: MenuConfig) => {
 
   const onItemKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
     const target = event.delegateTarget
-    const key = target?.dataset.menuItem || ''
-
-    if (!key) {
-      return
-    }
+    const key = target?.dataset.menuItem as string
 
     const $disabled = get(disabled$)
 
@@ -62,28 +55,41 @@ export const createMenu = (config?: MenuConfig) => {
       return
     }
 
+    if (!rootNode) {
+      console.warn('No root node found for menu')
+      return
+    }
+
     const $orientation = get(orientation$)
 
-    // TODO: Handle disabled items
+    const nodes = traveller(rootNode, '[data-menu-item]', (el) => {
+      return $disabled.includes(el.dataset.menuItem as string)
+    })
+
     if (
       (event.key === 'ArrowLeft' && $orientation === 'horizontal') ||
       (event.key === 'ArrowUp' && $orientation === 'vertical')
     ) {
       event.preventDefault()
-      const previous = target?.previousElementSibling as HTMLElement | null
-      previous?.focus()
-      return
+      nodes.previous(target)?.focus()
     }
 
-    // TODO: Handle disabled items
     if (
       (event.key === 'ArrowRight' && $orientation === 'horizontal') ||
       (event.key === 'ArrowDown' && $orientation === 'vertical')
     ) {
       event.preventDefault()
-      const next = target?.nextElementSibling as HTMLElement | null
-      next?.focus()
-      return
+      nodes.next(target)?.focus()
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault()
+      nodes.first()?.focus()
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault()
+      nodes.last()?.focus()
     }
   }
 
