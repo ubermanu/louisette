@@ -5,9 +5,27 @@
 </script>
 
 <Menu>
-  <MenuItem href="#">New file</MenuItem>
-  <MenuItem href="#">Save</MenuItem>
-  <MenuItem href="#">Save as...</MenuItem>
+  <MenuItem href="#">New tab</MenuItem>
+  <MenuItem href="#">New window</MenuItem>
+  <MenuDivider />
+  <MenuItem href="#">
+    History
+    <Menu slot="submenu">
+      <MenuItem href="#">Show full history</MenuItem>
+      <MenuItem href="#">History by site</MenuItem>
+      <MenuItem href="#">Recently closed</MenuItem>
+      <MenuItem href="#">Tabs from other devices</MenuItem>
+    </Menu>
+  </MenuItem>
+  <MenuItem href="#">Downloads</MenuItem>
+  <MenuItem href="#">
+    Bookmarks
+    <Menu slot="submenu">
+      <MenuItem href="#">Show all bookmarks</MenuItem>
+      <MenuItem href="#">Bookmark manager</MenuItem>
+      <MenuItem href="#">Add bookmark</MenuItem>
+    </Menu>
+  </MenuItem>
   <MenuDivider />
   <MenuItem href="#">Settings</MenuItem>
   <MenuItem href="#">Exit</MenuItem>

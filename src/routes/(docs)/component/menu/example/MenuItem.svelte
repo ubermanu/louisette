@@ -1,30 +1,38 @@
 <script lang="ts">
-  import type { Menu } from '$lib'
+  import { useHover, useFocusVisible, type Menu } from '$lib'
   import { getContext } from 'svelte'
+  import { ChevronRight } from 'lucide-svelte'
 
-  // Define the item as a link
-  export let href: string | null = null
+  export let href: string
 
   // Generate a random key for this menu item
   const key = Math.random().toString(36).substring(7)
 
   const { itemAttrs } = getContext<Menu>('menu')
+
+  const hasSubmenu = $$slots.submenu !== undefined
+
+  const { hoverEvents, hovering } = useHover()
+  const { focusEvents, focused } = useFocusVisible()
+
+  // TODO: Add proper menu navigation
 </script>
 
-<li>
-  {#if href}
-    <a {...$itemAttrs(key)} {href} class="item">
-      <slot />
-    </a>
-  {:else}
-    <button {...$itemAttrs(key)} on:click class="item">
-      <slot />
-    </button>
+<li class:relative={hasSubmenu} use:hoverEvents use:focusEvents>
+  <a
+    {...$itemAttrs(key)}
+    {href}
+    class="flex items-center justify-between gap-2 rounded-sm px-4 py-1 text-sm hover:bg-neutral-200 dark:hover:bg-neutral-700"
+    aria-haspopup={hasSubmenu ? 'true' : undefined}
+  >
+    <span><slot /></span>
+    {#if hasSubmenu}
+      <ChevronRight class="h-4 w-4" />
+    {/if}
+  </a>
+  {#if hasSubmenu && ($hovering || $focused)}
+    <div class="absolute left-full top-0 z-10 -mt-2 pl-2 shadow-lg">
+      <slot name="submenu" />
+    </div>
   {/if}
 </li>
-
-<style lang="postcss">
-  .item {
-    @apply block rounded-sm px-4 py-1 text-sm hover:bg-neutral-200 dark:hover:bg-neutral-700;
-  }
-</style>
