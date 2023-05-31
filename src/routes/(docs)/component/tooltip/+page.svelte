@@ -12,6 +12,16 @@
   an element such as a button or link.
 </p>
 
+<p>
+  <a
+    href="https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/"
+    target="_blank"
+    rel="noopener"
+  >
+    WAI-ARIA: Tooltip Pattern
+  </a>
+</p>
+
 <h2>Example</h2>
 
 <div>
