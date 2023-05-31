@@ -1,8 +1,9 @@
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
+import { activeElement } from '$lib/stores/activeElement.js'
 import type { Action } from 'svelte/action'
-import { derived, get, readable, writable } from 'svelte/store'
+import { derived, get, writable } from 'svelte/store'
 
 export type ToolbarConfig = {
   orientation?: 'horizontal' | 'vertical'
@@ -20,21 +21,19 @@ export const createToolbar = (config?: ToolbarConfig) => {
     'aria-orientation': orientation,
   }))
 
-  // The key of the first rendered item (not disabled)
-  // FIXME: This is a really hacky way to do this
-  let firstItemKey: string | undefined
+  // The last focused item key in the toolbar
+  const focused$ = writable<string | null>(null)
 
-  const isFocusable = (key: string) => {
-    return firstItemKey === key
-  }
-
-  const itemAttrs = readable((key: string) => {
-    if (!firstItemKey) {
-      firstItemKey = key
-    }
-    return {
-      'data-toolbar-item': key,
-      tabIndex: isFocusable(key) ? 0 : -1,
+  const itemAttrs = derived([focused$], ([focused]) => {
+    return (key: string) => {
+      // Find a prettier way to do this (causes a re-render)
+      if (!focused) {
+        focused$.set(key)
+      }
+      return {
+        'data-toolbar-item': key,
+        tabIndex: focused === key ? 0 : -1,
+      }
     }
   })
 
@@ -48,6 +47,7 @@ export const createToolbar = (config?: ToolbarConfig) => {
       return
     }
 
+    // TODO: Handle disabled items
     const nodes = traveller(rootNode, '[data-toolbar-item]')
     const $orientation = get(orientation$)
 
@@ -87,9 +87,16 @@ export const createToolbar = (config?: ToolbarConfig) => {
       },
     })
 
+    const unsubscribe = activeElement.subscribe((el) => {
+      if (rootNode && el && rootNode.contains(el)) {
+        focused$.set(el.dataset.toolbarItem || null)
+      }
+    })
+
     return {
       destroy() {
         removeListeners()
+        unsubscribe()
       },
     }
   }

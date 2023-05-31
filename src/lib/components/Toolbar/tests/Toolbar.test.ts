@@ -101,4 +101,28 @@ describe('Toolbar', () => {
     })
     expect(document.activeElement).toBe(getByTestId('toolbar-item-bold'))
   })
+
+  test('The last focused item should be focusable', async () => {
+    const { getByTestId } = render(ToolbarTest, {
+      props: {
+        items: [
+          { id: 'bold', label: 'B' },
+          { id: 'italic', label: 'I' },
+          { id: 'underline', label: 'U' },
+        ],
+      },
+    })
+
+    await fireEvent.keyDown(getByTestId('toolbar-item-bold'), { key: 'End' })
+
+    expect(document.activeElement).toBe(getByTestId('toolbar-item-underline'))
+
+    expect(getByTestId('toolbar-item-bold').getAttribute('tabindex')).toBe('-1')
+    expect(getByTestId('toolbar-item-italic').getAttribute('tabindex')).toBe(
+      '-1'
+    )
+    expect(getByTestId('toolbar-item-underline').getAttribute('tabindex')).toBe(
+      '0'
+    )
+  })
 })
