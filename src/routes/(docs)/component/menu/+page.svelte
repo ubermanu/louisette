@@ -2,6 +2,9 @@
   import Page from './example/+page.svelte'
   import PageSource from './example/+page.svelte?raw'
   import MenuSource from './example/Menu.svelte?raw'
+  import MenuItemSource from './example/MenuItem.svelte?raw'
+  import MenuDividerSource from './example/MenuDivider.svelte?raw'
+  import Snippet from '../../Snippet.svelte'
 </script>
 
 <h1>Menu</h1>
@@ -25,11 +28,13 @@
 <h2>Sources</h2>
 
 <p>Page</p>
-<code lang="svelte">
-  {PageSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={PageSource} />
 
 <p>Menu</p>
-<code lang="svelte">
-  {MenuSource.replace('$lib', 'louisette')}
-</code>
+<Snippet code={MenuSource} />
+
+<p>MenuItem</p>
+<Snippet code={MenuItemSource} />
+
+<p>MenuDivider</p>
+<Snippet code={MenuDividerSource} />
