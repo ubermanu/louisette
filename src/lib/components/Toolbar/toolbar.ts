@@ -14,18 +14,29 @@ export const createToolbar = (config?: ToolbarConfig) => {
   const { orientation } = { ...config }
 
   const orientation$ = writable(orientation || 'horizontal')
-  const focused$ = writable('')
 
   const toolbarAttrs = derived([orientation$], ([orientation]) => ({
     role: 'toolbar',
     'aria-orientation': orientation,
   }))
 
-  const itemAttrs = readable((key: string) => ({
-    'data-toolbar-item': key,
-    tabIndex: -1,
-    inert: '',
-  }))
+  // The key of the first rendered item (not disabled)
+  // FIXME: This is a really hacky way to do this
+  let firstItemKey: string | undefined
+
+  const isFocusable = (key: string) => {
+    return firstItemKey === key
+  }
+
+  const itemAttrs = readable((key: string) => {
+    if (!firstItemKey) {
+      firstItemKey = key
+    }
+    return {
+      'data-toolbar-item': key,
+      tabIndex: isFocusable(key) ? 0 : -1,
+    }
+  })
 
   let rootNode: HTMLElement | null = null
 
