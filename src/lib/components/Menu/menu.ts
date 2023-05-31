@@ -1,9 +1,10 @@
-import { delegate } from '$lib/helpers.js'
+import type { DelegateEvent } from '$lib/helpers/events.js'
+import { delegateEventListeners } from '$lib/helpers/events.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, writable } from 'svelte/store'
 
 export type MenuConfig = {
-  disabled?: string | string[]
+  disabled?: string[]
   orientation?: 'horizontal' | 'vertical'
 }
 
@@ -12,9 +13,7 @@ export type Menu = ReturnType<typeof createMenu>
 export const createMenu = (config?: MenuConfig) => {
   const { disabled, orientation } = { ...config }
 
-  const disabled$ = writable(
-    disabled ? (Array.isArray(disabled) ? disabled : [disabled]) : []
-  )
+  const disabled$ = writable(disabled || [])
   const orientation$ = writable(orientation || 'vertical')
 
   const menuAttrs = derived([orientation$], ([orientation]) => ({
@@ -33,13 +32,8 @@ export const createMenu = (config?: MenuConfig) => {
     role: 'separator',
   })
 
-  const resolveItemElement = (event: Event) =>
-    (event.target as HTMLElement).closest(
-      '[data-menu-item]'
-    ) as HTMLElement | null
-
-  const onItemClick = (event: MouseEvent) => {
-    const target = resolveItemElement(event)
+  const onItemClick = (event: DelegateEvent<MouseEvent>) => {
+    const target = event.delegateTarget
     const key = target?.dataset.menuItem || ''
 
     if (!key) {
@@ -52,8 +46,8 @@ export const createMenu = (config?: MenuConfig) => {
     }
   }
 
-  const onItemKeyDown = (event: KeyboardEvent) => {
-    const target = resolveItemElement(event)
+  const onItemKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
+    const target = event.delegateTarget
     const key = target?.dataset.menuItem || ''
 
     if (!key) {
@@ -93,17 +87,19 @@ export const createMenu = (config?: MenuConfig) => {
     }
   }
 
+  let rootNode: HTMLElement | null = null
+
   const useMenu: Action = (node) => {
-    const events = {
+    rootNode = node
+
+    const removeListeners = delegateEventListeners(node, {
       click: {
         '[data-menu-item]': onItemClick,
       },
       keydown: {
         '[data-menu-item]': onItemKeyDown,
       },
-    }
-
-    const removeListeners = delegate(node, events)
+    })
 
     return {
       destroy() {
