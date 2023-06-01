@@ -26,13 +26,21 @@ export const createMenu = (config?: MenuConfig) => {
     'aria-orientation': orientation,
   }))
 
+  // TODO: Find a better way to handle this
+  let firstItemKey: string | null = null
+
   // TODO: Handle disabled items
-  const itemAttrs = readable((key: string) => ({
-    role: 'menuitem',
-    'data-menu-item': key,
-    'data-menu': menuId,
-    tabindex: -1,
-  }))
+  const itemAttrs = readable((key: string) => {
+    if (!firstItemKey) {
+      firstItemKey = key
+    }
+    return {
+      role: 'menuitem',
+      'data-menu-item': key,
+      'data-menu': menuId,
+      tabindex: firstItemKey === key ? 0 : -1,
+    }
+  })
 
   const separatorAttrs = readable({
     role: 'separator',
