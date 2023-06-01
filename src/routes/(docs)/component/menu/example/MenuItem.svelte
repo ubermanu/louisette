@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createPopover, useHover, type Menu } from '$lib'
-  import { getContext, tick } from 'svelte'
+  import { getContext, setContext, tick } from 'svelte'
   import { ChevronRight } from 'lucide-svelte'
 
   export let href: string
@@ -14,6 +14,15 @@
   // Get the menu item attributes
   const { itemAttrs, orientation } = getContext<Menu>('menu')
 
+  type Submenu = {
+    key: string
+    show: () => void
+    hide: () => void
+  }
+
+  // Get the parent menu context
+  const parent = getContext<Submenu>('submenu')
+
   // Create a popover for the submenu
   const { triggerAttrs, visible, show, hide } = createPopover()
 
@@ -23,46 +32,50 @@
     onHoverEnd: () => hide(),
   })
 
-  let menuitem: HTMLElement
   let submenuContainer: HTMLElement
 
-  // TODO: Improve keyboard navigation (WIP)
-  const onKeyDown = (event: KeyboardEvent) => {
-    if (!hasSubmenu) {
-      return
+  // Set the submenu context with parent controls
+  setContext('submenu', { key, show, hide })
+
+  // Improve keyboard navigation
+  const onKeyDown = async (event: KeyboardEvent) => {
+    if (
+      parent &&
+      (event.key === 'Escape' ||
+        (event.key === 'ArrowLeft' && $orientation === 'vertical') ||
+        (event.key === 'ArrowUp' && $orientation === 'horizontal'))
+    ) {
+      event.preventDefault()
+      parent?.hide()
+      await tick()
+
+      // TODO: Maybe use a store that references the menu item element, so we can focus it here
+      ;(
+        document.querySelector(
+          `[data-menu-item="${parent.key}"]`
+        ) as HTMLElement
+      )?.focus()
     }
 
     if (
-      (event.key === 'ArrowRight' && $orientation === 'vertical') ||
-      (event.key === 'ArrowDown' && $orientation === 'horizontal')
+      hasSubmenu &&
+      ((event.key === 'ArrowRight' && $orientation === 'vertical') ||
+        (event.key === 'ArrowDown' && $orientation === 'horizontal'))
     ) {
       event.preventDefault()
       show()
-
+      await tick()
       // Focus the first menu item in the submenu
-      // TODO: Find a way to get the submenu instance?
-      tick().then(() => {
-        ;(
-          submenuContainer.querySelector('[data-menu-item]') as HTMLElement
-        )?.focus()
-      })
-    }
-
-    if (
-      event.key === 'Escape' ||
-      (event.key === 'ArrowLeft' && $orientation === 'vertical') ||
-      (event.key === 'ArrowUp' && $orientation === 'horizontal')
-    ) {
-      event.preventDefault()
-      hide()
-      menuitem?.focus()
+      // TODO: Trigger a focus event on the submenu, so it can be redirected to the first focusable element
+      ;(
+        submenuContainer.querySelector('[data-menu-item]') as HTMLElement
+      )?.focus()
     }
   }
 </script>
 
 <li class="relative" use:hover>
   <a
-    bind:this={menuitem}
     {...$itemAttrs(key)}
     {...$triggerAttrs}
     {href}

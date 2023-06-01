@@ -21,7 +21,13 @@
   <MenuItem href="#">
     Bookmarks
     <Menu slot="submenu">
-      <MenuItem href="#">Show all bookmarks</MenuItem>
+      <MenuItem href="#">
+        Show all bookmarks
+        <Menu slot="submenu">
+          <MenuItem href="#">Bookmarks bar</MenuItem>
+          <MenuItem href="#">Other bookmarks</MenuItem>
+        </Menu>
+      </MenuItem>
       <MenuItem href="#">Bookmark manager</MenuItem>
       <MenuItem href="#">Add bookmark</MenuItem>
     </Menu>
