@@ -1,12 +1,18 @@
 <script lang="ts">
-  import { createPopover, useHover, useFocusWithin, type Menu } from '$lib'
+  import {
+    createKey,
+    createPopover,
+    useHover,
+    useFocusWithin,
+    type Menu,
+  } from '$lib'
   import { getContext, setContext, tick } from 'svelte'
   import { ChevronRight } from 'lucide-svelte'
 
   export let href: string
 
   // Generate a random key for this menu item
-  const key = Math.random().toString(36).substring(7)
+  const key = createKey()
 
   // Check if this menu item has a submenu
   const hasSubmenu = $$slots.submenu !== undefined
