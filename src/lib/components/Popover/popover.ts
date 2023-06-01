@@ -1,5 +1,5 @@
 import type { Action } from 'svelte/action'
-import { derived, readable, writable } from 'svelte/store'
+import { derived, readonly, writable } from 'svelte/store'
 
 /**
  * A popover is a transient view that appears above other content on the screen
@@ -77,7 +77,7 @@ export const createPopover = () => {
   }
 
   return {
-    visible: readable(visible$),
+    visible: readonly(visible$),
     triggerAttrs,
     popoverAttrs,
     trigger: useTrigger,
