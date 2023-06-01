@@ -1,6 +1,5 @@
+import { browser } from '$lib/helpers/environment.js'
 import { get, readable } from 'svelte/store'
-
-const browser = typeof window !== 'undefined'
 
 export const activeElement = readable<HTMLElement | null>(null, (set) => {
   if (!browser) {

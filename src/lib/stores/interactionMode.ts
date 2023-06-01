@@ -1,6 +1,5 @@
+import { browser } from '$lib/helpers/environment.js'
 import { readable } from 'svelte/store'
-
-const browser = typeof window !== 'undefined'
 
 type InteractionMode = 'keyboard' | 'pointer' | 'virtual'
 
