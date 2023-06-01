@@ -77,7 +77,7 @@
 <li class="relative" use:hover>
   <a
     {...$itemAttrs(key)}
-    {...$triggerAttrs}
+    {...hasSubmenu ? $triggerAttrs : null}
     {href}
     class="flex items-center justify-between gap-2 rounded-sm px-4 py-1 text-sm hover:bg-neutral-200 dark:hover:bg-neutral-700"
     on:keydown={onKeyDown}
