@@ -1,6 +1,8 @@
 <script>
   import logo from '$images/louisette.svg'
   import { base } from '$app/paths'
+  import { Highlight } from 'svelte-highlight'
+  import bash from 'svelte-highlight/languages/bash'
 </script>
 
 <div class="flex h-[60vh] flex-col items-center justify-center">
@@ -10,6 +12,9 @@
     <b>Louisette</b> is a collection of component primitives for <b>Svelte</b>.
   </p>
   <p class="mt-4">
+    <Highlight language={bash} code="npm install louisette" />
+  </p>
+  <p>
     <a href={`${base}/component/accordion`} class="btn" rel="noopener">
       Get Started
     </a>
