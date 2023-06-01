@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createPopover, useHover, type Menu } from '$lib'
+  import { createPopover, useHover, useFocusWithin, type Menu } from '$lib'
   import { getContext, setContext, tick } from 'svelte'
   import { ChevronRight } from 'lucide-svelte'
 
@@ -72,9 +72,14 @@
       )?.focus()
     }
   }
+
+  // If tabbed away from the menu item, hide the submenu
+  const { focusWithin } = useFocusWithin({
+    onBlurWithin: () => hide(),
+  })
 </script>
 
-<li class="relative" use:hover>
+<li class="relative" use:hover use:focusWithin>
   <a
     {...$itemAttrs(key)}
     {...hasSubmenu ? $triggerAttrs : null}
