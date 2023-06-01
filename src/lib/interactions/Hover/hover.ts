@@ -35,7 +35,7 @@ export const useHover = (config?: HoverConfig) => {
     })
   }
 
-  const hoverEvents: Action = (node) => {
+  const hover: Action = (node) => {
     node.addEventListener('pointerenter', onPointerEnter)
     node.addEventListener('pointerleave', onPointerLeave)
 
@@ -49,6 +49,6 @@ export const useHover = (config?: HoverConfig) => {
 
   return {
     hovering: readonly(hovering$),
-    hoverEvents,
+    hover,
   }
 }

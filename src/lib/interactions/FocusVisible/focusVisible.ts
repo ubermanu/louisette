@@ -13,7 +13,7 @@ export const useFocusVisible = () => {
     focused$.set(false)
   }
 
-  const focusEvents: Action = (node) => {
+  const focusVisible: Action = (node) => {
     const unsubscribe = interactionMode.subscribe((mode) => {
       if (mode !== 'pointer') {
         node.addEventListener('focusin', onFocusIn)
@@ -34,6 +34,6 @@ export const useFocusVisible = () => {
 
   return {
     focused: readonly(focused$),
-    focusEvents,
+    focusVisible,
   }
 }

@@ -1,16 +1,8 @@
-import {
-  usePress,
-  type PressConfig,
-  type PressEvent,
-} from '$lib/interactions/Press/press.js'
+import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 
 export type ButtonConfig = {
   disabled?: boolean
-  onPress?: PressConfig['onPress']
-  onPressStart?: PressConfig['onPressStart']
-  onPressEnd?: PressConfig['onPressEnd']
-  onPressUp?: PressConfig['onPressUp']
 }
 
 export type Button = ReturnType<typeof createButton>
@@ -26,29 +18,35 @@ export const createButton = (config?: ButtonConfig) => {
     tabIndex: disabled ? -1 : 0,
   }))
 
-  // Guard against handlers being called when disabled.
-  const whenEnabled = (handler: ((event?: PressEvent) => void) | undefined) => {
-    if (handler) {
-      return (event?: PressEvent) => {
-        if (get(disabled$)) return
-        handler(event)
-      }
+  const onButtonClick = (event: MouseEvent) => {
+    if (get(disabled$)) {
+      event.preventDefault()
+      return
     }
   }
 
-  const { onPress, onPressStart, onPressEnd, onPressUp } = { ...config }
+  const onButtonKeyDown = (event: KeyboardEvent) => {
+    if (['Enter', ' '].includes(event.key) && get(disabled$)) {
+      event.preventDefault()
+      return
+    }
+  }
 
-  const { pressed, pressEvents } = usePress({
-    onPress: whenEnabled(onPress),
-    onPressStart: whenEnabled(onPressStart),
-    onPressEnd: whenEnabled(onPressEnd),
-    onPressUp: whenEnabled(onPressUp),
-  })
+  const useButton: Action = (node) => {
+    node.addEventListener('click', onButtonClick)
+    node.addEventListener('keydown', onButtonKeyDown)
+
+    return {
+      destroy() {
+        node.removeEventListener('click', onButtonClick)
+        node.removeEventListener('keydown', onButtonKeyDown)
+      },
+    }
+  }
 
   return {
-    pressed,
     disabled: disabled$,
     buttonAttrs,
-    button: pressEvents,
+    button: useButton,
   }
 }

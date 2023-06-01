@@ -2,8 +2,8 @@ import {
   createButton,
   type ButtonConfig,
 } from '$lib/components/Button/button.js'
-import type { PressEvent } from '$lib/interactions/Press/press.js'
-import { derived, readonly, writable } from 'svelte/store'
+import type { Action } from 'svelte/action'
+import { derived, get, readonly, writable } from 'svelte/store'
 
 export type ToggleButtonConfig = ButtonConfig & {
   checked?: boolean
@@ -12,42 +12,81 @@ export type ToggleButtonConfig = ButtonConfig & {
 export type ToggleButton = ReturnType<typeof createToggleButton>
 
 export const createToggleButton = (config?: ToggleButtonConfig) => {
-  const { checked, onPress, ...buttonConfig } = { ...config }
+  const { checked, ...buttonConfig } = { ...config }
 
   const checked$ = writable(checked || false)
 
-  const {
-    buttonAttrs: buttonAttrs$,
-    disabled: disabled$,
-    ...rest
-  } = createButton({
+  const { buttonAttrs: buttonAttrs$, disabled: disabled$ } = createButton({
     ...buttonConfig,
-    onPress: (event?: PressEvent) => {
-      checked$.update((c) => !c)
-      onPress?.(event)
-    },
   })
 
   // Update the aria-pressed attribute based on the checked state
   const toggleButtonAttrs = derived(
     [buttonAttrs$, checked$],
-    ([Attrs, checked]) => ({
-      ...Attrs,
+    ([buttonAttrs, checked]) => ({
+      ...buttonAttrs,
       'aria-pressed': checked,
     })
   )
 
-  // Uncheck the button when disabled
-  disabled$.subscribe((disabled) => {
-    if (disabled) {
-      checked$.set(false)
+  const check = () => {
+    if (get(disabled$)) {
+      return
     }
-  })
+    checked$.set(true)
+  }
+
+  const uncheck = () => {
+    if (get(disabled$)) {
+      return
+    }
+    checked$.set(false)
+  }
+
+  const toggle = () => {
+    if (get(disabled$)) {
+      return
+    }
+    checked$.update((checked) => !checked)
+  }
+
+  const onToggleButtonClick = (event: MouseEvent) => {
+    toggle()
+  }
+
+  const onToggleButtonKeyDown = (event: KeyboardEvent) => {
+    if (['Enter', ' '].includes(event.key)) {
+      event.preventDefault()
+      toggle()
+    }
+  }
+
+  const useToggleButton: Action = (node) => {
+    node.addEventListener('click', onToggleButtonClick)
+    node.addEventListener('keydown', onToggleButtonKeyDown)
+
+    const unsubscribe = disabled$.subscribe((disabled) => {
+      if (disabled) {
+        checked$.set(false)
+      }
+    })
+
+    return {
+      destroy() {
+        node.removeEventListener('click', onToggleButtonClick)
+        node.removeEventListener('keydown', onToggleButtonKeyDown)
+        unsubscribe()
+      },
+    }
+  }
 
   return {
     checked: readonly(checked$),
     disabled: disabled$,
-    buttonAttrs: toggleButtonAttrs,
-    ...rest,
+    toggleButtonAttrs,
+    toggleButton: useToggleButton,
+    check,
+    uncheck,
+    toggle,
   }
 }

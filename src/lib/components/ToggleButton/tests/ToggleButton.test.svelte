@@ -3,9 +3,9 @@
 
   export let defaults = {}
 
-  const { button, buttonAttrs } = createToggleButton(defaults)
+  const { toggleButton, toggleButtonAttrs } = createToggleButton(defaults)
 </script>
 
-<div data-testid="toggle-button" use:button {...$buttonAttrs}>
+<div data-testid="toggle-button" use:toggleButton {...$toggleButtonAttrs}>
   Toggle Button
 </div>

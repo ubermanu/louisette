@@ -62,7 +62,7 @@ export const useTypeAhead = (config?: TypeAheadConfig) => {
     stop()
   }
 
-  const typeAheadEvents: Action = (node) => {
+  const typeAhead: Action = (node) => {
     node.addEventListener('keydown', onKeyDown)
 
     return {
@@ -81,7 +81,7 @@ export const useTypeAhead = (config?: TypeAheadConfig) => {
 
   return {
     typing: readonly(value$),
-    typeAheadEvents,
+    typeAhead,
     stop,
   }
 }

@@ -100,7 +100,8 @@ export const usePress = (config?: PressConfig) => {
     onPressEnd?.(createEvent(event, 'pressend', 'mouse'))
   }
 
-  const pressEvents: Action = (node) => {
+  // TODO: Might be too much handlers, find a way to reduce them
+  const press: Action = (node) => {
     node.addEventListener('keydown', onButtonKeyDown)
     node.addEventListener('pointerdown', onButtonPointerDown)
     node.addEventListener('keyup', onButtonKeyUp)
@@ -122,6 +123,6 @@ export const usePress = (config?: PressConfig) => {
 
   return {
     pressed: readonly(pressed$),
-    pressEvents,
+    press,
   }
 }

@@ -61,7 +61,7 @@ export const useLongPress = (config?: LongPressConfig) => {
   })
 
   return {
-    longPressEvents: pressEvents,
+    longPress,
     ...rest,
   }
 }

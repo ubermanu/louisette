@@ -4,7 +4,7 @@
 
   const dispatch = createEventDispatcher()
 
-  const { pressed, pressEvents } = usePress({
+  const { pressed, press } = usePress({
     onPress: ({ pointerType }) => dispatch('press', { pointerType }),
     onPressStart: ({ pointerType }) => dispatch('press:start', { pointerType }),
     onPressEnd: ({ pointerType }) => dispatch('press:end', { pointerType }),
@@ -20,4 +20,4 @@
   })
 </script>
 
-<button use:pressEvents data-testid="button">Press me</button>
+<button use:press data-testid="button">Press me</button>

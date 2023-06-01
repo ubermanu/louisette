@@ -32,7 +32,6 @@ describe('ToggleButton', async () => {
   test('Pressing enter or space on the button toggles its state', async () => {
     const { getByTestId } = render(ToggleButtonTest)
     await fireEvent.keyDown(getByTestId('toggle-button'), { key: 'Enter' })
-    await fireEvent.keyUp(getByTestId('toggle-button'), { key: 'Enter' })
     expect(getByTestId('toggle-button').getAttribute('aria-pressed')).toBe(
       'true'
     )
@@ -41,14 +40,7 @@ describe('ToggleButton', async () => {
   // TODO: Test the click event to avoid duplication?
   test('Clicking on the button toggles its state', async () => {
     const { getByTestId } = render(ToggleButtonTest)
-    await fireEvent.pointerDown(getByTestId('toggle-button'), {
-      button: 0,
-      pointerType: 'mouse',
-    })
-    await fireEvent.pointerUp(getByTestId('toggle-button'), {
-      button: 0,
-      pointerType: 'mouse',
-    })
+    await fireEvent.click(getByTestId('toggle-button'))
     expect(getByTestId('toggle-button').getAttribute('aria-pressed')).toBe(
       'true'
     )

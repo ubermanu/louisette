@@ -12,13 +12,14 @@
 
   const hasSubmenu = $$slots.submenu !== undefined
 
-  const { hoverEvents, hovering } = useHover()
-  const { focusEvents, focused } = useFocusVisible()
+  const { hover, hovering } = useHover()
+  const { focusVisible, focused } = useFocusVisible()
 
   // TODO: Add proper menu navigation
+  // TODO: Use popover primitive
 </script>
 
-<li class:relative={hasSubmenu} use:hoverEvents use:focusEvents>
+<li class:relative={hasSubmenu} use:hover use:focusVisible>
   <a
     {...$itemAttrs(key)}
     {href}
