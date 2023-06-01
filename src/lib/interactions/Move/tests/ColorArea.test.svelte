@@ -5,12 +5,14 @@
 
   const dispatch = createEventDispatcher()
 
-  const position = writable({ x: 0, y: 0 })
+  let x = 0
+  let y = 0
 
   const { move } = useMove({
     onMove: ({ deltaX, deltaY }) => {
       dispatch('move')
-      position.set({ x: deltaX, y: deltaY })
+      x += deltaX
+      y += deltaY
     },
     onMoveStart: () => dispatch('move:start'),
     onMoveEnd: () => dispatch('move:end'),
@@ -21,8 +23,8 @@
   <div
     use:move
     class="absolute h-10 w-10 rounded-full bg-black"
-    style:left={$position.x + 'px'}
-    style:top={$position.y + 'px'}
+    style:left={x + 'px'}
+    style:top={y + 'px'}
     data-testid="handle"
   />
 </div>

@@ -24,7 +24,12 @@ export const useMove = (config?: MoveConfig) => {
   const moving$ = writable(false)
   let is_moving = false
 
+  let last_client_x = 0
+  let last_client_y = 0
+
   const onPointerDown = (event: PointerEvent) => {
+    last_client_x = event.clientX
+    last_client_y = event.clientY
     moving$.set((is_moving = true))
     onMoveStart?.({
       type: 'movestart',
@@ -44,14 +49,16 @@ export const useMove = (config?: MoveConfig) => {
     if (is_moving) {
       onMove?.({
         type: 'move',
-        deltaX: event.movementX,
-        deltaY: event.movementY,
+        deltaX: event.clientX - last_client_x,
+        deltaY: event.clientY - last_client_y,
         pointerType: event.pointerType as MoveEvent['pointerType'],
         shiftKey: event.shiftKey,
         ctrlKey: event.ctrlKey,
         metaKey: event.metaKey,
         altKey: event.altKey,
       })
+      last_client_x = event.clientX
+      last_client_y = event.clientY
     }
   }
 
@@ -74,6 +81,14 @@ export const useMove = (config?: MoveConfig) => {
   }
 
   const onKeyDown = (event: KeyboardEvent) => {
+    if (
+      !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)
+    ) {
+      return
+    }
+
+    event.preventDefault()
+
     const moveEvent: MoveEvent = {
       type: 'move',
       deltaX: 0,
