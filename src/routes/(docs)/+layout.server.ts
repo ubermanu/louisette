@@ -4,21 +4,29 @@ import path from 'node:path'
 import type { LayoutServerLoad } from './$types.js'
 
 export const load: LayoutServerLoad = async () => {
+  return {
+    sidebar: [
+      await getSidebarSection('Components', 'component'),
+      await getSidebarSection('Interactions', 'interaction'),
+    ],
+  }
+}
+
+const getSidebarSection = async (title: string, sub: string) => {
   const __dirname = path.dirname(import.meta.url.replace('file://', ''))
+  const folders = await fs.readdir(path.join(__dirname, './' + sub))
 
-  // Get the list of components in the component folder
-  const folders = await fs.readdir(path.join(__dirname, './component'))
-
-  const components = folders.map((folder) => {
+  const entries = folders.map((folder) => {
     return {
       name: folder.replace(/-/g, ' ').replace(/\w\S*/g, (txt) => {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
       }),
-      url: `${base}/component/${folder}`,
+      url: `${base}/${sub}/${folder}`,
     }
   })
 
   return {
-    components,
+    title,
+    entries,
   }
 }

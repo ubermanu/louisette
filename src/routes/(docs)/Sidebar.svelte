@@ -2,7 +2,7 @@
   import { page } from '$app/stores'
   import { X } from 'lucide-svelte'
 
-  $: components = $page?.data?.components ?? []
+  $: sidebar = $page?.data?.sidebar ?? []
 </script>
 
 <div class="sidebar">
@@ -17,22 +17,29 @@
     </button>
   </div>
 
-  <nav aria-label="Components">
-    <ul class="space-y-2">
-      {#each components as { name, url }}
-        <li class="w-full">
-          <a
-            href={url}
-            aria-current={$page.url.pathname === url ? 'page' : undefined}
-            class="block w-full rounded-lg px-4 py-2 transition-colors duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800"
-            class:is-active={$page.url.pathname === url}
-          >
-            {name}
-          </a>
-        </li>
-      {/each}
-    </ul>
-  </nav>
+  {#each sidebar as section}
+    <nav class="mb-4">
+      <h3
+        class="p-2 text-xl font-bold capitalize text-neutral-600 dark:text-neutral-400"
+      >
+        {section.title}
+      </h3>
+      <ul class="space-y-1">
+        {#each section.entries as { name, url }}
+          <li class="w-full">
+            <a
+              href={url}
+              aria-current={$page.url.pathname === url ? 'page' : undefined}
+              class="block w-full rounded-lg px-4 py-2 text-sm transition-colors duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800"
+              class:is-active={$page.url.pathname === url}
+            >
+              {name}
+            </a>
+          </li>
+        {/each}
+      </ul>
+    </nav>
+  {/each}
 </div>
 
 <style lang="postcss">

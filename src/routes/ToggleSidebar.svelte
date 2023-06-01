@@ -8,7 +8,7 @@
   })
 </script>
 
-{#if $page.data.components}
+{#if $page.data.sidebar}
   <button
     class="cursor-pointer rounded p-2 lg:hidden"
     on:click={() => {
