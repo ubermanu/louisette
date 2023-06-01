@@ -1,6 +1,7 @@
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
+import { generateId } from '$lib/helpers/uuid.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, writable } from 'svelte/store'
 
@@ -14,11 +15,14 @@ export type Menu = ReturnType<typeof createMenu>
 export const createMenu = (config?: MenuConfig) => {
   const { disabled, orientation } = { ...config }
 
+  const menuId = generateId()
+
   const disabled$ = writable(disabled || [])
   const orientation$ = writable(orientation || 'vertical')
 
   const menuAttrs = derived([orientation$], ([orientation]) => ({
     role: 'menu',
+    id: menuId,
     'aria-orientation': orientation,
   }))
 
@@ -26,6 +30,7 @@ export const createMenu = (config?: MenuConfig) => {
   const itemAttrs = readable((key: string) => ({
     role: 'menuitem',
     'data-menu-item': key,
+    'data-menu': menuId,
     tabindex: -1,
   }))
 
@@ -62,9 +67,13 @@ export const createMenu = (config?: MenuConfig) => {
 
     const $orientation = get(orientation$)
 
-    const nodes = traveller(rootNode, '[data-menu-item]', (el) => {
-      return $disabled.includes(el.dataset.menuItem as string)
-    })
+    const nodes = traveller(
+      rootNode,
+      `[data-menu-item][data-menu="${menuId}"]`,
+      (el) => {
+        return $disabled.includes(el.dataset.menuItem as string)
+      }
+    )
 
     if (
       (event.key === 'ArrowLeft' && $orientation === 'horizontal') ||
@@ -100,10 +109,10 @@ export const createMenu = (config?: MenuConfig) => {
 
     const removeListeners = delegateEventListeners(node, {
       click: {
-        '[data-menu-item]': onItemClick,
+        [`[data-menu-item][data-menu="${menuId}"]`]: onItemClick,
       },
       keydown: {
-        '[data-menu-item]': onItemKeyDown,
+        [`[data-menu-item][data-menu="${menuId}"]`]: onItemKeyDown,
       },
     })
 
