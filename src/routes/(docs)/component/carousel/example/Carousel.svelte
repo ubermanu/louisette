@@ -28,7 +28,7 @@
   {#if controls}
     <button
       {...$previousButtonAttrs}
-      class="absolute left-2 top-1/2 -translate-y-1/2 transform rounded-full bg-white text-neutral-950 shadow dark:bg-neutral-900 dark:text-white"
+      class="absolute left-2 top-1/2 -translate-y-1/2 transform rounded-full bg-white text-neutral-950 shadow hover:bg-neutral-300 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800"
     >
       <svg class="h-6 w-6 md:h-10 md:w-10" viewBox="0 0 24 24">
         <path
@@ -39,7 +39,7 @@
     </button>
     <button
       {...$nextButtonAttrs}
-      class="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-full bg-white text-neutral-950 shadow dark:bg-neutral-900 dark:text-white"
+      class="absolute right-2 top-1/2 -translate-y-1/2 transform rounded-full bg-white text-neutral-950 shadow hover:bg-neutral-300 dark:bg-neutral-900 dark:text-white dark:hover:bg-neutral-800"
     >
       <svg class="h-6 w-6 md:h-10 md:w-10" viewBox="0 0 24 24">
         <path
@@ -53,6 +53,6 @@
     class="absolute bottom-2 left-2 inline-block rounded bg-white px-2 py-1 text-xs text-neutral-950 shadow dark:bg-neutral-900 dark:text-white"
     aria-hidden="true"
   >
-    Status: {$status}
+    {$status}
   </div>
 </div>
