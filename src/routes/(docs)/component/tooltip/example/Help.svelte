@@ -2,7 +2,12 @@
   import { createTooltip } from '$lib'
   import { onDestroy, onMount } from 'svelte'
   import { browser } from '$app/environment'
-  import { computePosition, autoUpdate, type Placement } from '@floating-ui/dom'
+  import {
+    computePosition,
+    autoUpdate,
+    size,
+    type Placement,
+  } from '@floating-ui/dom'
 
   const { trigger, triggerAttrs, tooltipAttrs, visible } = createTooltip()
 
@@ -14,13 +19,26 @@
 
   let cleanup
 
+  const maxSize = size({
+    apply({ availableWidth, availableHeight, elements }) {
+      Object.assign(elements.floating.style, {
+        maxWidth: `${availableWidth}px`,
+        maxHeight: `${availableHeight}px`,
+      })
+    },
+  })
+
+  const updatePosition = async () => {
+    const { x, y } = await computePosition(referenceEl, floatingEl, {
+      placement,
+      middleware: [maxSize],
+    })
+    position = { x, y }
+  }
+
   if (browser) {
     onMount(() => {
-      cleanup = autoUpdate(referenceEl, floatingEl, () => {
-        computePosition(referenceEl, floatingEl, { placement }).then(
-          ({ x, y }) => (position = { x, y })
-        )
-      })
+      cleanup = autoUpdate(referenceEl, floatingEl, updatePosition)
     })
 
     onDestroy(() => {
