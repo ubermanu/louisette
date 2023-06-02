@@ -8,8 +8,8 @@
 <h1>Tooltip</h1>
 
 <p>
-  A tooltip is a small pop-up that appears when a user places their cursor over
-  an element such as a button or link.
+  A <code>tooltip</code> is a small pop-up that appears when a user places their
+  cursor over an element such as a button or link.
 </p>
 
 <p>
