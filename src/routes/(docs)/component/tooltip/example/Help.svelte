@@ -1,7 +1,7 @@
 <script lang="ts">
   import { HelpCircle } from 'lucide-svelte'
   import { createTooltip } from '$lib'
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import { browser } from '$app/environment'
   import { computePosition, autoUpdate, type Placement } from '@floating-ui/dom'
 
@@ -13,13 +13,19 @@
   let floatingEl: HTMLElement
   let position = { x: 0, y: 0 }
 
+  let cleanup
+
   if (browser) {
     onMount(() => {
-      autoUpdate(referenceEl, floatingEl, () => {
+      cleanup = autoUpdate(referenceEl, floatingEl, () => {
         computePosition(referenceEl, floatingEl, { placement }).then(
           ({ x, y }) => (position = { x, y })
         )
       })
+    })
+
+    onDestroy(() => {
+      cleanup?.()
     })
   }
 </script>
