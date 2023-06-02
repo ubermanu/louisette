@@ -1,8 +1,22 @@
 <script lang="ts">
   import { createCalendar } from '$lib'
 
-  const { calendar, nextButtonAttrs, prevButtonAttrs, title, days, weekdays } =
-    createCalendar()
+  export let date: Date | null = null
+
+  const {
+    calendar,
+    nextButtonAttrs,
+    prevButtonAttrs,
+    title,
+    days,
+    weekdays,
+    selected,
+  } = createCalendar({
+    selected: [date],
+  })
+
+  // Update the date when the selected date changes (2-way binding)
+  $: date = $selected[0] ? new Date($selected[0]) : null
 </script>
 
 <div

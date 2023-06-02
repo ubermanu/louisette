@@ -7,7 +7,7 @@
 
 <h1>Calendar</h1>
 
-<p>The calendar component allows the user to select a date.</p>
+<p>The <code>calendar</code> component allows the user to select a date.</p>
 
 <h2>Example</h2>
 
