@@ -2,6 +2,7 @@ import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
 import { activeElement } from '$lib/stores/activeElement.js'
+import { documentVisible } from '$lib/stores/documentVisible.js'
 import { reducedMotion } from '$lib/stores/reducedMotion.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, readonly, writable } from 'svelte/store'
@@ -198,8 +199,10 @@ export const createCarousel = (config?: CarouselConfig) => {
   let wasPlaying = false
 
   const onCarouselMouseEnter = () => {
-    wasPlaying = get(status$) === 'playing'
-    pause()
+    if (!wasPlaying) {
+      wasPlaying = get(status$) === 'playing'
+      pause()
+    }
   }
 
   const onCarouselMouseLeave = () => {
@@ -260,11 +263,25 @@ export const createCarousel = (config?: CarouselConfig) => {
       }
     })
 
+    // Force the carousel to pause when the page is hidden
+    const unsubscribe3 = documentVisible.subscribe((visible) => {
+      if (!visible && !wasPlaying) {
+        if (get(status$) === 'playing') {
+          pause()
+          wasPlaying = true
+        }
+      } else if (visible && wasPlaying) {
+        play()
+        wasPlaying = false
+      }
+    })
+
     return {
       destroy() {
         removeListeners()
         unsubscribe()
         unsubscribe2()
+        unsubscribe3()
         pause()
         rootNode = null
       },
