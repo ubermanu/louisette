@@ -51,5 +51,5 @@ blockquote.warning {
 }
 
 .btn {
-  @apply inline-flex items-center justify-center rounded bg-gradient-to-r from-accent-400 to-accent-500 px-4 py-2 text-sm font-medium text-white shadow;
+  @apply inline-flex select-none items-center justify-center rounded bg-gradient-to-r from-accent-400 to-accent-500 px-4 py-2 text-sm font-medium text-white shadow transition-transform duration-200 ease-in-out active:scale-95;
 }
