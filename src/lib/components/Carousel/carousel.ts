@@ -132,7 +132,6 @@ export const createCarousel = (config?: CarouselConfig) => {
     const keys = getSlideKeys()
 
     if (!keys.length) {
-      console.warn('No slides found for carousel')
       return
     }
 
@@ -154,7 +153,6 @@ export const createCarousel = (config?: CarouselConfig) => {
     const keys = getSlideKeys()
 
     if (!keys.length) {
-      console.warn('No slides found for carousel')
       return
     }
 
