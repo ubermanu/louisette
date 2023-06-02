@@ -8,6 +8,7 @@ export const load: LayoutServerLoad = async () => {
     sidebar: [
       await getSidebarSection('Components', 'component'),
       await getSidebarSection('Interactions', 'interaction'),
+      await getSidebarSection('Stores', 'store'),
     ],
   }
 }
