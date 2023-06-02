@@ -51,7 +51,6 @@ export const createCarousel = (config?: CarouselConfig) => {
     })
   )
 
-  // TODO: Set the correct label according to each slide's position
   const slideAttrs = derived([current$, status$], ([current, status]) => {
     return (key: string) => {
       // Set the current slide if it hasn't been set yet
@@ -59,32 +58,60 @@ export const createCarousel = (config?: CarouselConfig) => {
         current$.set(key)
       }
 
+      let label = ''
+
+      // If the root node is defined, we can now count the number of slides
+      if (rootNode) {
+        const slideKeys = getSlideKeys()
+        label = `${slideKeys.indexOf(key) + 1} / ${slideKeys.length}`
+      }
+
       return {
         role: 'group',
         'aria-roledescription': 'slide',
         'aria-current': current === key ? 'slide' : undefined,
         'data-carousel-slide': key,
-        // 'aria-label': `X of N slides`,
+        'aria-label': label,
         inert: current === key ? undefined : '',
       }
     }
   })
 
-  // TODO: Set the disabled state of the previous button based on the current slide
-  const previousButtonAttrs = derived([current$, loop$], ([current, loop]) => ({
-    'aria-controls': trackId,
-    'aria-label': 'Go to the previous slide',
-    'data-carousel-prev-slide': '',
-    // disabled: !loop && current === '1',
-  }))
+  const previousButtonAttrs = derived([current$, loop$], ([current, loop]) => {
+    let disabled = false
 
-  // TODO: Set the disabled state of the next button based on the current slide
-  const nextButtonAttrs = derived([current$, loop$], ([current, loop]) => ({
-    'aria-controls': trackId,
-    'aria-label': 'Go to the next slide',
-    'data-carousel-next-slide': '',
-    // disabled: !loop && current === '3',
-  }))
+    // Set the disabled state of the previous button if the root node is defined
+    if (rootNode && !loop) {
+      const slideKeys = getSlideKeys()
+      const currentIndex = slideKeys.indexOf(current)
+      disabled = currentIndex === 0
+    }
+
+    return {
+      'aria-controls': trackId,
+      'aria-label': 'Go to the previous slide',
+      'data-carousel-prev-slide': '',
+      disabled,
+    }
+  })
+
+  const nextButtonAttrs = derived([current$, loop$], ([current, loop]) => {
+    let disabled = false
+
+    // Set the disabled state of the next button if the root node is defined
+    if (rootNode && !loop) {
+      const slideKeys = getSlideKeys()
+      const currentIndex = slideKeys.indexOf(current)
+      disabled = currentIndex === slideKeys.length - 1
+    }
+
+    return {
+      'aria-controls': trackId,
+      'aria-label': 'Go to the next slide',
+      'data-carousel-next-slide': '',
+      disabled,
+    }
+  })
 
   const goToSlide = (key: string) => {
     current$.set(key)
