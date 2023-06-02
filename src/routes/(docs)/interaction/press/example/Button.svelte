@@ -7,7 +7,7 @@
 
 <button
   use:press
-  class="inline-flex items-center rounded bg-neutral-200 p-2 shadow-sm hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600"
+  class="inline-flex select-none items-center rounded bg-neutral-200 p-2 shadow-sm hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600"
   class:is-pressed={$pressed}
 >
   <svelte:component this={$pressed ? Smile : Frown} class="mr-2 h-5 w-5" />
