@@ -11,6 +11,10 @@ export const interactionMode = readable<InteractionMode | null>(null, (set) => {
 
   const setInteractionMode = (event: PointerEvent | KeyboardEvent) => {
     if (event instanceof KeyboardEvent) {
+      // If the user is typing text, don't update the interaction mode
+      if (isTypingText(event)) {
+        return
+      }
       set('keyboard')
     } else if (event instanceof PointerEvent) {
       set(isVirtualPointerEvent(event) ? 'virtual' : 'pointer')
@@ -19,8 +23,15 @@ export const interactionMode = readable<InteractionMode | null>(null, (set) => {
     }
   }
 
-  document.addEventListener('keydown', setInteractionMode, true)
-  document.addEventListener('pointerdown', setInteractionMode, true)
+  document.addEventListener('keydown', setInteractionMode, {
+    capture: true,
+    passive: true,
+  })
+
+  document.addEventListener('pointerdown', setInteractionMode, {
+    capture: true,
+    passive: true,
+  })
 
   return () => {
     document.removeEventListener('keydown', setInteractionMode)
@@ -38,3 +49,40 @@ const isVirtualPointerEvent = (event: PointerEvent) => {
       event.pointerType === 'mouse')
   )
 }
+
+const isTypingText = (event: KeyboardEvent) => {
+  const isTextInput =
+    event.target instanceof HTMLInputElement ||
+    event.target instanceof HTMLTextAreaElement ||
+    event.target instanceof HTMLSelectElement
+
+  const isTypingEvent = typingKeys.includes(event.key) || event.key.length === 1
+
+  return isTextInput && isTypingEvent
+}
+
+const typingKeys = [
+  'Backspace',
+  'Tab',
+  'Enter',
+  'Escape',
+  'Space',
+  'Delete',
+  'CapsLock',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'Home',
+  'End',
+  'PageUp',
+  'PageDown',
+  'Insert',
+  'Clear',
+  'Copy',
+  'Cut',
+  'Paste',
+  'SelectAll',
+  'Undo',
+  'Redo',
+]
