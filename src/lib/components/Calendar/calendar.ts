@@ -47,7 +47,9 @@ export const createCalendar = (config?: CalendarConfig) => {
 
   // Contains the dates that are selected (in the format YYYY-MM-DD)
   const selected$ = writable(
-    (selected || []).map((date) => new Date(date).toISOString().slice(0, 10))
+    (selected || [])
+      .map((date) => (date ? new Date(date).toISOString().slice(0, 10) : ''))
+      .filter(Boolean)
   )
 
   // Contains the dates that are disabled (in the format YYYY-MM-DD)
