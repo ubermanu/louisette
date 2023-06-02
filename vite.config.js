@@ -13,6 +13,6 @@ export default defineConfig({
     LOUISETTE_VERSION: JSON.stringify(version),
   },
   optimizeDeps: {
-    entries: ['highlight.js', '@floating-ui/dom'],
+    entries: ['highlight.js', '@floating-ui/dom', 'canvas-confetti'],
   },
 })
