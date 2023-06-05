@@ -28,7 +28,8 @@
     "dist",
     "!dist/**/*.test.*",
     "!dist/**/*.spec.*",
-    "!dist/**/*/example/**/*"
+    "!dist/**/*/example/**/*",
+    "!dist/**/*.svelte"
   ],
   "scripts": {
     "build": "vite build && npm run package",
