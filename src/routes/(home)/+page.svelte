@@ -15,7 +15,7 @@
     <Highlight language={bash} code="npm install louisette" />
   </p>
   <p>
-    <a href={`${base}/component/accordion`} class="btn" rel="noopener">
+    <a href={`${base}/getting-started`} class="btn" rel="noopener">
       Get Started
     </a>
   </p>
