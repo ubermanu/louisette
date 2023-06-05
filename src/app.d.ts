@@ -4,9 +4,13 @@ declare global {
   namespace App {
     // interface Error {}
     // interface Locals {}
-    // interface PageData {}
+    interface PageData {
+      sidebar?: SidebarItem[]
+    }
     // interface Platform {}
   }
 }
 
-export {}
+type SidebarItem = { title: string; href: string; children?: SidebarItem[] }
+
+export { SidebarItem }

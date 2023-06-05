@@ -17,29 +17,50 @@
     </button>
   </div>
 
-  {#each sidebar as section}
-    <nav class="mb-4">
-      <h3
-        class="p-2 text-xl font-bold capitalize text-neutral-600 dark:text-neutral-400"
-      >
-        {section.title}
-      </h3>
+  {#if sidebar.length > 0}
+    <nav>
       <ul class="space-y-1">
-        {#each section.entries as { name, url }}
-          <li class="w-full">
-            <a
-              href={url}
-              aria-current={$page.url.pathname === url ? 'page' : undefined}
-              class="block w-full rounded-lg px-4 py-2 text-sm transition-colors duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800"
-              class:is-active={$page.url.pathname === url}
+        {#each sidebar as item}
+          {#if item.children}
+            <li
+              class="p-2 text-xl font-bold capitalize text-neutral-600 dark:text-neutral-400"
             >
-              {name}
-            </a>
-          </li>
+              {item.title}
+            </li>
+            <ul class="space-y-1">
+              {#each item.children as { title, href }}
+                <li class="w-full">
+                  <a
+                    {href}
+                    aria-current={$page.url.pathname === href
+                      ? 'page'
+                      : undefined}
+                    class="block w-full rounded-lg px-4 py-2 text-sm transition-colors duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800"
+                    class:is-active={$page.url.pathname === href}
+                  >
+                    {title}
+                  </a>
+                </li>
+              {/each}
+            </ul>
+          {:else}
+            <li class="w-full">
+              <a
+                href={item.href}
+                aria-current={$page.url.pathname === item.href
+                  ? 'page'
+                  : undefined}
+                class="block w-full rounded-lg px-4 py-2 text-sm transition-colors duration-200 hover:bg-neutral-200 dark:hover:bg-neutral-800"
+                class:is-active={$page.url.pathname === item.href}
+              >
+                {item.title}
+              </a>
+            </li>
+          {/if}
         {/each}
       </ul>
     </nav>
-  {/each}
+  {/if}
 </div>
 
 <style lang="postcss">
