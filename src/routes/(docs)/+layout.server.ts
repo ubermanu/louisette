@@ -4,47 +4,44 @@ import path from 'node:path'
 import type { SidebarItem } from '../../app.js'
 import type { LayoutServerLoad } from './$types.js'
 
-export const load: LayoutServerLoad = async () => {
-  const docs = await import.meta.glob('/src/docs/**/*.md')
+export const load: LayoutServerLoad = async ({ locals }) => {
+  const docEntries = await import.meta.glob('/src/lib/**/README.md')
 
-  // TODO: Get titles from metadata
-  const slugs = Array.from(Object.entries(docs))
-    .map(([p]) => p.replace(/^\/src\/docs\//, '').replace(/\.md$/, ''))
-    .sort((a, b) => depthCompare(a, b) || a.localeCompare(b))
+  const docs = await Promise.all(
+    Object.keys(docEntries).map(async (path) => {
+      const md = await import(/* @vite-ignore */ path)
+
+      if (!md.metadata.path) {
+        console.warn(`No path found for ${path}`)
+      }
+
+      return {
+        title: md.metadata.title || '',
+        href: `${base}/${md.metadata.path}`,
+        depth: md.metadata.path?.split('/').length || 0,
+      }
+    })
+  )
 
   let sidebar: SidebarItem[] = []
 
-  for (const slug of slugs) {
+  for (const i of docs) {
     // If the slug has no depth, push it
-    if (!slug.includes('/')) {
-      sidebar.push({
-        title: Case.capital(path.basename(slug)),
-        href: `${base}/${slug}`,
-      })
-      continue
-    }
+    if (i.depth === 1) {
+      sidebar.push(i)
+    } else {
+      const parentPath = path.dirname(i.href)
+      const parent = sidebar.find((item) => item.href === parentPath)
 
-    // If the slug has a path, push it to the correct parent
-    if (slug.includes('/')) {
-      const parent = path.dirname(slug)
-      const child = path.basename(slug)
-
-      // If the parent doesn't exist, create it
-      if (!sidebar.find((item) => item.title === parent)) {
+      if (parent) {
+        parent.children?.push(i)
+      } else {
         sidebar.push({
-          title: parent,
-          href: '',
-          children: [],
+          title: Case.capital(parentPath.split('/').pop() || ''),
+          href: parentPath,
+          children: [i],
         })
       }
-
-      // Push the child to the parent
-      sidebar
-        .find((item) => item.title === parent)
-        ?.children?.push({
-          title: Case.capital(child),
-          href: `${base}/${slug}`,
-        })
     }
   }
 

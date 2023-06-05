@@ -2,47 +2,25 @@ import { error } from '@sveltejs/kit'
 import type { PageLoad } from './$types.js'
 
 export const load: PageLoad = async ({ params }) => {
-  const docs = import.meta.glob('/src/docs/**/*.md')
-  const examples = import.meta.glob('/src/examples/**/*/*.svelte')
+  const docEntries = await import.meta.glob('/src/lib/**/README.md')
 
-  let component, metadata
-  let sources = []
-  let example
-
-  for (const path in docs) {
-    if (path.includes(params.path as string)) {
+  const docs = await Promise.all(
+    Object.keys(docEntries).map(async (path) => {
       const md = await import(/* @vite-ignore */ path)
-      component = md.default
-      metadata = md.metadata
-      break
-    }
-  }
-
-  for (const path in examples) {
-    if (path.includes(params.path as string)) {
-      const svelte = await import(/* @vite-ignore */ `${path}?raw&inline`)
-      sources.push({
-        filename: basename(path),
-        code: svelte.default,
-      })
-
-      if (path.endsWith('/+page.svelte')) {
-        const page = await import(/* @vite-ignore */ path)
-        example = page.default
+      return {
+        component: md.default,
+        metadata: md.metadata,
       }
-    }
-  }
+    })
+  )
 
-  if (!component) {
-    throw error(404, 'Not found')
+  const entry = docs.find((doc) => doc.metadata?.path === params.path)
+
+  if (!entry) {
+    throw error(404)
   }
 
   return {
-    component,
-    metadata,
-    example,
-    sources,
+    ...entry,
   }
 }
-
-const basename = (path: string) => path.split('/').pop() || ''

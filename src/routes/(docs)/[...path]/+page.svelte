@@ -19,7 +19,7 @@
   </div>
 {/if}
 
-{#if data.sources.length > 0}
+{#if data.sources?.length > 0}
   <h2>Sources</h2>
   {#each data.sources as source}
     <p>{source.filename}</p>

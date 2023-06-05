@@ -3,7 +3,9 @@
 declare global {
   namespace App {
     // interface Error {}
-    // interface Locals {}
+    interface Locals {
+      docs: { component: any; metadata: any }[]
+    }
     interface PageData {
       sidebar?: SidebarItem[]
     }
