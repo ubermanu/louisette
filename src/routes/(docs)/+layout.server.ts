@@ -2,14 +2,15 @@ import { base } from '$app/paths'
 import Case from 'case'
 import path from 'node:path'
 import type { SidebarItem } from '../../app.js'
+import type { MdsvexResolver } from '../../mdsvex.js'
 import type { LayoutServerLoad } from './$types.js'
 
 export const load: LayoutServerLoad = async ({ locals }) => {
   const docEntries = await import.meta.glob('/src/lib/**/README.md')
 
   const docs = await Promise.all(
-    Object.keys(docEntries).map(async (path) => {
-      const md = await import(/* @vite-ignore */ path)
+    Object.entries(docEntries).map(async ([path, resolver]) => {
+      const md = await (resolver as MdsvexResolver)?.()
 
       if (!md.metadata.path) {
         console.warn(`No path found for ${path}`)

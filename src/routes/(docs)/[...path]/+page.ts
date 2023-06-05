@@ -1,12 +1,13 @@
 import { error } from '@sveltejs/kit'
+import type { MdsvexResolver } from '../../../mdsvex.js'
 import type { PageLoad } from './$types.js'
 
 export const load: PageLoad = async ({ params }) => {
   const docEntries = await import.meta.glob('/src/lib/**/README.md')
 
   const docs = await Promise.all(
-    Object.keys(docEntries).map(async (path) => {
-      const md = await import(/* @vite-ignore */ path)
+    Object.entries(docEntries).map(async ([, resolver]) => {
+      const md = await (resolver as MdsvexResolver)?.()
       return {
         component: md.default,
         metadata: md.metadata,
