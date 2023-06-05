@@ -1,7 +1,7 @@
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
-import { activeElement } from '$lib/stores/activeElement.js'
+import { activeElement } from '$lib/index.js'
 import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 

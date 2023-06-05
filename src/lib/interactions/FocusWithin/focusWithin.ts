@@ -1,4 +1,4 @@
-import { activeElement } from '$lib/stores/activeElement.js'
+import { activeElement } from '$lib/index.js'
 import type { Action } from 'svelte/action'
 import { get, readonly, writable } from 'svelte/store'
 

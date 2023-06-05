@@ -1,4 +1,4 @@
-import { interactionMode } from '$lib/stores/interactionMode.js'
+import { interactionMode } from '$lib/index.js'
 import type { Action } from 'svelte/action'
 import { readonly, writable } from 'svelte/store'
 

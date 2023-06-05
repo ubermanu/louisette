@@ -1,9 +1,7 @@
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
-import { activeElement } from '$lib/stores/activeElement.js'
-import { documentVisible } from '$lib/stores/documentVisible.js'
-import { reducedMotion } from '$lib/stores/reducedMotion.js'
+import { activeElement, documentVisible, reducedMotion } from '$lib/index.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, readonly, writable } from 'svelte/store'
 

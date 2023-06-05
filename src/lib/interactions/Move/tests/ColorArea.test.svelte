@@ -1,7 +1,6 @@
 <script lang="ts">
   import { useMove } from '$lib'
   import { createEventDispatcher } from 'svelte'
-  import { writable } from 'svelte/store'
 
   const dispatch = createEventDispatcher()
 

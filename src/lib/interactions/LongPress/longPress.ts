@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { usePress, type PressEvent } from '../Press/press.js'
+import { usePress, type PressEvent } from '$lib/interactions/Press/press.js'
 
 export type LongPressEvent = PressEvent & {
   type: 'longpressstart' | 'longpressend' | 'longpress'
