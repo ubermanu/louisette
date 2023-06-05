@@ -1,14 +1,11 @@
 <script lang="ts">
   import Snippet from '../Snippet.svelte'
+  import { title } from '../../title.js'
 
   export let data
 
-  const title = data.metadata.title
+  $: $title = data.metadata.title
 </script>
-
-<svelte:head>
-  <title>Louisette - {title}</title>
-</svelte:head>
 
 <svelte:component this={data.component} />
 

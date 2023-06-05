@@ -5,6 +5,10 @@
   import bash from 'svelte-highlight/languages/bash'
 </script>
 
+<svelte:head>
+  <title>Louisette</title>
+</svelte:head>
+
 <div class="flex h-[60vh] flex-col items-center justify-center">
   <img src={logo} alt class="h-24 w-24 md:h-32 md:w-32" />
   <p class="font-serif text-5xl md:text-6xl">Louisette</p>
