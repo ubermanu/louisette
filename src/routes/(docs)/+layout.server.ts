@@ -49,17 +49,3 @@ export const load: LayoutServerLoad = async ({ locals }) => {
     sidebar,
   }
 }
-
-/**
- * Sort paths by their depth
- *
- * @param a
- * @param b
- */
-const depthCompare = (a: string, b: string) => {
-  const aDepth = a.split('/').length
-  const bDepth = b.split('/').length
-  if (aDepth < bDepth) return -1
-  if (aDepth > bDepth) return 1
-  return 0
-}
