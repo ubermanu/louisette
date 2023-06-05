@@ -27,7 +27,8 @@
   "files": [
     "dist",
     "!dist/**/*.test.*",
-    "!dist/**/*.spec.*"
+    "!dist/**/*.spec.*",
+    "!dist/**/*/example/**/*"
   ],
   "scripts": {
     "build": "vite build && npm run package",
