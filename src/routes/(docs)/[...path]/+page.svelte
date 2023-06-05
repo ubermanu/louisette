@@ -7,7 +7,9 @@
   $: $title = data.metadata.title
 </script>
 
-<svelte:component this={data.component} />
+<div class="prose">
+  <svelte:component this={data.component} />
+</div>
 
 {#if data.example}
   <h2>Example</h2>

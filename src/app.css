@@ -16,6 +16,7 @@ pre[data-language] code {
   @apply whitespace-pre-wrap rounded-md p-4 text-xs shadow;
 }
 
+kbd,
 code:not([class]) {
   @apply inline-block whitespace-pre-wrap rounded-sm  bg-neutral-900 p-1 font-mono text-xs text-neutral-100 shadow;
 }
@@ -46,8 +47,12 @@ a:not([class]) {
   @apply rounded-sm text-accent-500 underline underline-offset-4 hover:text-accent-600 hover:no-underline dark:text-accent-400 dark:hover:text-accent-500;
 }
 
-blockquote {
+.prose blockquote {
   @apply rounded-md bg-red-500 p-4 text-white dark:bg-red-500 dark:text-neutral-900;
+}
+
+.prose ul {
+  @apply list-inside list-disc;
 }
 
 .btn {
