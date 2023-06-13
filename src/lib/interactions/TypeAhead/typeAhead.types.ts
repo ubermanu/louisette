@@ -2,7 +2,11 @@ import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 
 export type TypeAheadConfig = {
-  /** The time in milliseconds to wait before ending the typeahead. */
+  /**
+   * The time in milliseconds to wait before ending the typeahead.
+   *
+   * @default 500
+   */
   threshold?: number
 
   /** The callback when a new character is pushed. */
