@@ -5,7 +5,7 @@
   const products = ['🧀', '🧴', '🪥', '🥑', '🥖', '☕', '🍺', '🍅', '🐟']
 </script>
 
-<div class="mb-4 flex w-fit gap-2 rounded">
+<div class="mb-4 flex w-fit flex-wrap gap-2 rounded">
   {#each products as value}
     <Product {value} />
   {/each}

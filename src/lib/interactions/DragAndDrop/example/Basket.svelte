@@ -13,7 +13,7 @@
 
 <div
   use:drop
-  class="mb-2 flex min-h-[3rem] max-w-md flex-wrap gap-2 rounded-md border-2 border-transparent bg-amber-50 p-2 shadow dark:bg-amber-950"
+  class="mb-2 flex min-h-[3rem] w-full flex-wrap gap-2 rounded-md border-2 border-transparent bg-amber-50 p-2 shadow dark:bg-amber-950"
   class:is-hovering={$hovering}
 >
   {#each items as item}
