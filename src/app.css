@@ -27,5 +27,5 @@ a:not([class]) {
 }
 
 pre[data-language] code {
-  @apply whitespace-pre-wrap rounded-md p-4 text-xs shadow;
+  @apply rounded-md p-4 text-xs shadow md:whitespace-pre-wrap;
 }

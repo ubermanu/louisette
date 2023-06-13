@@ -20,10 +20,9 @@
 
   {#if data.sources?.length > 0}
     <h2>Sources</h2>
-    {#each data.sources as source}
-      <p>{source.filename}</p>
-      <div class="not-prose">
-        <Snippet code={source.code} />
+    {#each data.sources as { code, filename }}
+      <div class="not-prose mb-4">
+        <Snippet {code} {filename} />
       </div>
     {/each}
   {/if}

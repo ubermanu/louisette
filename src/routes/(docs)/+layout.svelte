@@ -7,10 +7,10 @@
 </svelte:head>
 
 <div class="flex w-full lg:gap-12">
-  <div class="lg:w-full lg:max-w-[300px]">
+  <aside class="lg:w-full lg:max-w-[300px]">
     <Sidebar />
-  </div>
-  <div class="flex flex-grow flex-col">
+  </aside>
+  <div class="w-full">
     <slot />
   </div>
 </div>
