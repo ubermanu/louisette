@@ -1,21 +1,8 @@
 import type { Action } from 'svelte/action'
 import { get, readonly, writable } from 'svelte/store'
+import type { TypeAhead, TypeAheadConfig } from './typeAhead.types.js'
 
-export type TypeAheadConfig = {
-  /** The time in milliseconds to wait before ending the typeahead. */
-  threshold?: number
-
-  /** The callback when a new character is pushed. */
-  onTypeAhead?: (value: string) => void
-
-  /** The callback when the typeahead starts. */
-  onTypeAheadStart?: () => void
-
-  /** The callback when the typeahead ends. */
-  onTypeAheadEnd?: () => void
-}
-
-export const useTypeAhead = (config?: TypeAheadConfig) => {
+export const useTypeAhead = (config?: TypeAheadConfig): TypeAhead => {
   const {
     threshold = 500,
     onTypeAhead,

@@ -1,18 +1,8 @@
 import type { Action } from 'svelte/action'
 import { readonly, writable } from 'svelte/store'
+import type { Hover, HoverConfig } from './hover.types.js'
 
-export type HoverEvent = {
-  type: 'hoverstart' | 'hoverend'
-  pointerType: PointerEvent['pointerType']
-  target: EventTarget | null
-}
-
-export type HoverConfig = {
-  onHoverStart?: (event?: HoverEvent) => void
-  onHoverEnd?: (event?: HoverEvent) => void
-}
-
-export const useHover = (config?: HoverConfig) => {
+export const useHover = (config?: HoverConfig): Hover => {
   const { onHoverStart, onHoverEnd } = { ...config }
 
   const hovering$ = writable(false)

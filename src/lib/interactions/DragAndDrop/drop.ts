@@ -1,13 +1,9 @@
 import type { Action } from 'svelte/action'
 import { readonly, writable } from 'svelte/store'
-
-export type DropConfig = {
-  accept?: string[]
-  onDrop?: (e: DragEvent) => void
-}
+import type { Drop, DropConfig } from './drop.types.js'
 
 // TODO: Add keyboard support
-export const useDrop = (config?: DropConfig) => {
+export const useDrop = (config?: DropConfig): Drop => {
   const { onDrop } = { ...config }
 
   const hovering$ = writable(false)

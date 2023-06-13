@@ -1,8 +1,9 @@
 import { interactionMode } from '$lib/index.js'
 import type { Action } from 'svelte/action'
 import { readonly, writable } from 'svelte/store'
+import type { FocusVisible } from './focusVisible.types.js'
 
-export const useFocusVisible = () => {
+export const useFocusVisible = (): FocusVisible => {
   const focused$ = writable(false)
 
   const onFocusIn = () => {

@@ -1,24 +1,8 @@
 import type { Action } from 'svelte/action'
 import { readonly, writable } from 'svelte/store'
+import type { Move, MoveConfig, MoveEvent } from './move.types.js'
 
-export type MoveEvent = {
-  type: 'movestart' | 'moveend' | 'move'
-  deltaX: number
-  deltaY: number
-  pointerType: 'mouse' | 'pen' | 'touch' | 'keyboard' | 'virtual'
-  shiftKey: boolean
-  ctrlKey: boolean
-  metaKey: boolean
-  altKey: boolean
-}
-
-export type MoveConfig = {
-  onMoveStart?: (event: MoveEvent) => void
-  onMoveEnd?: (event: MoveEvent) => void
-  onMove?: (event: MoveEvent) => void
-}
-
-export const useMove = (config?: MoveConfig) => {
+export const useMove = (config?: MoveConfig): Move => {
   const { onMoveStart, onMoveEnd, onMove } = { ...config }
 
   const moving$ = writable(false)

@@ -1,37 +1,6 @@
 import type { Action } from 'svelte/action'
 import { get, readonly, writable } from 'svelte/store'
-
-export type PressEvent = {
-  type: 'pressstart' | 'pressend' | 'pressup' | 'press'
-  pointerType: 'mouse' | 'keyboard' | 'touch' | 'pen' | string
-  target: EventTarget | null
-  shiftKey: boolean
-  ctrlKey: boolean
-  altKey: boolean
-  metaKey: boolean
-}
-
-export type PressConfig = {
-  /** Handler that is called when the press is released over the target. */
-  onPress?: (event?: PressEvent) => void
-
-  /** Handler that is called when a press interaction starts. */
-  onPressStart?: (event?: PressEvent) => void
-
-  /**
-   * Handler that is called when a press interaction ends, either over the
-   * target or when the pointer leaves the target.
-   */
-  onPressEnd?: (event?: PressEvent) => void
-
-  /**
-   * Handler that is called when a press is released over the target, regardless
-   * of whether it started on the target or not.
-   */
-  onPressUp?: (event?: PressEvent) => void
-}
-
-const controlKeys = new Set(['Enter', ' '])
+import type { Press, PressConfig, PressEvent } from './press.types.js'
 
 /** Creates a press event from a mouse or keyboard event. */
 const createEvent = (
@@ -48,7 +17,7 @@ const createEvent = (
   metaKey: event.metaKey,
 })
 
-export const usePress = (config?: PressConfig) => {
+export const usePress = (config?: PressConfig): Press => {
   const { onPress, onPressStart, onPressEnd, onPressUp } = {
     ...config,
   }
@@ -56,14 +25,14 @@ export const usePress = (config?: PressConfig) => {
   const pressed$ = writable(false)
 
   const onButtonKeyDown = (event: KeyboardEvent) => {
-    if (!controlKeys.has(event.key) || get(pressed$)) return
+    if (!['Enter', ' '].includes(event.key) || get(pressed$)) return
     event.preventDefault()
     pressed$.set(true)
     onPressStart?.(createEvent(event, 'pressstart', 'keyboard'))
   }
 
   const onButtonKeyUp = (event: KeyboardEvent) => {
-    if (!controlKeys.has(event.key) || !get(pressed$)) return
+    if (!['Enter', ' '].includes(event.key) || !get(pressed$)) return
     event.preventDefault()
     pressed$.set(false)
     onPress?.(createEvent(event, 'press', 'keyboard'))

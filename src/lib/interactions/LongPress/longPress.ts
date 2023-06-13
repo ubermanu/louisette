@@ -1,31 +1,7 @@
-// @ts-nocheck
-import { usePress, type PressEvent } from '$lib/interactions/Press/press.js'
+import { usePress, type PressEvent } from '$lib/index.js'
+import type { LongPress, LongPressConfig } from './longPress.types.js'
 
-export type LongPressEvent = PressEvent & {
-  type: 'longpressstart' | 'longpressend' | 'longpress'
-}
-
-export type LongPressConfig = {
-  /** The number of milliseconds to wait before triggering the long press. */
-  threshold?: number
-
-  /**
-   * Handler that is called when the threshold time is met while the press is
-   * over the target.
-   */
-  onLongPress?: (event?: LongPressEvent) => void
-
-  /** Handler that is called when a long press interaction starts. */
-  onLongPressStart?: (event?: LongPressEvent) => void
-
-  /**
-   * Handler that is called when a long press interaction ends, either over the
-   * target or when the pointer leaves the target.
-   */
-  onLongPressEnd?: (event?: LongPressEvent) => void
-}
-
-export const useLongPress = (config?: LongPressConfig) => {
+export const useLongPress = (config?: LongPressConfig): LongPress => {
   const {
     threshold = 1000,
     onLongPress,
@@ -40,7 +16,7 @@ export const useLongPress = (config?: LongPressConfig) => {
   const onPressStart = (event: PressEvent) => {
     if (timer) return
     onLongPressStart?.({ ...event, type: 'longpressstart' })
-    timer = setTimeout(() => {
+    timer = window.setTimeout(() => {
       onLongPress?.({ ...event, type: 'longpress' })
       onLongPressEnd?.({ ...event, type: 'longpressend' })
       timer = undefined
@@ -49,19 +25,19 @@ export const useLongPress = (config?: LongPressConfig) => {
 
   const onPressEnd = (event: PressEvent) => {
     if (timer) {
-      clearTimeout(timer)
+      window.clearTimeout(timer)
       timer = undefined
       onLongPressEnd?.({ ...event, type: 'longpressend' })
     }
   }
 
-  const { press, ...rest } = usePress({
+  const { press, pressed } = usePress({
     onPressStart: onLongPressStart || onLongPress ? onPressStart : undefined,
     onPressEnd: onLongPressEnd ? onPressEnd : undefined,
   })
 
   return {
     longPress: press,
-    ...rest,
+    pressed,
   }
 }

@@ -1,14 +1,9 @@
 import { activeElement } from '$lib/index.js'
 import type { Action } from 'svelte/action'
 import { get, readonly, writable } from 'svelte/store'
+import type { FocusWithin, FocusWithinConfig } from './focusWithin.types.js'
 
-export type FocusWithinConfig = {
-  onFocusWithin?: () => void
-  onBlurWithin?: () => void
-}
-
-/** Fires a callback when the element or any of its children receive/loose focus. */
-export const useFocusWithin = (config?: FocusWithinConfig) => {
+export const useFocusWithin = (config?: FocusWithinConfig): FocusWithin => {
   const { onFocusWithin, onBlurWithin } = { ...config }
 
   const focused$ = writable(false)

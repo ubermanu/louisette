@@ -1,16 +1,10 @@
 import type { Action } from 'svelte/action'
-import type { SvelteComponent } from 'svelte/internal'
 import { get, readable, readonly, writable } from 'svelte/store'
-
-export type DragConfig = {
-  onDragStart?: (e: DragEvent) => void
-  onDragEnd?: (e: DragEvent) => void
-  preview?: SvelteComponent | string
-}
+import type { Drag, DragConfig } from './drag.types.js'
 
 // TODO: Add keyboard support
 // TODO: Add drag image support (rendered component)
-export const useDrag = (config?: DragConfig) => {
+export const useDrag = (config?: DragConfig): Drag => {
   const { onDragStart, onDragEnd } = { ...config }
 
   const dragging$ = writable(false)
