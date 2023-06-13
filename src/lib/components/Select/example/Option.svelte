@@ -1,0 +1,15 @@
+<script lang="ts">
+  import type { Select } from '$lib'
+  import { getContext } from 'svelte'
+
+  export let value: string
+  export let selected: boolean = false
+
+  const { optionAttrs, select } = getContext<Select>('select')
+
+  if (selected) select(value)
+</script>
+
+<div {...$optionAttrs(value)}>
+  <slot />
+</div>
