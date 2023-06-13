@@ -17,18 +17,26 @@ export const activeElement = readable<HTMLElement | null>(null, (set) => {
 
   setActiveElement()
 
+  // Ignore the blur event if the focus is changed to another element.
+  const removeActiveElement = (event: FocusEvent) => {
+    if (event.relatedTarget) {
+      return
+    }
+    setActiveElement()
+  }
+
   document.addEventListener('focus', setActiveElement, {
     capture: true,
     passive: true,
   })
 
-  document.addEventListener('blur', setActiveElement, {
+  document.addEventListener('blur', removeActiveElement, {
     capture: true,
     passive: true,
   })
 
   return () => {
     document.removeEventListener('focus', setActiveElement)
-    document.removeEventListener('blur', setActiveElement)
+    document.removeEventListener('blur', removeActiveElement)
   }
 })
