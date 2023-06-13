@@ -7,7 +7,7 @@
   $: $title = data.metadata.title
 </script>
 
-<div class="prose">
+<div class="prose prose-neutral dark:prose-invert">
   <svelte:component this={data.component} />
 </div>
 

@@ -8,53 +8,24 @@
   @apply outline-none ring ring-accent-500 ring-opacity-50;
 }
 
-pre[data-language] {
-  @apply mb-4;
+.prose kbd,
+.prose code:not([class]) {
+  @apply my-0 inline-block whitespace-pre-wrap  rounded-sm bg-neutral-900 p-1 font-mono text-xs text-neutral-100 shadow;
 }
 
-pre[data-language] code {
-  @apply whitespace-pre-wrap rounded-md p-4 text-xs shadow;
-}
-
-kbd,
-code:not([class]) {
-  @apply inline-block whitespace-pre-wrap rounded-sm  bg-neutral-900 p-1 font-mono text-xs text-neutral-100 shadow;
-}
-
-h1 {
-  @apply mb-4 mt-6 text-3xl font-semibold;
-}
-
-h1:first-child {
-  @apply mt-0;
-}
-
-h2 {
-  @apply mb-4 mt-6 text-2xl font-semibold;
-}
-
-p,
-code[lang] {
-  @apply mb-4;
-}
-
-p:last-child,
-code[lang]:last-child {
-  @apply mb-0;
+.prose code:not([class]):before,
+.prose code:not([class]):after {
+  @apply content-none;
 }
 
 a:not([class]) {
   @apply rounded-sm text-accent-500 underline underline-offset-4 hover:text-accent-600 hover:no-underline dark:text-accent-400 dark:hover:text-accent-500;
 }
 
-.prose blockquote {
-  @apply rounded-md bg-red-500 p-4 text-white dark:bg-red-500 dark:text-neutral-900;
-}
-
-.prose ul {
-  @apply list-inside list-disc;
-}
-
 .btn {
   @apply inline-flex select-none items-center justify-center rounded bg-gradient-to-r from-accent-400 to-accent-500 px-4 py-2 text-sm font-medium text-white shadow transition-transform duration-200 ease-in-out active:scale-95;
+}
+
+pre[data-language] code {
+  @apply whitespace-pre-wrap rounded-md p-4 text-xs shadow;
 }
