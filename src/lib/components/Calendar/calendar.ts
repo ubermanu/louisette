@@ -3,28 +3,9 @@ import { delegateEventListeners } from '$lib/helpers/events.js'
 import { tick } from 'svelte'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable, type Readable } from 'svelte/store'
+import type { Calendar, CalendarConfig, CalendarDay } from './calendar.types.js'
 
-export type CalendarConfig = {
-  month?: number
-  year?: number
-  selected?: string[] | Date[]
-  disabled?: string[] | Date[]
-  onMonthChange?: () => void
-  onYearChange?: () => void
-  onSelectionChange?: () => void
-  lang?: string
-  firstDayOfWeek?: number
-}
-
-export type CalendarDay = {
-  date: Date
-  isOutOfMonth: boolean
-  dayAttrs: Record<string, any>
-}
-
-export type Calendar = ReturnType<typeof createCalendar>
-
-export const createCalendar = (config?: CalendarConfig) => {
+export const createCalendar = (config?: CalendarConfig): Calendar => {
   const {
     month,
     disabled,

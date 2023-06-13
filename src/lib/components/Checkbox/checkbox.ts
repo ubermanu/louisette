@@ -1,15 +1,8 @@
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
+import type { Checkbox, CheckboxConfig } from './checkbox.types.js'
 
-export type CheckboxConfig = {
-  checked?: boolean
-  disabled?: boolean
-  indeterminate?: boolean
-}
-
-export type Checkbox = ReturnType<typeof createCheckbox>
-
-export const createCheckbox = (config?: CheckboxConfig) => {
+export const createCheckbox = (config?: CheckboxConfig): Checkbox => {
   const { checked, disabled, indeterminate } = { ...config }
 
   const checked$ = writable(indeterminate ? false : checked || false)

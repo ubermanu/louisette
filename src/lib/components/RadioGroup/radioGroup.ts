@@ -3,15 +3,9 @@ import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, readonly, writable } from 'svelte/store'
+import type { RadioGroup, RadioGroupConfig } from './radioGroup.types.js'
 
-export type RadioGroupConfig = {
-  selected?: string
-  disabled?: string[]
-}
-
-export type RadioGroup = ReturnType<typeof createRadioGroup>
-
-export const createRadioGroup = (config?: RadioGroupConfig) => {
+export const createRadioGroup = (config?: RadioGroupConfig): RadioGroup => {
   const { selected, disabled } = { ...config }
 
   const selected$ = writable(selected || '')

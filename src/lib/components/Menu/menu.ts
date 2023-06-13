@@ -4,15 +4,9 @@ import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, writable } from 'svelte/store'
+import type { Menu, MenuConfig } from './menu.types.js'
 
-export type MenuConfig = {
-  disabled?: string[]
-  orientation?: 'horizontal' | 'vertical'
-}
-
-export type Menu = ReturnType<typeof createMenu>
-
-export const createMenu = (config?: MenuConfig) => {
+export const createMenu = (config?: MenuConfig): Menu => {
   const { disabled, orientation } = { ...config }
 
   const menuId = generateId()

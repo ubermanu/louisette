@@ -1,14 +1,8 @@
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
+import type { Switch, SwitchConfig } from './switch.types.js'
 
-export type SwitchConfig = {
-  active?: boolean
-  disabled?: boolean
-}
-
-export type Switch = ReturnType<typeof createSwitch>
-
-export const createSwitch = (config?: SwitchConfig) => {
+export const createSwitch = (config?: SwitchConfig): Switch => {
   const { active, disabled } = { ...config }
 
   const active$ = writable(active || false)

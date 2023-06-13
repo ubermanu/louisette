@@ -3,24 +3,9 @@ import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
+import type { Listbox, ListboxConfig } from './listbox.types.js'
 
-export type ListboxConfig = {
-  /** The key of the selected options. */
-  selected?: string[]
-
-  /** The key of the disabled options. */
-  disabled?: string[]
-
-  /** If true, the listbox allows multiple selections. */
-  multiple?: boolean
-
-  /** The orientation of the listbox. */
-  orientation?: 'horizontal' | 'vertical'
-}
-
-export type Listbox = ReturnType<typeof createListbox>
-
-export const createListbox = (config?: ListboxConfig) => {
+export const createListbox = (config?: ListboxConfig): Listbox => {
   const { selected, disabled, multiple, orientation } = { ...config }
 
   const selected$ = writable(

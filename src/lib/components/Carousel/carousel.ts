@@ -4,27 +4,9 @@ import { generateId } from '$lib/helpers/uuid.js'
 import { activeElement, documentVisible, reducedMotion } from '$lib/index.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readable, readonly, writable } from 'svelte/store'
+import type { Carousel, CarouselConfig } from './carousel.types.js'
 
-export type CarouselConfig = {
-  /** The orientation of the carousel */
-  orientation?: 'horizontal' | 'vertical'
-
-  /**
-   * Whether the carousel should loop back to the beginning when it reaches the
-   * end
-   */
-  loop?: boolean
-
-  /** Whether the carousel should autoplay */
-  autoplay?: boolean
-
-  /** The interval at which the carousel goes to the next slide (default: 5s) */
-  interval?: number
-}
-
-export type Carousel = ReturnType<typeof createCarousel>
-
-export const createCarousel = (config?: CarouselConfig) => {
+export const createCarousel = (config?: CarouselConfig): Carousel => {
   const { orientation, loop, autoplay, interval } = { ...config }
 
   const current$ = writable<string>('')

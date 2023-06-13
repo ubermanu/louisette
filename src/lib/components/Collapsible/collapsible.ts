@@ -1,15 +1,9 @@
 import { generateId } from '$lib/helpers/uuid.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
+import type { Collapsible, CollapsibleConfig } from './collapsible.types.js'
 
-export type CollapsibleConfig = {
-  expanded?: boolean
-  disabled?: boolean
-}
-
-export type Collapsible = ReturnType<typeof createCollapsible>
-
-export const createCollapsible = (config?: CollapsibleConfig) => {
+export const createCollapsible = (config?: CollapsibleConfig): Collapsible => {
   const { expanded, disabled } = { ...config }
 
   const expanded$ = writable(expanded || false)

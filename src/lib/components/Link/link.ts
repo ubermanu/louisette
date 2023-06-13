@@ -1,15 +1,8 @@
 import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
+import type { Link, LinkConfig } from './link.types.js'
 
-export type LinkConfig = {
-  disabled?: boolean
-  href: string
-  target?: string
-}
-
-export type Link = ReturnType<typeof createLink>
-
-export const createLink = (config: LinkConfig) => {
+export const createLink = (config: LinkConfig): Link => {
   const { disabled, href, target } = { ...config }
 
   const disabled$ = writable(disabled || false)

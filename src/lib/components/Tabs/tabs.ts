@@ -3,24 +3,9 @@ import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
+import type { Tabs, TabsConfig } from './tabs.types.js'
 
-export type TabsConfig = {
-  /** The key of the active panel. */
-  active?: string
-
-  /** The key of the disabled panels. */
-  disabled?: string | string[]
-
-  /** The orientation of the tabs. */
-  orientation?: 'horizontal' | 'vertical'
-
-  /** The behavior of the tabs. */
-  behavior?: 'auto' | 'manual'
-}
-
-export type Tabs = ReturnType<typeof createTabs>
-
-export const createTabs = (config?: TabsConfig) => {
+export const createTabs = (config?: TabsConfig): Tabs => {
   const { active, disabled, orientation, behavior } = { ...config }
 
   const active$ = writable(active || '')

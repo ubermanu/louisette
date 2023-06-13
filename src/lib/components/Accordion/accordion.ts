@@ -4,16 +4,9 @@ import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
+import type { Accordion, AccordionConfig } from './accordion.types.js'
 
-export type AccordionConfig = {
-  expanded?: string[]
-  disabled?: string[]
-  multiple?: boolean
-}
-
-export type Accordion = ReturnType<typeof createAccordion>
-
-export const createAccordion = (config?: AccordionConfig) => {
+export const createAccordion = (config?: AccordionConfig): Accordion => {
   const { multiple, expanded, disabled } = { ...config }
 
   const multiple$ = writable(multiple || false)

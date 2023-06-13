@@ -4,14 +4,9 @@ import { traveller } from '$lib/helpers/traveller.js'
 import { activeElement } from '$lib/index.js'
 import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
+import type { Toolbar, ToolbarConfig } from './toolbar.types.js'
 
-export type ToolbarConfig = {
-  orientation?: 'horizontal' | 'vertical'
-}
-
-export type Toolbar = ReturnType<typeof createToolbar>
-
-export const createToolbar = (config?: ToolbarConfig) => {
+export const createToolbar = (config?: ToolbarConfig): Toolbar => {
   const { orientation } = { ...config }
 
   const orientation$ = writable(orientation || 'horizontal')

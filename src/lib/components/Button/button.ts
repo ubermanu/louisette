@@ -1,13 +1,8 @@
 import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
+import type { Button, ButtonConfig } from './button.types.js'
 
-export type ButtonConfig = {
-  disabled?: boolean
-}
-
-export type Button = ReturnType<typeof createButton>
-
-export const createButton = (config?: ButtonConfig) => {
+export const createButton = (config?: ButtonConfig): Button => {
   const { disabled } = { ...config }
 
   const disabled$ = writable(disabled || false)

@@ -1,17 +1,11 @@
-import {
-  createButton,
-  type ButtonConfig,
-} from '$lib/components/Button/button.js'
+import { createButton } from '$lib/index.js'
 import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
+import type { ToggleButton, ToggleButtonConfig } from './toggleButton.types.js'
 
-export type ToggleButtonConfig = ButtonConfig & {
-  checked?: boolean
-}
-
-export type ToggleButton = ReturnType<typeof createToggleButton>
-
-export const createToggleButton = (config?: ToggleButtonConfig) => {
+export const createToggleButton = (
+  config?: ToggleButtonConfig
+): ToggleButton => {
   const { checked, ...buttonConfig } = { ...config }
 
   const checked$ = writable(checked || false)

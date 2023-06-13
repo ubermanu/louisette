@@ -1,12 +1,13 @@
 import type { Action } from 'svelte/action'
 import { derived, readonly, writable } from 'svelte/store'
+import type { Popover } from './popover.types.js'
 
 /**
  * A popover is a transient view that appears above other content on the screen
  * when a trigger is activated. The focus is transferred to the popover, and the
  * popover is dismissed when the focus is lost.
  */
-export const createPopover = () => {
+export const createPopover = (): Popover => {
   const visible$ = writable(false)
 
   const triggerAttrs = derived(visible$, (visible) => ({
