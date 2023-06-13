@@ -24,7 +24,7 @@
 >
   <button
     use:move
-    class="absolute h-8 w-8 rounded-full border-2 border-neutral-700 bg-neutral-900 shadow-md"
+    class="absolute h-8 w-8 touch-none rounded-full border-2 border-neutral-700 bg-neutral-900 shadow-md"
     style="left: {x}px; top: {y}px"
   />
 </div>
