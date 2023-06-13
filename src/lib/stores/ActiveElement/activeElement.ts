@@ -18,8 +18,10 @@ export const activeElement = readable<HTMLElement | null>(null, (set) => {
   setActiveElement()
 
   document.addEventListener('focusin', setActiveElement)
+  document.addEventListener('focusout', setActiveElement)
 
   return () => {
     document.removeEventListener('focusin', setActiveElement)
+    document.removeEventListener('focusout', setActiveElement)
   }
 })
