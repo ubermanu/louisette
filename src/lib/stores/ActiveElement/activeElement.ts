@@ -15,10 +15,6 @@ export const activeElement = readable<HTMLElement | null>(null, (set) => {
     }
   }
 
-  const removeActiveElement = () => {
-    set(null)
-  }
-
   setActiveElement()
 
   document.addEventListener('focus', setActiveElement, {
@@ -26,13 +22,13 @@ export const activeElement = readable<HTMLElement | null>(null, (set) => {
     passive: true,
   })
 
-  document.addEventListener('blur', removeActiveElement, {
+  document.addEventListener('blur', setActiveElement, {
     capture: true,
     passive: true,
   })
 
   return () => {
     document.removeEventListener('focus', setActiveElement)
-    document.removeEventListener('blur', removeActiveElement)
+    document.removeEventListener('blur', setActiveElement)
   }
 })

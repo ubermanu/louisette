@@ -10,9 +10,9 @@ export const useFocusWithin = (config?: FocusWithinConfig): FocusWithin => {
 
   const focusWithin: Action = (node) => {
     const unsubscribe = activeElement.subscribe((element) => {
-      // Skip if the element is NULL.
+      // Skip if the element is NULL or the body.
       // Happens when the focus is changed to another element (see activeElement.ts).
-      if (!element) {
+      if (element === document.body || element === null) {
         return
       }
 
