@@ -10,7 +10,13 @@ expanded or collapsed.
 
 [WAI-ARIA: Accordion Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/)
 
-## Controls
+## Features
+
+### Multiple items
+
+The `accordion` component supports multiple expanded items, if configured to do so.
+
+### Keyboard navigation
 
 - <kbd>Space</kbd> or <kbd>Enter</kbd> on a collapsed item expands it.
 - <kbd>Escape</kbd> on an expanded item collapses it.
