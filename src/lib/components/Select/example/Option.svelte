@@ -10,6 +10,7 @@
     optionAttrs,
     select,
     selected: selectedList,
+    activeDescendant,
   } = getContext<Select>('select')
 
   if (selected) select(value)
@@ -18,6 +19,7 @@
 <div
   {...$optionAttrs(value)}
   class="flex cursor-pointer items-center justify-between rounded-md p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
+  class:is-active-descendant={$activeDescendant === value}
 >
   <span>
     <slot />
@@ -37,3 +39,9 @@
     </svg>
   {/if}
 </div>
+
+<style lang="postcss">
+  .is-active-descendant {
+    @apply bg-neutral-200 dark:bg-neutral-600;
+  }
+</style>

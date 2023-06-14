@@ -13,6 +13,7 @@ export type Select = {
   disabled: Readable<string[]>
   selected: Readable<string[]>
   selectedLabel: Readable<string>
+  activeDescendant: Readable<string>
   button: Action
   buttonAttrs: Readable<HTMLAttributes>
   listbox: Action

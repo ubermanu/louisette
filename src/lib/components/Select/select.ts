@@ -1,6 +1,7 @@
 import { createListbox } from '$lib/components/Listbox/listbox.js'
-import { mergeActions } from '$lib/helpers/actions.js'
+import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
+import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
 import { useTypeAhead } from '$lib/interactions/TypeAhead/typeAhead.js'
 import type { Action } from 'svelte/action'
@@ -52,6 +53,7 @@ export const createSelect = (config?: SelectConfig): Select => {
     ([opened, origAttributes]) => ({
       ...origAttributes,
       id: listboxId,
+      tabIndex: undefined,
       'aria-hidden': !opened,
       inert: opened ? undefined : '',
     })
@@ -78,21 +80,121 @@ export const createSelect = (config?: SelectConfig): Select => {
   const useButton: Action = (node) => {
     buttonNode = node
 
+    // TODO: Insane duplicate code from the listbox, refactor
     const onButtonKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowDown') {
-        event.preventDefault()
-        openListbox()
+      const $multiple = multiple
+      const $activeDescendant = get(listbox.activeDescendant)
+      const $disabled = get(listbox.disabled)
+      const $opened = get(opened$)
+
+      if (!listboxNode) {
+        console.warn('There is no listbox associated with this select')
+        return
       }
 
-      if (event.key === 'Enter' || event.key === ' ') {
+      const nodes = traveller(listboxNode, '[data-listbox-option]', (el) => {
+        return $disabled.includes(el.dataset.listboxOption!)
+      })
+
+      let target =
+        nodes
+          .all()
+          .find((el) => el.dataset.listboxOption === $activeDescendant) || null
+
+      if (['Enter', ' ', 'ArrowDown'].includes(event.key) && !$opened) {
         event.preventDefault()
-        toggleListbox()
+        openListbox()
+
+        // TODO: Set activeDescendant to the first selected option (if none)
+        if (!target) {
+          listbox.activeDescendant.set(nodes.first()?.dataset.listboxOption!)
+        }
+        return
       }
 
       if (event.key === 'Escape') {
         event.preventDefault()
         closeListbox()
+        return
       }
+
+      if (['Enter', ' ', 'Tab'].includes(event.key) && $opened) {
+        event.preventDefault()
+
+        if ($multiple && event.shiftKey) {
+          // TODO: Select all options between lastSelected and key
+        } else {
+          listbox.toggle($activeDescendant)
+        }
+
+        return
+      }
+
+      if (!target) {
+        console.warn('There are no options in this listbox')
+        return
+      }
+
+      if (event.key === 'ArrowDown') {
+        event.preventDefault()
+        const next = nodes.next(target)
+
+        if (next) {
+          listbox.activeDescendant.set(next.dataset.listboxOption!)
+
+          if (event.shiftKey && $multiple) {
+            listbox.select(next.dataset.listboxOption!)
+          }
+        }
+      }
+
+      if (event.key === 'ArrowUp') {
+        event.preventDefault()
+        const previous = nodes.previous(target)
+
+        if (previous) {
+          listbox.activeDescendant.set(previous.dataset.listboxOption!)
+
+          if (event.shiftKey && $multiple) {
+            listbox.select(previous.dataset.listboxOption!)
+          }
+        }
+      }
+
+      if (event.key === 'Home') {
+        event.preventDefault()
+        const first = nodes.first()
+
+        if (first) {
+          // Selects the focused option and all options up to the first option.
+          if ($multiple && event.shiftKey && event.ctrlKey) {
+            // TODO: Implement
+          } else {
+            listbox.activeDescendant.set(first.dataset.listboxOption!)
+          }
+        }
+      }
+
+      if (event.key === 'End') {
+        event.preventDefault()
+        const last = nodes.last()
+
+        if (last) {
+          // Selects the focused option and all options up to the last option.
+          if ($multiple && event.shiftKey && event.ctrlKey) {
+            // TODO: Implement
+          } else {
+            listbox.activeDescendant.set(last.dataset.listboxOption!)
+          }
+        }
+      }
+
+      if ($multiple && event.key === 'a' && event.ctrlKey) {
+        event.preventDefault()
+        // TODO: Implement
+      }
+
+      // TODO: Implement typeahead (from interactions)
     }
 
     const onButtonClick = () => {
@@ -119,9 +221,11 @@ export const createSelect = (config?: SelectConfig): Select => {
 
   let listboxNode: HTMLElement | null = null
 
+  // TODO: Kind of duplicate of what the listbox action does
   const useListbox: Action = (node) => {
     listboxNode = node
 
+    // TODO: Subscribe outside of action
     const unsubscribe = listbox.selected.subscribe((selected) => {
       // if (selected.length === 0) return
       // const key = selected[selected.length - 1]
@@ -132,23 +236,21 @@ export const createSelect = (config?: SelectConfig): Select => {
       closeListbox()
     })
 
-    const onOptionKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        closeListbox()
-      }
-    }
-
     const removeListeners = delegateEventListeners(node, {
-      keydown: {
-        '[data-listbox-option]': onOptionKeyDown,
+      click: {
+        '[data-listbox-option]': (event: DelegateEvent<MouseEvent>) => {
+          listbox.toggle(event.delegateTarget.dataset.listboxOption!)
+          listbox.activeDescendant.set(
+            event.delegateTarget.dataset.listboxOption!
+          )
+        },
       },
     })
 
     return {
       destroy() {
-        unsubscribe()
         removeListeners()
+        unsubscribe()
         listboxNode = null
       },
     }
@@ -185,9 +287,10 @@ export const createSelect = (config?: SelectConfig): Select => {
     selected: listbox.selected,
     disabled: listbox.disabled,
     selectedLabel,
-    button: mergeActions(useButton, typeahead.typeAhead),
+    activeDescendant: listbox.activeDescendant,
+    button: useButton,
     buttonAttrs,
-    listbox: mergeActions(useListbox, listbox.listbox),
+    listbox: useListbox,
     listboxAttrs,
     optionAttrs: listbox.optionAttrs,
     select: listbox.select,
