@@ -228,6 +228,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
       click: {
         '[data-listbox-option]': (event: DelegateEvent<MouseEvent>) => {
           toggle(event.delegateTarget.dataset.listboxOption!)
+          activeDescendant$.set(event.delegateTarget.dataset.listboxOption!)
         },
       },
     })
