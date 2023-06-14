@@ -19,6 +19,7 @@ export type ListboxConfig = {
 export type Listbox = {
   selected: Readable<string[]>
   disabled: Readable<string[]>
+  activeDescendant: Readable<string>
   listboxAttrs: Readable<HTMLAttributes>
   optionAttrs: Readable<(key: string) => HTMLAttributes>
   groupAttrs: Readable<(key: string) => HTMLAttributes>

@@ -4,12 +4,14 @@
 
   export let value: string
 
-  const { optionAttrs, selected } = getContext<Listbox>('listbox')
+  const { optionAttrs, selected, activeDescendant } =
+    getContext<Listbox>('listbox')
 </script>
 
 <div
   class="cursor-pointer rounded-md p-2 transition-colors hover:bg-neutral-200 focus:outline-none focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
   class:is-selected={$selected.includes(value)}
+  class:is-active-descendant={$activeDescendant === value}
   {...$optionAttrs(value)}
 >
   <slot />
@@ -18,5 +20,9 @@
 <style lang="postcss">
   .is-selected {
     @apply bg-accent-200 dark:bg-accent-700;
+  }
+
+  .is-active-descendant {
+    @apply ring ring-accent-500 ring-opacity-50;
   }
 </style>
