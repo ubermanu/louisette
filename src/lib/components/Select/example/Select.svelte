@@ -2,7 +2,8 @@
   import { setContext } from 'svelte'
   import { createSelect } from '$lib'
 
-  export let value: string = ''
+  export let multiple: boolean = false
+  export let value: string | string[] = ''
   export let placeholder: string = 'Select an option'
 
   // TODO: implement disabled
@@ -21,7 +22,7 @@
     selected: selectedList,
   } = selectContext
 
-  $: value = $selectedList.join(',')
+  $: value = multiple ? $selectedList : $selectedList[0]
 </script>
 
 <div class="relative min-w-[1rem]">

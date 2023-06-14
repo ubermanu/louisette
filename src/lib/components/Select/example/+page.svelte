@@ -9,8 +9,11 @@
   You have selected the value: <strong>{value || 'nothing'}</strong>
 </p>
 
-<Select bind:value>
-  <Option value="1">Option 1</Option>
-  <Option value="2">Option 2</Option>
-  <Option value="3">Option 3</Option>
+<Select bind:value placeholder="Select a transportation method">
+  <Option value="🚗">Car</Option>
+  <Option value="🚲">Bike</Option>
+  <Option value="🚌">Bus</Option>
+  <Option value="✈️">Plane</Option>
+  <Option value="🚂">Train</Option>
+  <Option value="🚶‍♂️">Walk</Option>
 </Select>
