@@ -6,7 +6,7 @@
 </script>
 
 <p class="mb-4 text-sm opacity-60">
-  You have selected: <strong>{value || 'nothing'}</strong>
+  You have selected: <strong>{JSON.stringify(value)}</strong>
 </p>
 
 <Listbox bind:value label="Select your favourite pet">

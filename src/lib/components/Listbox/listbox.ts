@@ -235,7 +235,6 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
         '[data-listbox-option]': (event: DelegateEvent<MouseEvent>) => {
           const $multiple = get(multiple$)
           // TODO: If shift is pressed, select all options between lastSelected and key
-          console.log($multiple)
           if ($multiple) {
             toggle(event.delegateTarget.dataset.listboxOption!)
           } else {

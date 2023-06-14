@@ -94,61 +94,6 @@ describe('Listbox', async () => {
     expect(getByTestId('option-3').getAttribute('aria-checked')).toBe('true')
   })
 
-  test('If no selected, the first option should be focusable', async () => {
-    const { getByTestId } = render(ListboxTest, {
-      props: {
-        items: [
-          { id: 1, label: 'One', value: 'one' },
-          { id: 2, label: 'Two', value: 'two' },
-          { id: 3, label: 'Three', value: 'three' },
-        ],
-      },
-    })
-
-    expect(getByTestId('option-1').getAttribute('tabIndex')).toBe('0')
-    expect(getByTestId('option-2').getAttribute('tabIndex')).toBe('-1')
-    expect(getByTestId('option-3').getAttribute('tabIndex')).toBe('-1')
-  })
-
-  test('If selected, the selected option should be focusable', async () => {
-    const { getByTestId } = render(ListboxTest, {
-      props: {
-        defaults: {
-          selected: ['two'],
-        },
-        items: [
-          { id: 1, label: 'One', value: 'one' },
-          { id: 2, label: 'Two', value: 'two' },
-          { id: 3, label: 'Three', value: 'three' },
-        ],
-      },
-    })
-
-    expect(getByTestId('option-1').getAttribute('tabIndex')).toBe('-1')
-    expect(getByTestId('option-2').getAttribute('tabIndex')).toBe('0')
-    expect(getByTestId('option-3').getAttribute('tabIndex')).toBe('-1')
-  })
-
-  test('If multiple selected, the first selected option should be focusable', async () => {
-    const { getByTestId } = render(ListboxTest, {
-      props: {
-        defaults: {
-          multiple: true,
-          selected: ['two', 'three'],
-        },
-        items: [
-          { id: 1, label: 'One', value: 'one' },
-          { id: 2, label: 'Two', value: 'two' },
-          { id: 3, label: 'Three', value: 'three' },
-        ],
-      },
-    })
-
-    expect(getByTestId('option-1').getAttribute('tabIndex')).toBe('-1')
-    expect(getByTestId('option-2').getAttribute('tabIndex')).toBe('0')
-    expect(getByTestId('option-3').getAttribute('tabIndex')).toBe('-1')
-  })
-
   test('Clicking an option should select it', async () => {
     const { getByTestId } = render(ListboxTest, {
       props: {
@@ -208,6 +153,40 @@ describe('Listbox', async () => {
     expect(getByTestId('option-1').getAttribute('aria-selected')).toBe('false')
   })
 
+  test('Handles keyboard navigation', async () => {
+    const { getByTestId } = render(ListboxTest, {
+      props: {
+        items: [
+          { id: 1, label: 'One', value: 'one' },
+          { id: 2, label: 'Two', value: 'two' },
+          { id: 3, label: 'Three', value: 'three' },
+        ],
+      },
+    })
+
+    const listbox = getByTestId('listbox')
+
+    await fireEvent.keyDown(listbox, { key: 'ArrowDown' })
+    expect(listbox.getAttribute('aria-activedescendant')).toBe(
+      getByTestId('option-1').id
+    )
+
+    await fireEvent.keyDown(listbox, { key: 'ArrowDown' })
+    expect(listbox.getAttribute('aria-activedescendant')).toBe(
+      getByTestId('option-2').id
+    )
+
+    await fireEvent.keyDown(listbox, { key: 'End' })
+    expect(listbox.getAttribute('aria-activedescendant')).toBe(
+      getByTestId('option-3').id
+    )
+
+    await fireEvent.keyDown(listbox, { key: 'Home' })
+    expect(listbox.getAttribute('aria-activedescendant')).toBe(
+      getByTestId('option-1').id
+    )
+  })
+
   test('Pressing space on an option should select it', async () => {
     const { getByTestId } = render(ListboxTest, {
       props: {
@@ -219,7 +198,10 @@ describe('Listbox', async () => {
       },
     })
 
-    await fireEvent.keyDown(getByTestId('option-1'), { key: ' ' })
+    const listbox = getByTestId('listbox')
+
+    await fireEvent.keyDown(listbox, { key: 'ArrowDown' })
+    await fireEvent.keyDown(listbox, { key: ' ' })
     expect(getByTestId('option-1').getAttribute('aria-selected')).toBe('true')
   })
 
@@ -237,35 +219,15 @@ describe('Listbox', async () => {
       },
     })
 
-    await fireEvent.keyDown(getByTestId('option-1'), { key: ' ' })
+    const listbox = getByTestId('listbox')
+
+    await fireEvent.keyDown(listbox, { key: 'ArrowDown' })
+    await fireEvent.keyDown(listbox, { key: ' ' })
     expect(getByTestId('option-1').getAttribute('aria-checked')).toBe('true')
 
-    await fireEvent.keyDown(getByTestId('option-2'), { key: ' ' })
+    await fireEvent.keyDown(listbox, { key: 'ArrowDown' })
+    await fireEvent.keyDown(listbox, { key: ' ' })
     expect(getByTestId('option-1').getAttribute('aria-checked')).toBe('true')
     expect(getByTestId('option-2').getAttribute('aria-checked')).toBe('true')
-  })
-
-  test('Handles keyboard navigation', async () => {
-    const { getByTestId } = render(ListboxTest, {
-      props: {
-        items: [
-          { id: 1, label: 'One', value: 'one' },
-          { id: 2, label: 'Two', value: 'two' },
-          { id: 3, label: 'Three', value: 'three' },
-        ],
-      },
-    })
-
-    await fireEvent.keyDown(getByTestId('option-1'), { key: 'ArrowDown' })
-    expect(document.activeElement).toBe(getByTestId('option-2'))
-
-    await fireEvent.keyDown(getByTestId('option-2'), { key: 'ArrowDown' })
-    expect(document.activeElement).toBe(getByTestId('option-3'))
-
-    await fireEvent.keyDown(getByTestId('option-3'), { key: 'Home' })
-    expect(document.activeElement).toBe(getByTestId('option-1'))
-
-    await fireEvent.keyDown(getByTestId('option-1'), { key: 'End' })
-    expect(document.activeElement).toBe(getByTestId('option-3'))
   })
 })

@@ -6,7 +6,7 @@
   export let multiple: boolean = false
   export let value: string | string[] = ''
 
-  const listboxContext = createListbox()
+  const listboxContext = createListbox({ multiple })
   setContext('listbox', listboxContext)
 
   const { listbox, listboxAttrs, selected: selectedList } = listboxContext
