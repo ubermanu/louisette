@@ -121,12 +121,15 @@ export const createSelect = (config?: SelectConfig): Select => {
       if (['Enter', ' ', 'Tab'].includes(event.key) && $opened) {
         event.preventDefault()
 
-        if ($multiple && event.shiftKey) {
-          // TODO: Select all options between lastSelected and key
+        if ($multiple) {
+          if (event.shiftKey) {
+            // TODO: Select all options between lastSelected and key
+          } else {
+            listbox.toggle($activeDescendant)
+          }
         } else {
-          listbox.toggle($activeDescendant)
+          listbox.select($activeDescendant)
         }
-
         return
       }
 
@@ -232,14 +235,23 @@ export const createSelect = (config?: SelectConfig): Select => {
       // const option = document.getElementById(key)
       // if (option) option.scrollIntoView({ block: 'nearest' })
 
-      // Close the listbox when the user (un)selects an option
-      closeListbox()
+      // Close the listbox when the user (un)selects an option (if not multiple)
+      if (!multiple) {
+        closeListbox()
+      }
     })
 
+    // TODO: Huge copy pasta from the listbox action, refactor
     const removeListeners = delegateEventListeners(node, {
       click: {
         '[data-listbox-option]': (event: DelegateEvent<MouseEvent>) => {
-          listbox.toggle(event.delegateTarget.dataset.listboxOption!)
+          // TODO: The multiple value check should come from the listbox
+          // TODO: If shift is pressed, select all options between lastSelected and key
+          if (multiple) {
+            listbox.toggle(event.delegateTarget.dataset.listboxOption!)
+          } else {
+            listbox.select(event.delegateTarget.dataset.listboxOption!)
+          }
           listbox.activeDescendant.set(
             event.delegateTarget.dataset.listboxOption!
           )

@@ -117,10 +117,14 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
       if (event.key === ' ') {
         event.preventDefault()
 
-        if ($multiple && event.shiftKey) {
-          // TODO: Select all options between lastSelected and key
+        if ($multiple) {
+          if (event.shiftKey) {
+            // TODO: Select all options between lastSelected and key
+          } else {
+            toggle($activeDescendant)
+          }
         } else {
-          toggle($activeDescendant)
+          select($activeDescendant)
         }
 
         return
@@ -229,7 +233,14 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
     const removeListeners = delegateEventListeners(node, {
       click: {
         '[data-listbox-option]': (event: DelegateEvent<MouseEvent>) => {
-          toggle(event.delegateTarget.dataset.listboxOption!)
+          const $multiple = get(multiple$)
+          // TODO: If shift is pressed, select all options between lastSelected and key
+          console.log($multiple)
+          if ($multiple) {
+            toggle(event.delegateTarget.dataset.listboxOption!)
+          } else {
+            select(event.delegateTarget.dataset.listboxOption!)
+          }
           activeDescendant$.set(event.delegateTarget.dataset.listboxOption!)
         },
       },
