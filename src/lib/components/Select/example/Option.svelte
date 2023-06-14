@@ -10,6 +10,9 @@
   if (selected) select(value)
 </script>
 
-<div {...$optionAttrs(value)}>
+<div
+  {...$optionAttrs(value)}
+  class="cursor-pointer rounded-md p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
+>
   <slot />
 </div>

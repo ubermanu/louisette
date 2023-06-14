@@ -9,15 +9,15 @@ export type SelectConfig = {
 }
 
 export type Select = {
-  multiple: Readable<boolean>
+  opened: Readable<boolean>
   disabled: Readable<string[]>
   selected: Readable<string[]>
   selectedLabel: Readable<string>
-  triggerAttrs: Readable<HTMLAttributes>
+  button: Action
+  buttonAttrs: Readable<HTMLAttributes>
+  listbox: Action
   listboxAttrs: Readable<HTMLAttributes>
   optionAttrs: Readable<(key: string) => HTMLAttributes>
-  trigger: Action
-  listbox: Action
   select: (key: string) => void
   unselect: (key: string) => void
   toggle: (key: string) => void
