@@ -23,7 +23,9 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
       role: 'listbox',
       'aria-multiselectable': multiple,
       'aria-orientation': orientation,
-      'aria-activedescendant': activeDescendant || undefined,
+      'aria-activedescendant': activeDescendant
+        ? optionId(activeDescendant)
+        : undefined,
       tabIndex: 0,
     })
   )
