@@ -11,7 +11,8 @@
 
   const { listbox, listboxAttrs, selected: selectedList } = listboxContext
 
-  $: value = multiple ? $selectedList : $selectedList[0]
+  // 2-way binding to expose the selected value(s) to the parent component
+  $: value = multiple ? $selectedList : $selectedList[0] ?? ''
 </script>
 
 <div
