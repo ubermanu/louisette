@@ -129,7 +129,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
       const $disabled = get(disabled$)
 
       const nodes = traveller(node, '[data-listbox-option]', (el) => {
-        return $disabled.includes(el.dataset.accordionTrigger as string)
+        return $disabled.includes(el.dataset.listboxOption!)
       })
 
       let target =
@@ -138,7 +138,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
           .find((el) => el.dataset.listboxOption === $activeDescendant) || null
 
       if (!target) {
-        activeDescendant$.set(nodes.first()?.dataset.listboxOption as string)
+        activeDescendant$.set(nodes.first()?.dataset.listboxOption!)
         return
       }
 
@@ -254,7 +254,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
   return {
     selected: readonly(selected$),
     disabled: disabled$,
-    activeDescendant: readonly(activeDescendant$),
+    activeDescendant: activeDescendant$,
     listboxAttrs,
     optionAttrs,
     groupAttrs,
