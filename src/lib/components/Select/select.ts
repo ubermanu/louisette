@@ -205,19 +205,27 @@ export const createSelect = (config?: SelectConfig): Select => {
       toggleListbox()
     }
 
-    const onButtonBlur = () => {
-      closeListbox()
+    // When the user clicks outside the component, close the listbox
+    const onDocumentClick = (event: MouseEvent) => {
+      if (
+        !(
+          buttonNode?.contains(event.target as Node) ||
+          listboxNode?.contains(event.target as Node)
+        )
+      ) {
+        closeListbox()
+      }
     }
 
     node.addEventListener('keydown', onButtonKeyDown)
     node.addEventListener('click', onButtonClick)
-    // node.addEventListener('blur', onButtonBlur)
+    document.addEventListener('click', onDocumentClick, true)
 
     return {
       destroy() {
         node.removeEventListener('keydown', onButtonKeyDown)
         node.removeEventListener('click', onButtonClick)
-        // node.removeEventListener('blur', onButtonBlur)
+        document.removeEventListener('click', onDocumentClick, true)
         buttonNode = null
       },
     }
