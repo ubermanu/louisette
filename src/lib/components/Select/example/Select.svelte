@@ -25,23 +25,27 @@
   <button
     use:button
     {...$buttonAttrs}
-    class="flex w-full items-center justify-between rounded bg-white px-4 py-2 shadow dark:bg-neutral-700 dark:text-neutral-100"
+    class="flex w-full items-center justify-between gap-4 rounded bg-white px-4 py-2 shadow dark:bg-neutral-700 dark:text-neutral-100"
   >
     <span class:opacity-50={!$selectedLabel}>
       {$selectedLabel || placeholder}
     </span>
-    <svg
-      class="h-5 w-5"
-      viewBox="0 0 20 20"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M6.293 6.707a1 1 0 011.414 0L10 9.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-      />
-    </svg>
+    <span class="ml-auto" class:rotate-180={$opened}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="h-4 w-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+        />
+      </svg>
+    </span>
   </button>
 
   <div
