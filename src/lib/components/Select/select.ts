@@ -1,4 +1,5 @@
 import { createListbox } from '$lib/components/Listbox/listbox.js'
+import { mergeActions } from '$lib/helpers/actions.js'
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
@@ -289,7 +290,7 @@ export const createSelect = (config?: SelectConfig): Select => {
     onTypeAhead: (text) => {
       const option = lookupListboxOption(text)
       if (option) {
-        listbox.select(option.dataset.listboxOption!)
+        listbox.activeDescendant.set(option.dataset.listboxOption!)
       }
     },
   })
@@ -300,7 +301,7 @@ export const createSelect = (config?: SelectConfig): Select => {
     disabled: listbox.disabled,
     selectedLabel,
     activeDescendant: listbox.activeDescendant,
-    button: useButton,
+    button: mergeActions(useButton, typeahead.typeAhead),
     buttonAttrs,
     listbox: useListbox,
     listboxAttrs,
