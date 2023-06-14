@@ -38,8 +38,6 @@ export const createSelect = (config?: SelectConfig): Select => {
     else openListbox()
   }
 
-  const typeahead = useTypeAhead()
-
   const buttonAttrs = derived([opened$], ([opened]) => ({
     id: buttonId,
     role: 'combobox',
@@ -155,12 +153,38 @@ export const createSelect = (config?: SelectConfig): Select => {
     }
   }
 
+  const lookupListboxOption = (text: string): HTMLElement | null => {
+    const options = Array.from(
+      listboxNode?.querySelectorAll('[data-listbox-option]') || []
+    ) as HTMLElement[]
+
+    return (
+      options.find((option) => {
+        if (!option.textContent) return false
+        return option.textContent.toLowerCase().startsWith(text.toLowerCase())
+      }) || null
+    )
+  }
+
+  // TODO: Test that
+  const typeahead = useTypeAhead({
+    onTypeAheadStart: () => {
+      openListbox()
+    },
+    onTypeAhead: (text) => {
+      const option = lookupListboxOption(text)
+      if (option) {
+        listbox.select(option.dataset.listboxOption!)
+      }
+    },
+  })
+
   return {
     opened: readonly(opened$),
     selected: listbox.selected,
     disabled: listbox.disabled,
     selectedLabel,
-    button: useButton,
+    button: mergeActions(useButton, typeahead.typeAhead),
     buttonAttrs,
     listbox: mergeActions(useListbox, listbox.listbox),
     listboxAttrs,
