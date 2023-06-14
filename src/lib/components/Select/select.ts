@@ -1,3 +1,5 @@
+import { mergeActions } from '$lib/helpers/actions.js'
+import { delegateEventListeners } from '$lib/helpers/events.js'
 import { generateId } from '$lib/helpers/uuid.js'
 import { createListbox, useTypeAhead } from '$lib/index.js'
 import type { Action } from 'svelte/action'
@@ -57,8 +59,17 @@ export const createSelect = (config?: SelectConfig): Select => {
   )
 
   const selectedLabel = derived(listbox.selected, (selected) => {
-    if (selected.length === 0) return ''
-    if (selected.length === 1) return selected[0]
+    if (selected.length === 0) {
+      return ''
+    }
+    if (selected.length === 1) {
+      // Get the text content of the selected option (as label)
+      // This infers that the option is a text node, might be true in general
+      return (
+        listboxNode?.querySelector(`[data-listbox-option="${selected[0]}"]`)
+          ?.textContent || selected[0]
+      )
+    }
     return `${selected.length} selected`
   })
 
@@ -107,15 +118,42 @@ export const createSelect = (config?: SelectConfig): Select => {
     }
   }
 
-  listbox.selected.subscribe((selected) => {
-    // if (selected.length === 0) return
-    // const key = selected[selected.length - 1]
-    // const option = document.getElementById(key)
-    // if (option) option.scrollIntoView({ block: 'nearest' })
+  let listboxNode: HTMLElement | null = null
 
-    // Close the listbox when the user (un)selects an option
-    closeListbox()
-  })
+  const useListbox: Action = (node) => {
+    listboxNode = node
+
+    const unsubscribe = listbox.selected.subscribe((selected) => {
+      // if (selected.length === 0) return
+      // const key = selected[selected.length - 1]
+      // const option = document.getElementById(key)
+      // if (option) option.scrollIntoView({ block: 'nearest' })
+
+      // Close the listbox when the user (un)selects an option
+      closeListbox()
+    })
+
+    const onOptionKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        closeListbox()
+      }
+    }
+
+    const removeListeners = delegateEventListeners(node, {
+      keydown: {
+        '[data-listbox-option]': onOptionKeyDown,
+      },
+    })
+
+    return {
+      destroy() {
+        unsubscribe()
+        removeListeners()
+        listboxNode = null
+      },
+    }
+  }
 
   return {
     opened: readonly(opened$),
@@ -124,7 +162,7 @@ export const createSelect = (config?: SelectConfig): Select => {
     selectedLabel,
     button: useButton,
     buttonAttrs,
-    listbox: listbox.listbox,
+    listbox: mergeActions(useListbox, listbox.listbox),
     listboxAttrs,
     optionAttrs: listbox.optionAttrs,
     select: listbox.select,

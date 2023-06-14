@@ -2,11 +2,14 @@
   import { setContext } from 'svelte'
   import { createSelect } from '$lib'
 
-  export let value: string
+  export let value: string = ''
   export let placeholder: string = 'Select an option'
 
   // TODO: implement disabled
   export let disabled: boolean = false
+
+  const selectContext = createSelect()
+  setContext('select', selectContext)
 
   const {
     opened,
@@ -15,10 +18,10 @@
     listbox,
     listboxAttrs,
     selectedLabel,
-    ...selectContext
-  } = createSelect()
+    selected: selectedList,
+  } = selectContext
 
-  setContext('select', selectContext)
+  $: value = $selectedList.join(',')
 </script>
 
 <div class="relative min-w-[1rem]">
