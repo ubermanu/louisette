@@ -2,7 +2,7 @@
   import Collapsible from './Collapsible.svelte'
 </script>
 
-<Collapsible heading="🗞️ Paper">
+<Collapsible heading="Paper" icon="🗞️">
   The invention of paper is attributed to ancient China, where it was first
   developed around 200 BCE. It was initially made from the fibers of mulberry
   trees. Paper is an incredibly versatile material that is used for various

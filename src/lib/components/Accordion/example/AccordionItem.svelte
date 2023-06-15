@@ -2,6 +2,7 @@
   import { createKey, type Accordion } from '$lib'
   import { getContext } from 'svelte'
 
+  export let icon: string = ''
   export let heading: string
   export let disabled: boolean = false
   export let open: boolean = false
@@ -29,6 +30,9 @@
     class="flex cursor-pointer select-none items-center rounded-sm px-5 py-4 font-semibold leading-5 transition-colors duration-200 ease-in-out hover:bg-neutral-100 focus-visible:bg-neutral-100 dark:hover:bg-neutral-700 dark:focus-visible:bg-neutral-700"
     class:is-disabled={disabled}
   >
+    {#if icon}
+      <span class="mr-3" aria-hidden="true">{icon}</span>
+    {/if}
     {heading}
     <span class="ml-auto" class:rotate-180={$expanded.includes(key)}>
       <svg
