@@ -1,13 +1,19 @@
 <script lang="ts">
   import Listbox from './Listbox.svelte'
   import ListboxItem from './ListboxItem.svelte'
+
+  let value = ''
 </script>
 
-<Listbox>
-  <ListboxItem value="🐈">🐈 Cat</ListboxItem>
-  <ListboxItem value="🐕">🐕 Dog</ListboxItem>
-  <ListboxItem value="🐇">🐇 Rabbit</ListboxItem>
-  <ListboxItem value="🐁">🐁 Mouse</ListboxItem>
-  <ListboxItem value="🐀">🐀 Rat</ListboxItem>
-  <ListboxItem value="🐦">🐦 Bird</ListboxItem>
+<p class="mb-4 text-sm opacity-60">
+  You have selected: <strong>{JSON.stringify(value)}</strong>
+</p>
+
+<Listbox bind:value label="Select your favourite pet">
+  <ListboxItem value="🐈">Cat</ListboxItem>
+  <ListboxItem value="🐕">Dog</ListboxItem>
+  <ListboxItem value="🐇">Rabbit</ListboxItem>
+  <ListboxItem value="🐁">Mouse</ListboxItem>
+  <ListboxItem value="🐀">Rat</ListboxItem>
+  <ListboxItem value="🐦">Bird</ListboxItem>
 </Listbox>

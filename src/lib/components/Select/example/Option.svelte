@@ -1,20 +1,25 @@
 <script lang="ts">
-  import type { Listbox } from '$lib'
+  import type { Select } from '$lib'
   import { getContext } from 'svelte'
 
   export let value: string
+  export let selected: boolean = false
+  export let disabled: boolean = false
 
   const {
     optionAttrs,
+    select,
     selected: selectedList,
     activeDescendant,
-  } = getContext<Listbox>('listbox')
+  } = getContext<Select>('select')
+
+  if (selected) select(value)
 </script>
 
 <div
-  class="flex cursor-pointer items-center justify-between gap-4 rounded-md p-2 transition-colors hover:bg-neutral-200 focus:outline-none focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
-  class:is-active-descendant={$activeDescendant === value}
   {...$optionAttrs(value)}
+  class="flex cursor-pointer items-center justify-between rounded-md p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600"
+  class:is-active-descendant={$activeDescendant === value}
 >
   <span>
     <slot />
@@ -37,6 +42,6 @@
 
 <style lang="postcss">
   .is-active-descendant {
-    @apply bg-neutral-200 dark:bg-neutral-700;
+    @apply bg-neutral-200 dark:bg-neutral-600;
   }
 </style>
