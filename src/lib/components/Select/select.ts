@@ -67,9 +67,11 @@ export const createSelect = (config?: SelectConfig): Select => {
     if (selected.length === 1) {
       // Get the text content of the selected option (as label)
       // This infers that the option is a text node, might be true in general
+      // FIXME: When selected is defined from defaults, the node does not exist yet
       return (
-        listboxNode?.querySelector(`[data-listbox-option="${selected[0]}"]`)
-          ?.textContent || selected[0]
+        listboxNode
+          ?.querySelector(`[data-listbox-option="${selected[0]}"]`)
+          ?.textContent?.trim() || selected[0]
       )
     }
     return `${selected.length} selected`
