@@ -27,13 +27,17 @@ export const createSelect = (config?: SelectConfig): Select => {
 
   // TODO: Focus the first option (or the last selected option) when opening the listbox
   const openListbox = () => {
+    if (get(opened$)) return
     opened$.set(true)
+    document.addEventListener('click', onDocumentClick, true)
   }
 
   /** Close the listbox and focus the button */
   const closeListbox = () => {
+    if (!get(opened$)) return
     opened$.set(false)
     buttonNode?.focus()
+    document.removeEventListener('click', onDocumentClick, true)
   }
 
   const toggleListbox = () => {
@@ -76,6 +80,18 @@ export const createSelect = (config?: SelectConfig): Select => {
     }
     return `${selected.length} selected`
   })
+
+  // When the user clicks outside the component, close the listbox
+  const onDocumentClick = (event: MouseEvent) => {
+    if (
+      !(
+        buttonNode?.contains(event.target as Node) ||
+        listboxNode?.contains(event.target as Node)
+      )
+    ) {
+      closeListbox()
+    }
+  }
 
   let buttonNode: HTMLElement | null = null
 
@@ -207,22 +223,8 @@ export const createSelect = (config?: SelectConfig): Select => {
       toggleListbox()
     }
 
-    // When the user clicks outside the component, close the listbox
-    const onDocumentClick = (event: MouseEvent) => {
-      if (
-        !(
-          buttonNode?.contains(event.target as Node) ||
-          listboxNode?.contains(event.target as Node)
-        ) &&
-        get(opened$)
-      ) {
-        closeListbox()
-      }
-    }
-
     node.addEventListener('keydown', onButtonKeyDown)
     node.addEventListener('click', onButtonClick)
-    document.addEventListener('click', onDocumentClick, true)
 
     return {
       destroy() {
