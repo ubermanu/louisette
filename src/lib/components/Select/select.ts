@@ -13,7 +13,6 @@ export const createSelect = (config?: SelectConfig): Select => {
   const { multiple, disabled, selected } = { ...config }
 
   const baseId = generateId()
-  const buttonId = `${baseId}-button`
   const listboxId = `${baseId}-listbox`
 
   const listbox = createListbox({
@@ -45,13 +44,16 @@ export const createSelect = (config?: SelectConfig): Select => {
     else openListbox()
   }
 
-  const buttonAttrs = derived([opened$], ([opened]) => ({
-    id: buttonId,
-    role: 'combobox',
-    'aria-haspopup': 'listbox',
-    'aria-expanded': opened,
-    'aria-controls': listboxId,
-  }))
+  const buttonAttrs = derived(
+    [opened$, listbox.listboxAttrs],
+    ([opened, listboxAttrs]) => ({
+      role: 'combobox',
+      'aria-haspopup': 'listbox',
+      'aria-expanded': opened,
+      'aria-controls': listboxId,
+      'aria-activedescendant': listboxAttrs['aria-activedescendant'],
+    })
+  )
 
   const listboxAttrs = derived(
     [opened$, listbox.listboxAttrs],
@@ -61,6 +63,7 @@ export const createSelect = (config?: SelectConfig): Select => {
       tabIndex: undefined,
       'aria-hidden': !opened,
       inert: opened ? undefined : '',
+      'aria-activedescendant': undefined,
     })
   )
 
