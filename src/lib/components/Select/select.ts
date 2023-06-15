@@ -211,7 +211,8 @@ export const createSelect = (config?: SelectConfig): Select => {
         !(
           buttonNode?.contains(event.target as Node) ||
           listboxNode?.contains(event.target as Node)
-        )
+        ) &&
+        get(opened$)
       ) {
         closeListbox()
       }
