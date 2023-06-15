@@ -139,6 +139,7 @@ export const createSelect = (config?: SelectConfig): Select => {
 
       if (['Enter', ' ', 'Tab'].includes(event.key) && $opened) {
         event.preventDefault()
+        event.stopPropagation()
 
         if ($multiple) {
           if (event.shiftKey) {
