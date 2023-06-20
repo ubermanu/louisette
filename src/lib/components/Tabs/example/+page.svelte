@@ -6,9 +6,9 @@
 
 <Tabs>
   <svelte:fragment slot="tabs">
-    <Tab key="apples">🍎 Apples</Tab>
-    <Tab key="oranges">🍊 Oranges</Tab>
-    <Tab key="grapes">🍇 Grapes</Tab>
+    <Tab key="apples" icon="🍎">Apples</Tab>
+    <Tab key="oranges" icon="🍊">Oranges</Tab>
+    <Tab key="grapes" icon="🍇">Grapes</Tab>
   </svelte:fragment>
   <TabPanel key="apples">
     There are thousands of apple varieties, each with its own unique taste and
