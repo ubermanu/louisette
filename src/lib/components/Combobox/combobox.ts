@@ -182,7 +182,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     }
 
     const onInputInput = (event: InputEvent) => {
-      if (event.inputType === 'deleteContentBackward') {
+      if (event.inputType !== 'insertText') {
         return
       }
 
