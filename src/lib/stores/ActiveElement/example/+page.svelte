@@ -4,7 +4,7 @@
   $: number = $activeElement?.dataset.number ?? null
 </script>
 
-<p class="text-sm opacity-60">
+<p class="mb-4 text-sm opacity-60">
   {#if number}
     The active element is <strong>{number}</strong>.
   {:else}

@@ -2,8 +2,8 @@
   import { interactionMode } from '$lib'
 </script>
 
-<p>
-  You are currently using a <strong>{$interactionMode}</strong> device.
+<p class="mb-4 text-sm opacity-60">
+  You are currently using a <strong>{$interactionMode || 'unknown'}</strong> device.
 </p>
 
 <input
