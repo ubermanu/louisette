@@ -21,9 +21,9 @@ export const createTagGroup = (config?: TagGroupConfig): TagGroup => {
   // TODO: When dismissing a tag, the next tag is focused but not announced by screen readers
   const tagGroupAttrs = derived(focusWithin.focused, (focused) => ({
     role: 'listbox',
-    'aria-atomic': 'false',
-    'aria-relevant': 'additions',
-    'aria-live': focused ? 'polite' : 'off',
+    // 'aria-atomic': 'false',
+    // 'aria-relevant': 'additions',
+    // 'aria-live': focused ? 'polite' : 'off',
   }))
 
   const tagAttrs = derived(focused$, (focused) => (tag: string) => {
