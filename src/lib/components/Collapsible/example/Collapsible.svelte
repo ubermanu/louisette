@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createCollapsible } from '$lib'
 
+  export let icon: string = ''
   export let heading: string
 
   const { trigger, triggerAttrs, contentAttrs, expanded } = createCollapsible()
@@ -14,6 +15,9 @@
     class="space-between flex items-center rounded-lg p-4 font-semibold transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:bg-neutral-100 focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700 dark:focus-visible:bg-neutral-700"
     {...$triggerAttrs}
   >
+    {#if icon}
+      <span class="mr-2" aria-hidden="true">{icon}</span>
+    {/if}
     {heading}
     <span class="ml-auto" class:rotate-180={$expanded}>
       <svg

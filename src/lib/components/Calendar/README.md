@@ -7,7 +7,9 @@ path: component/calendar
 
 The `calendar` component provides a way to select a date.
 
-## Controls
+## Features
+
+### Keyboard navigation
 
 - <kbd>Space</kbd> or <kbd>Enter</kbd> on a date selects it.
 - <kbd>Arrow Up</kbd>, <kbd>Arrow Right</kbd>, <kbd>Arrow Down</kbd>, or <kbd>Arrow Left</kbd> navigates between dates.

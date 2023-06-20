@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createTooltip } from '$lib'
-  import { onDestroy, onMount } from 'svelte'
+  import { onMount } from 'svelte'
   import { browser } from '$app/environment'
   import {
     computePosition,
@@ -16,8 +16,6 @@
   let referenceEl: HTMLElement
   let floatingEl: HTMLElement
   let position = { x: 0, y: 0 }
-
-  let cleanup
 
   const maxSize = size({
     apply({ availableWidth, availableHeight, elements }) {
@@ -37,13 +35,7 @@
   }
 
   if (browser) {
-    onMount(() => {
-      cleanup = autoUpdate(referenceEl, floatingEl, updatePosition)
-    })
-
-    onDestroy(() => {
-      cleanup?.()
-    })
+    onMount(() => autoUpdate(referenceEl, floatingEl, updatePosition))
   }
 </script>
 

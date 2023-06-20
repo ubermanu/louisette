@@ -11,9 +11,9 @@ export const documentVisible = readable(true, (set) => {
     set(!document.hidden)
   }
 
-  document.addEventListener('visibilitychange', setDocumentVisible)
+  document.addEventListener('visibilitychange', setDocumentVisible, true)
 
   return () => {
-    document.removeEventListener('visibilitychange', setDocumentVisible)
+    document.removeEventListener('visibilitychange', setDocumentVisible, true)
   }
 })
