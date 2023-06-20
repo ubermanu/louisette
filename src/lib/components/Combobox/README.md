@@ -7,6 +7,8 @@ path: component/combobox
 
 A `combobox` is a combination of a text input and a dropdown list. It allows users to select an option from the list or enter a custom value.
 
+[WAI-ARIA: Combobox Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/examples/combobox-autocomplete-list/)
+
 ## Features
 
 ### Autocomplete
