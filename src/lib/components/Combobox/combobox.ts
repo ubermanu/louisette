@@ -45,13 +45,17 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     else openListbox()
   }
 
-  const inputAttrs = derived([opened$], ([opened]) => ({
-    id: inputId,
-    role: 'combobox',
-    'aria-autocomplete': autocomplete ? 'both' : 'list',
-    'aria-expanded': opened,
-    'aria-controls': listboxId,
-  }))
+  const inputAttrs = derived(
+    [opened$, listbox.listboxAttrs],
+    ([opened, listboxAttrs]) => ({
+      id: inputId,
+      role: 'combobox',
+      'aria-autocomplete': autocomplete ? 'both' : 'list',
+      'aria-expanded': opened,
+      'aria-controls': listboxId,
+      'aria-activedescendant': listboxAttrs['aria-activedescendant'],
+    })
+  )
 
   const listboxAttrs = derived(
     [opened$, listbox.listboxAttrs],
@@ -59,6 +63,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
       ...origAttributes,
       id: listboxId,
       tabIndex: undefined,
+      'aria-activeDescendant': undefined,
       'aria-hidden': !opened,
       inert: opened ? undefined : '',
     })
