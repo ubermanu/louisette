@@ -295,6 +295,14 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     'aria-controls': listboxId,
   }))
 
+  // Remove the "aria-selected" attribute from the option
+  const optionAttrs = derived(listbox.optionAttrs, ($optionAttrs) => {
+    return (option: string) => {
+      const { ['aria-selected']: _, ...attrs } = $optionAttrs(option)
+      return attrs
+    }
+  })
+
   return {
     opened: readonly(opened$),
     selected: listbox.selected,
@@ -306,7 +314,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     buttonAttrs,
     listbox: useListbox,
     listboxAttrs,
-    optionAttrs: listbox.optionAttrs,
+    optionAttrs,
     select: listbox.select,
     unselect: listbox.unselect,
     toggle: listbox.toggle,

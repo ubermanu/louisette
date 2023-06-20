@@ -16,7 +16,7 @@
 
 <Combobox
   options={searchOptions}
-  label="Pick your favourite color"
+  label="Favourite color"
   placeholder="Enter the name of your favourite color..."
   autocomplete
 />
