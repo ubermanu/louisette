@@ -5,7 +5,7 @@ path: component/tabs
 
 # Tabs
 
-The `tabs` component is used to display a set of tabs.
+The `tabs` component is used to display a set of sections of content, each associated with a tab. Only one tab can be selected at a time.
 
 [WAI-ARIA Tabs Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/)
 
