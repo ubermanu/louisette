@@ -3,6 +3,7 @@
   import { getContext } from 'svelte'
 
   export let key: string
+  export let icon: string = ''
 
   const { tabAttrs, active } = getContext<Tabs>('tabs')
 </script>
@@ -12,6 +13,9 @@
   class="cursor-pointer select-none rounded-md p-2 transition-colors hover:bg-neutral-100 focus:outline-none focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
   class:is-active={$active === key}
 >
+  {#if icon}
+    <span class="mr-1 text-sm" aria-hidden="true">{icon}</span>
+  {/if}
   <slot />
 </div>
 
