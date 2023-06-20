@@ -9,6 +9,10 @@ A `combobox` is a combination of a text input and a dropdown list. It allows use
 
 ## Features
 
+### Autocomplete
+
+If enabled, the input will automatically complete the value with the first option that matches the user's input.
+
 ### Keyboard navigation
 
 - <kbd>Enter</kbd> on an option selects it.
