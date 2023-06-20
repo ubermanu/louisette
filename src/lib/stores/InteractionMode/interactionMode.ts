@@ -34,8 +34,8 @@ export const interactionMode = readable<InteractionMode | null>(null, (set) => {
   })
 
   return () => {
-    document.removeEventListener('keydown', setInteractionMode)
-    document.removeEventListener('pointerdown', setInteractionMode)
+    document.removeEventListener('keydown', setInteractionMode, true)
+    document.removeEventListener('pointerdown', setInteractionMode, true)
   }
 })
 
