@@ -4,6 +4,7 @@
   export let label: string
   export let placeholder: string = ''
   export let options: string[] = []
+  export let autocomplete: boolean = false
 
   const {
     input,
@@ -15,7 +16,7 @@
     optionAttrs,
     opened,
     activeDescendant,
-  } = createCombobox()
+  } = createCombobox({ autocomplete })
 </script>
 
 <div class="relative min-w-[1rem]">

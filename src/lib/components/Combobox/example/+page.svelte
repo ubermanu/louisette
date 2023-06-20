@@ -18,4 +18,5 @@
   options={searchOptions}
   label="Pick your favourite color"
   placeholder="Enter the name of your favourite color..."
+  autocomplete
 />
