@@ -46,7 +46,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
   const inputAttrs = derived([opened$], ([opened]) => ({
     id: inputId,
     role: 'combobox',
-    'aria-autocomplete': 'list',
+    'aria-autocomplete': 'none',
     'aria-expanded': opened,
     'aria-controls': listboxId,
   }))
@@ -257,6 +257,26 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     )
   }
 
+  const useButton: Action = (node) => {
+    const onButtonClick = () => {
+      toggleListbox()
+    }
+
+    node.addEventListener('click', onButtonClick)
+
+    return {
+      destroy() {
+        node.removeEventListener('click', onButtonClick)
+      },
+    }
+  }
+
+  const buttonAttrs = derived([opened$], ([opened]) => ({
+    tabindex: '-1',
+    'aria-expanded': opened,
+    'aria-controls': listboxId,
+  }))
+
   return {
     opened: readonly(opened$),
     selected: listbox.selected,
@@ -264,6 +284,8 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     activeDescendant: listbox.activeDescendant,
     input: useInput,
     inputAttrs,
+    button: useButton,
+    buttonAttrs,
     listbox: useListbox,
     listboxAttrs,
     optionAttrs: listbox.optionAttrs,

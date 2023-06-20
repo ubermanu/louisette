@@ -15,6 +15,8 @@ export type Combobox = {
   activeDescendant: Readable<string>
   input: Action
   inputAttrs: Readable<HTMLAttributes>
+  button: Action
+  buttonAttrs: Readable<HTMLAttributes>
   listbox: Action
   listboxAttrs: Readable<HTMLAttributes>
   optionAttrs: Readable<(key: string) => HTMLAttributes>
