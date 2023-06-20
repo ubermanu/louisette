@@ -67,6 +67,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     if (
       !(
         inputNode?.contains(event.target as Node) ||
+        buttonNode?.contains(event.target as Node) ||
         listboxNode?.contains(event.target as Node)
       )
     ) {
@@ -257,7 +258,11 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     )
   }
 
+  let buttonNode: HTMLElement | null = null
+
   const useButton: Action = (node) => {
+    buttonNode = node
+
     const onButtonClick = () => {
       toggleListbox()
     }
@@ -267,6 +272,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     return {
       destroy() {
         node.removeEventListener('click', onButtonClick)
+        buttonNode = null
       },
     }
   }
