@@ -36,7 +36,7 @@ export const activeElement = readable<HTMLElement | null>(null, (set) => {
   })
 
   return () => {
-    document.removeEventListener('focus', setActiveElement)
-    document.removeEventListener('blur', removeActiveElement)
+    document.removeEventListener('focus', setActiveElement, true)
+    document.removeEventListener('blur', removeActiveElement, true)
   }
 })
