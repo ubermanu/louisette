@@ -3,8 +3,18 @@ import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 
 export type ComboboxConfig = {
+  /**
+   * If true, the matching option will be inserted into the input when the user
+   * types. If false, the input will be left unchanged.
+   *
+   * @defaultValue false
+   */
   autocomplete?: boolean
+
+  /** The disabled options. */
   disabled?: string[]
+
+  /** The selected options. */
   selected?: string[]
 }
 

@@ -8,7 +8,7 @@ import { derived, get, readonly, writable } from 'svelte/store'
 import type { Combobox, ComboboxConfig } from './combobox.types.js'
 
 export const createCombobox = (config?: ComboboxConfig): Combobox => {
-  const { disabled, selected } = { ...config }
+  const { disabled, selected, autocomplete } = { ...config }
 
   const baseId = generateId()
   const inputId = `${baseId}-input`
@@ -36,6 +36,8 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     opened$.set(false)
     inputNode?.focus()
     document.removeEventListener('click', onDocumentClick, true)
+    // Remove text selection in the input and move the cursor to the end
+    ;(inputNode as HTMLInputElement | null)?.setSelectionRange(-1, -1)
   }
 
   const toggleListbox = () => {
@@ -46,7 +48,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
   const inputAttrs = derived([opened$], ([opened]) => ({
     id: inputId,
     role: 'combobox',
-    'aria-autocomplete': 'none',
+    'aria-autocomplete': autocomplete ? 'both' : 'list',
     'aria-expanded': opened,
     'aria-controls': listboxId,
   }))
@@ -133,46 +135,52 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
         return
       }
 
-      switch (event.key) {
-        case 'ArrowDown': {
-          event.preventDefault()
-          const next = nodes.next(target)
-          if (next) {
-            listbox.activeDescendant.set(next.dataset.listboxOption!)
+      if ($opened) {
+        switch (event.key) {
+          case 'ArrowDown': {
+            event.preventDefault()
+            const next = nodes.next(target)
+            if (next) {
+              listbox.activeDescendant.set(next.dataset.listboxOption!)
+            }
+            break
           }
-          break
-        }
 
-        case 'ArrowUp': {
-          event.preventDefault()
-          const previous = nodes.previous(target)
-          if (previous) {
-            listbox.activeDescendant.set(previous.dataset.listboxOption!)
+          case 'ArrowUp': {
+            event.preventDefault()
+            const previous = nodes.previous(target)
+            if (previous) {
+              listbox.activeDescendant.set(previous.dataset.listboxOption!)
+            }
+            break
           }
-          break
-        }
 
-        case 'Home': {
-          event.preventDefault()
-          const first = nodes.first()
-          if (first) {
-            listbox.activeDescendant.set(first.dataset.listboxOption!)
+          case 'Home': {
+            event.preventDefault()
+            const first = nodes.first()
+            if (first) {
+              listbox.activeDescendant.set(first.dataset.listboxOption!)
+            }
+            break
           }
-          break
-        }
 
-        case 'End': {
-          event.preventDefault()
-          const last = nodes.last()
-          if (last) {
-            listbox.activeDescendant.set(last.dataset.listboxOption!)
+          case 'End': {
+            event.preventDefault()
+            const last = nodes.last()
+            if (last) {
+              listbox.activeDescendant.set(last.dataset.listboxOption!)
+            }
+            break
           }
-          break
         }
       }
     }
 
-    const onInputInput = () => {
+    const onInputInput = (event: InputEvent) => {
+      if (event.inputType === 'deleteContentBackward') {
+        return
+      }
+
       const text = (inputNode as HTMLInputElement).value.trim()
 
       if (text.length === 0) {
@@ -190,18 +198,30 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
 
       if (firstMatch) {
         openListbox()
-        listbox.activeDescendant.set(firstMatch.dataset.listboxOption!)
+        const match = firstMatch.dataset.listboxOption!
+        listbox.activeDescendant.set(match)
+
+        if (autocomplete) {
+          // Set selection to the rest of the matched text
+          ;(inputNode as HTMLInputElement).value = match
+          ;(inputNode as HTMLInputElement).setSelectionRange(
+            text.length,
+            match.length
+          )
+        }
       } else {
         closeListbox()
       }
     }
 
     node.addEventListener('keydown', onInputKeyDown)
+    // @ts-ignore
     node.addEventListener('input', onInputInput)
 
     return {
       destroy() {
         node.removeEventListener('keydown', onInputKeyDown)
+        // @ts-ignore
         node.removeEventListener('input', onInputInput)
         document.removeEventListener('click', onDocumentClick, true)
         inputNode = null
@@ -243,19 +263,6 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
         listboxNode = null
       },
     }
-  }
-
-  const lookupListboxOption = (text: string): HTMLElement | null => {
-    const options = Array.from(
-      listboxNode?.querySelectorAll('[data-listbox-option]') || []
-    ) as HTMLElement[]
-
-    return (
-      options.find((option) => {
-        if (!option.textContent) return false
-        return option.textContent.toLowerCase().startsWith(text.toLowerCase())
-      }) || null
-    )
   }
 
   let buttonNode: HTMLElement | null = null
