@@ -15,9 +15,9 @@ export const reducedMotion = readable(false, (set) => {
 
   setReducedMotion()
 
-  mediaQuery.addEventListener('change', setReducedMotion)
+  mediaQuery.addEventListener('change', setReducedMotion, true)
 
   return () => {
-    mediaQuery.removeEventListener('change', setReducedMotion)
+    mediaQuery.removeEventListener('change', setReducedMotion, true)
   }
 })
