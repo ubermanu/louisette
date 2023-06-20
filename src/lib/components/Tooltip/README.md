@@ -13,4 +13,6 @@ The following example implements the tooltip component using [@floating-ui/dom](
 
 ## Features
 
-- Displays the tooltip on hover or focus
+### Keyboard navigation
+
+- `Escape` key closes the tooltip when focused
