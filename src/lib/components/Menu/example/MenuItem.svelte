@@ -101,7 +101,7 @@
   {#if hasSubmenu && $visible}
     <div
       bind:this={submenuContainer}
-      class="absolute left-full top-0 z-10 -mt-2 pl-2 shadow-lg"
+      class="absolute left-full top-0 z-10 -mt-2 pl-2"
     >
       <slot name="submenu" />
     </div>
