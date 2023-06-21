@@ -1,7 +1,7 @@
 {
   "name": "louisette",
   "description": "Accessible Svelte component primitives",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "keywords": [
     "louisette",
     "headless",
