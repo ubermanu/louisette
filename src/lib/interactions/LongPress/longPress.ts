@@ -33,7 +33,7 @@ export const useLongPress = (config?: LongPressConfig): LongPress => {
 
   const { press, pressed } = usePress({
     onPressStart: onLongPressStart || onLongPress ? onPressStart : undefined,
-    onPressEnd: onLongPressEnd ? onPressEnd : undefined,
+    onPressEnd,
   })
 
   return {
