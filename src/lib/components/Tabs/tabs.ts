@@ -71,30 +71,24 @@ export const createTabs = (config?: TabsConfig): Tabs => {
   }
 
   const onTabClick = (event: DelegateEvent<MouseEvent>) => {
-    open(event.delegateTarget.dataset.tabsTab as string)
+    open(event.delegateTarget.dataset.tabsTab!)
   }
 
   const onTabKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
     const target = event.delegateTarget
-    const key = (event.target as HTMLElement).dataset.tabsTab || ''
 
     const $orientation = get(orientation$)
     const $behavior = get(behavior$)
 
     if (['Enter', ' '].includes(event.key) && $behavior === 'manual') {
       event.preventDefault()
-      open(key)
-    }
-
-    if (!rootNode) {
-      console.warn('Tabs root node not found.')
-      return
+      open(target.dataset.tabsTab!)
     }
 
     const $disabled = get(disabled$)
 
-    const nodes = traveller(rootNode, '[data-tabs-tab]', (el) => {
-      return $disabled.includes(el.dataset.tabsTab as string)
+    const nodes = traveller(rootNode!, '[data-tabs-tab]', (el) => {
+      return $disabled.includes(el.dataset.tabsTab!)
     })
 
     if (
@@ -139,7 +133,7 @@ export const createTabs = (config?: TabsConfig): Tabs => {
       throw new Error('No root node found for the tabs')
     }
 
-    const removeListeners = delegateEventListeners(rootNode, {
+    return delegateEventListeners(rootNode, {
       click: {
         '[data-tabs-tab]': onTabClick,
       },
@@ -150,10 +144,6 @@ export const createTabs = (config?: TabsConfig): Tabs => {
         '[data-tabs-tab]': onTabFocus,
       },
     })
-
-    return () => {
-      removeListeners()
-    }
   })
 
   return {
