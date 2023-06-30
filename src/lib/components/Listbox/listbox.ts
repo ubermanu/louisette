@@ -141,18 +141,15 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
 
     const $disabled = get(disabled$)
 
-    const nodes = traveller(listboxNode!, '[data-listbox-option]', (el) => {
+    const options = traveller(listboxNode!, '[data-listbox-option]', (el) => {
       return $disabled.includes(el.dataset.listboxOption!)
     })
 
-    let target =
-      nodes
-        .all()
-        .find((el) => el.dataset.listboxOption === $activeDescendant) || null
+    let target = listboxNode!.querySelector(`[data-listbox-option="${$activeDescendant}"]`) as HTMLElement | null
 
     if (!target) {
       event.preventDefault()
-      activeDescendant$.set(nodes.first()?.dataset.listboxOption!)
+      activeDescendant$.set(options.first()?.dataset.listboxOption!)
       return
     }
 
@@ -166,7 +163,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
       (event.key === 'ArrowRight' && $orientation === 'horizontal')
     ) {
       event.preventDefault()
-      const next = nodes.next(target)
+      const next = options.next(target)
 
       if (next) {
         activeDescendant$.set(next.dataset.listboxOption!)
@@ -182,7 +179,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
       (event.key === 'ArrowLeft' && $orientation === 'horizontal')
     ) {
       event.preventDefault()
-      const previous = nodes.previous(target)
+      const previous = options.previous(target)
 
       if (previous) {
         activeDescendant$.set(previous.dataset.listboxOption!)
@@ -195,7 +192,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
 
     if (event.key === 'Home') {
       event.preventDefault()
-      const first = nodes.first()
+      const first = options.first()
 
       if (first) {
         // Selects the focused option and all options up to the first option.
@@ -209,7 +206,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
 
     if (event.key === 'End') {
       event.preventDefault()
-      const last = nodes.last()
+      const last = options.last()
 
       if (last) {
         // Selects the focused option and all options up to the last option.
@@ -224,7 +221,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
     if ($multiple && event.key === 'a' && event.ctrlKey) {
       event.preventDefault()
 
-      const allKeys = nodes
+      const allKeys = options
         .all()
         .map((option) => (option as HTMLElement).dataset.listboxOption!)
 
