@@ -151,6 +151,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
         .find((el) => el.dataset.listboxOption === $activeDescendant) || null
 
     if (!target) {
+      event.preventDefault()
       activeDescendant$.set(nodes.first()?.dataset.listboxOption!)
       return
     }
@@ -245,7 +246,6 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
     if (!listboxNode) {
       throw new Error('Could not find the listbox')
     }
-
 
     listboxNode.addEventListener('keydown', onListboxKeyDown)
 
