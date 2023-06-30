@@ -18,12 +18,11 @@ export const createTabs = (config?: TabsConfig): Tabs => {
   const behavior$ = writable(behavior || 'auto')
 
   const baseId = generateId()
-  const rootId = `${baseId}-tabs`
   const tabId = (key: string) => `${baseId}-tab-${key}`
   const panelId = (key: string) => `${baseId}-panel-${key}`
 
   const rootAttrs = readable({
-    id: rootId
+    'data-tabs': baseId
   })
 
   const listAttrs = derived([orientation$], ([orientation]) => ({
@@ -83,6 +82,7 @@ export const createTabs = (config?: TabsConfig): Tabs => {
     if (['Enter', ' '].includes(event.key) && $behavior === 'manual') {
       event.preventDefault()
       open(target.dataset.tabsTab!)
+      return
     }
 
     const $disabled = get(disabled$)
@@ -97,6 +97,7 @@ export const createTabs = (config?: TabsConfig): Tabs => {
     ) {
       event.preventDefault()
       nodes.previous(target)?.focus()
+      return
     }
 
     if (
@@ -105,16 +106,19 @@ export const createTabs = (config?: TabsConfig): Tabs => {
     ) {
       event.preventDefault()
       nodes.next(target)?.focus()
+      return
     }
 
     if (event.key === 'Home') {
       event.preventDefault()
       nodes.first()?.focus()
+      return
     }
 
     if (event.key === 'End') {
       event.preventDefault()
       nodes.last()?.focus()
+      return
     }
   }
 
@@ -127,7 +131,7 @@ export const createTabs = (config?: TabsConfig): Tabs => {
   let rootNode: HTMLElement | null = null
 
   onBrowserMount(() => {
-    rootNode = document.getElementById(rootId)
+    rootNode = document.querySelector(`[data-tabs="${baseId}"]`) as HTMLElement | null
 
     if (!rootNode) {
       throw new Error('No root node found for the tabs')

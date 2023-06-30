@@ -65,7 +65,7 @@ export const createCollapsible = (config?: CollapsibleConfig): Collapsible => {
   }
 
   onBrowserMount(() => {
-    const node = document.getElementById(triggerId) as HTMLElement | null
+    const node = document.getElementById(triggerId)
 
     if (!node) {
       throw new Error('No trigger found for this collapsible')

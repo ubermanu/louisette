@@ -14,12 +14,11 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
   const disabled$ = writable(disabled || [])
 
   const baseId = generateId()
-  const rootId = `${baseId}-accordion`
   const triggerId = (key: string) => `${baseId}-trigger-${key}`
   const contentId = (key: string) => `${baseId}-content-${key}`
 
   const rootAttrs = readable({
-    id: rootId,
+    'data-accordion': baseId,
   })
 
   const triggerAttrs = derived(
@@ -173,7 +172,7 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
   }
 
   onBrowserMount(() => {
-    rootNode = document.getElementById(rootId)
+    rootNode = document.querySelector(`[data-accordion="${baseId}"]`) as HTMLElement | null
 
     if (!rootNode) {
       throw new Error('No root node found for the accordion')
