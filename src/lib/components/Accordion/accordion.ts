@@ -1,9 +1,9 @@
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
-import type { Action } from 'svelte/action'
-import { derived, get, readonly, writable } from 'svelte/store'
+import { derived, get, readable, readonly, writable } from 'svelte/store'
 import type { Accordion, AccordionConfig } from './accordion.types.js'
 
 export const createAccordion = (config?: AccordionConfig): Accordion => {
@@ -14,16 +14,21 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
   const disabled$ = writable(disabled || [])
 
   const baseId = generateId()
-  const getTriggerId = (key: string) => `${baseId}-trigger-${key}`
-  const getContentId = (key: string) => `${baseId}-content-${key}`
+  const rootId = `${baseId}-accordion`
+  const triggerId = (key: string) => `${baseId}-trigger-${key}`
+  const contentId = (key: string) => `${baseId}-content-${key}`
+
+  const rootAttrs = readable({
+    id: rootId,
+  })
 
   const triggerAttrs = derived(
     [expanded$, disabled$],
     ([expanded, disabled]) => {
       return (key: string) => ({
-        id: getTriggerId(key),
+        id: triggerId(key),
         role: 'button',
-        'aria-controls': getContentId(key),
+        'aria-controls': contentId(key),
         'aria-expanded': expanded.includes(key),
         'aria-disabled': disabled.includes(key),
         tabIndex: disabled.includes(key) ? -1 : 0,
@@ -35,9 +40,9 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
 
   const contentAttrs = derived([expanded$], ([expanded]) => {
     return (key: string) => ({
-      id: getContentId(key),
+      id: contentId(key),
       role: 'region',
-      'aria-labelledby': getTriggerId(key),
+      'aria-labelledby': triggerId(key),
       'aria-hidden': !expanded.includes(key),
       inert: !expanded.includes(key) ? '' : undefined,
       'data-accordion-content': key,
@@ -113,7 +118,7 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
   /** Toggles the accordion when the trigger is clicked. */
   const onTriggerClick = (event: DelegateEvent<MouseEvent>) => {
     event.preventDefault()
-    toggle(event.delegateTarget.dataset.accordionTrigger as string)
+    toggle(event.delegateTarget.dataset.accordionTrigger!)
   }
 
   /**
@@ -128,7 +133,7 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
    */
   const onTriggerKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
     const target = event.delegateTarget
-    const key = target.dataset.accordionTrigger as string
+    const key = target.dataset.accordionTrigger!
 
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
@@ -140,15 +145,10 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
       collapse(key)
     }
 
-    if (!rootNode) {
-      console.warn('The accordion root node is not defined.')
-      return
-    }
-
     const $disabled = get(disabled$)
 
-    const nodes = traveller(rootNode, '[data-accordion-trigger]', (el) => {
-      return $disabled.includes(el.dataset.accordionTrigger as string)
+    const nodes = traveller(rootNode!, '[data-accordion-trigger]', (el) => {
+      return $disabled.includes(el.dataset.accordionTrigger!)
     })
 
     if (event.key === 'ArrowUp') {
@@ -172,11 +172,14 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
     }
   }
 
-  /** Bind event listeners to the accordion */
-  const useAccordion: Action = (node) => {
-    rootNode = node
+  onBrowserMount(() => {
+    rootNode = document.getElementById(rootId)
 
-    const removeListeners = delegateEventListeners(node, {
+    if (!rootNode) {
+      throw new Error('No root node found for the accordion')
+    }
+
+    const removeListeners = delegateEventListeners(rootNode, {
       keydown: {
         '[data-accordion-trigger]': onTriggerKeyDown,
       },
@@ -192,21 +195,19 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
       }
     })
 
-    return {
-      destroy() {
-        removeListeners()
-        unsubscribe()
-      },
+    return () => {
+      removeListeners()
+      unsubscribe()
     }
-  }
+  })
 
   return {
     multiple: multiple$,
     expanded: readonly(expanded$),
     disabled: readonly(disabled$),
+    rootAttrs,
     triggerAttrs,
     contentAttrs,
-    accordion: useAccordion,
     expand,
     collapse,
     toggle,
