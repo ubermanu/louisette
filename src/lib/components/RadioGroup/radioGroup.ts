@@ -1,7 +1,8 @@
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
-import type { Action } from 'svelte/action'
+import { generateId } from '$lib/helpers/uuid.js'
 import { derived, get, readable, readonly, writable } from 'svelte/store'
 import type { RadioGroup, RadioGroupConfig } from './radioGroup.types.js'
 
@@ -11,8 +12,11 @@ export const createRadioGroup = (config?: RadioGroupConfig): RadioGroup => {
   const selected$ = writable(selected || '')
   const disabled$ = writable(disabled || [])
 
+  const baseId = generateId()
+
   const radioGroupAttrs = readable({
     role: 'radiogroup',
+    'data-radiogroup': baseId,
   })
 
   let firstRadioKey: string | undefined
@@ -32,7 +36,7 @@ export const createRadioGroup = (config?: RadioGroupConfig): RadioGroup => {
       role: 'radio',
       'aria-checked': selected === String(key),
       'aria-disabled': disabled.includes(String(key)),
-      'data-radio-group-radio': key,
+      'data-radiogroup-radio': key,
       tabIndex: isFocusable(String(key)) ? 0 : -1,
     })
   })
@@ -43,27 +47,23 @@ export const createRadioGroup = (config?: RadioGroupConfig): RadioGroup => {
   }
 
   const onRadioClick = (event: DelegateEvent<MouseEvent>) => {
-    select(event.delegateTarget.dataset.radioGroupRadio as string)
+    select(event.delegateTarget.dataset.radiogroupRadio!)
   }
 
   const onRadioKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
     const target = event.delegateTarget
-    const key = target?.dataset.radioGroupRadio || ''
+    const key = target?.dataset.radiogroupRadio!
 
     if (event.key === ' ') {
       event.preventDefault()
       select(key)
-    }
-
-    if (!rootNode) {
-      console.warn('No root node found for radio group')
       return
     }
 
     const $disabled = get(disabled$)
 
-    const radios = traveller(rootNode, '[data-radio-group-radio]', (el) => {
-      return $disabled.includes(el.dataset.radioGroupRadio as string)
+    const radios = traveller(rootNode!, '[data-radiogroup-radio]', (el) => {
+      return $disabled.includes(el.dataset.radiogroupRadio!)
     })
 
     if (['ArrowDown', 'ArrowRight'].includes(event.key)) {
@@ -89,31 +89,28 @@ export const createRadioGroup = (config?: RadioGroupConfig): RadioGroup => {
 
   let rootNode: HTMLElement | null = null
 
-  const useRadioGroup: Action = (node) => {
-    rootNode = node
+  onBrowserMount(() => {
+    rootNode = document.querySelector(`[data-radiogroup="${baseId}"]`)
 
-    const removeListeners = delegateEventListeners(node, {
+    if (!rootNode) {
+      throw new Error('Could not find the radio group')
+    }
+
+    return delegateEventListeners(rootNode, {
       click: {
-        '[data-radio-group-radio]': onRadioClick,
+        '[data-radiogroup-radio]': onRadioClick,
       },
       keydown: {
-        '[data-radio-group-radio]': onRadioKeyDown,
+        '[data-radiogroup-radio]': onRadioKeyDown,
       },
     })
-
-    return {
-      destroy() {
-        removeListeners()
-      },
-    }
-  }
+  })
 
   return {
     selected: readonly(selected$),
     disabled: disabled$,
     radioGroupAttrs,
     radioAttrs,
-    radioGroup: useRadioGroup,
     select,
   }
 }
