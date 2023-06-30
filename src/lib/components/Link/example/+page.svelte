@@ -2,14 +2,13 @@
   import { createLink } from '$lib'
   import { page } from '$app/stores'
 
-  const { link, linkAttrs } = createLink({
+  const { linkAttrs } = createLink({
     href: $page.url.pathname,
   })
 </script>
 
 <!-- svelte-ignore a11y-img-redundant-alt -->
 <img
-  use:link
   {...$linkAttrs}
   src="https://picsum.photos/seed/1/200/300"
   alt="A clickable image"
