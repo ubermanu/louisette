@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from '$lib/helpers/types.js'
-import type { Action } from 'svelte/action'
 import type { Readable, Writable } from 'svelte/store'
 
 export type ListboxConfig = {
@@ -23,7 +22,6 @@ export type Listbox = {
   listboxAttrs: Readable<HTMLAttributes>
   optionAttrs: Readable<(key: string) => HTMLAttributes>
   groupAttrs: Readable<(key: string) => HTMLAttributes>
-  listbox: Action
   select: (key: string) => void
   unselect: (key: string) => void
   toggle: (key: string) => void
