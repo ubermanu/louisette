@@ -9,7 +9,7 @@
     type Placement,
   } from '@floating-ui/dom'
 
-  const { trigger, triggerAttrs, tooltipAttrs, visible } = createTooltip()
+  const { triggerAttrs, tooltipAttrs, visible } = createTooltip()
 
   export let placement: Placement = 'right'
 
@@ -41,7 +41,6 @@
 
 <button
   bind:this={referenceEl}
-  use:trigger
   {...$triggerAttrs}
   class="inline-block rounded p-1"
 >
