@@ -6,7 +6,6 @@
 
   // TODO: Fix first render of the icon
   const {
-    switch: switchRef,
     switchAttrs,
     active,
   } = createSwitch({
@@ -45,7 +44,6 @@
 </svelte:head>
 
 <button
-  use:switchRef
   {...$switchAttrs}
   class="rounded p-2 transition-colors duration-200 hover:text-accent-500"
 >
