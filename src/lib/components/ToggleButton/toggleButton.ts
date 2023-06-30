@@ -1,25 +1,27 @@
-import { createButton } from '$lib/index.js'
-import type { Action } from 'svelte/action'
+import { onBrowserMount } from '$lib/helpers/environment.js'
+import { generateId } from '$lib/helpers/uuid.js'
 import { derived, get, readonly, writable } from 'svelte/store'
 import type { ToggleButton, ToggleButtonConfig } from './toggleButton.types.js'
 
 export const createToggleButton = (
   config?: ToggleButtonConfig
 ): ToggleButton => {
-  const { checked, ...buttonConfig } = { ...config }
+  const { checked, disabled } = { ...config }
 
   const checked$ = writable(checked || false)
+  const disabled$ = writable(disabled || false)
 
-  const { buttonAttrs: buttonAttrs$, disabled: disabled$ } = createButton({
-    ...buttonConfig,
-  })
+  const baseId = generateId()
 
   // Update the aria-pressed attribute based on the checked state
   const toggleButtonAttrs = derived(
-    [buttonAttrs$, checked$],
-    ([buttonAttrs, checked]) => ({
-      ...buttonAttrs,
+    [disabled$, checked$],
+    ([disabled, checked]) => ({
+      'role': 'button',
+      'aria-disabled': disabled,
+      tabIndex: disabled ? 0 : -1,
       'aria-pressed': checked,
+      'data-togglebutton': baseId,
     })
   )
 
@@ -44,7 +46,7 @@ export const createToggleButton = (
     checked$.update((checked) => !checked)
   }
 
-  const onToggleButtonClick = (event: MouseEvent) => {
+  const onToggleButtonClick = () => {
     toggle()
   }
 
@@ -55,7 +57,14 @@ export const createToggleButton = (
     }
   }
 
-  const useToggleButton: Action = (node) => {
+
+  onBrowserMount(() => {
+    const node = document.querySelector(`[data-togglebutton="${baseId}"]`) as HTMLElement | null
+
+    if (!node) {
+      throw new Error('Could not find the toggle button')
+    }
+
     node.addEventListener('click', onToggleButtonClick)
     node.addEventListener('keydown', onToggleButtonKeyDown)
 
@@ -65,20 +74,17 @@ export const createToggleButton = (
       }
     })
 
-    return {
-      destroy() {
-        node.removeEventListener('click', onToggleButtonClick)
-        node.removeEventListener('keydown', onToggleButtonKeyDown)
-        unsubscribe()
-      },
+    return () => {
+      node.removeEventListener('click', onToggleButtonClick)
+      node.removeEventListener('keydown', onToggleButtonKeyDown)
+      unsubscribe()
     }
-  }
+  })
 
   return {
     checked: readonly(checked$),
     disabled: disabled$,
     toggleButtonAttrs,
-    toggleButton: useToggleButton,
     check,
     uncheck,
     toggle,
