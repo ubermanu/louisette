@@ -6,7 +6,7 @@
   /** @type {{ label: string; value: string }[]} */
   export let options = []
 
-  const { tagGroup, tagGroupAttrs, tagAttrs, dismissButtonAttrs } =
+  const { tagGroupAttrs, tagAttrs, dismissButtonAttrs } =
     createTagGroup({
       onDismiss: (key) => {
         options = options.filter((option) => option.value !== key)
@@ -15,7 +15,6 @@
 </script>
 
 <div
-  use:tagGroup
   {...$tagGroupAttrs}
   class="flex flex-wrap gap-2"
   aria-label={label}

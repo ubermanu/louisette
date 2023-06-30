@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from '$lib/helpers/types.js'
-import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 
 export type TagGroupConfig = {
@@ -11,7 +10,6 @@ export type TagGroupConfig = {
 }
 
 export type TagGroup = {
-  tagGroup: Action
   tagGroupAttrs: Readable<HTMLAttributes>
   tagAttrs: Readable<(tag: string) => HTMLAttributes>
   dismissButtonAttrs: Readable<(tag: string) => HTMLAttributes>
