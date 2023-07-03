@@ -1,19 +1,21 @@
 import { createListbox } from '$lib/components/Listbox/listbox.js'
-import { mergeActions } from '$lib/helpers/actions.js'
-import type { DelegateEvent } from '$lib/helpers/events.js'
-import { delegateEventListeners } from '$lib/helpers/events.js'
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
 import { useTypeAhead } from '$lib/interactions/TypeAhead/typeAhead.js'
-import type { Action } from 'svelte/action'
-import { derived, get, readonly, writable } from 'svelte/store'
+import { derived, get, readable, readonly, writable } from 'svelte/store'
 import type { Select, SelectConfig } from './select.types.js'
 
 export const createSelect = (config?: SelectConfig): Select => {
   const { multiple, disabled, selected } = { ...config }
 
   const baseId = generateId()
+  const buttonId = `${baseId}-button`
   const listboxId = `${baseId}-listbox`
+
+  const selectAttrs = readable({
+    'data-select': baseId,
+  })
 
   const listbox = createListbox({
     selected,
@@ -52,6 +54,7 @@ export const createSelect = (config?: SelectConfig): Select => {
       'aria-expanded': opened,
       'aria-controls': listboxId,
       'aria-activedescendant': listboxAttrs['aria-activedescendant'],
+      'data-select-button': buttonId,
     })
   )
 
@@ -96,194 +99,123 @@ export const createSelect = (config?: SelectConfig): Select => {
     }
   }
 
-  let buttonNode: HTMLElement | null = null
+  const onButtonKeyDown = (event: KeyboardEvent) => {
+    const $multiple = multiple
+    const $activeDescendant = get(listbox.activeDescendant)
+    const $disabled = get(listbox.disabled)
+    const $opened = get(opened$)
 
-  // TODO: Merge this action with typeAhead later
-  const useButton: Action = (node) => {
-    buttonNode = node
+    const nodes = traveller(listboxNode!, '[data-listbox-option]', (el) => {
+      return $disabled.includes(el.dataset.listboxOption!)
+    })
 
-    // TODO: Insane duplicate code from the listbox, refactor
-    const onButtonKeyDown = (event: KeyboardEvent) => {
-      const $multiple = multiple
-      const $activeDescendant = get(listbox.activeDescendant)
-      const $disabled = get(listbox.disabled)
-      const $opened = get(opened$)
+    let target =
+      nodes
+        .all()
+        .find((el) => el.dataset.listboxOption === $activeDescendant) || null
 
-      if (!listboxNode) {
-        console.warn('There is no listbox associated with this select')
-        return
-      }
+    if (['Enter', ' ', 'ArrowDown'].includes(event.key) && !$opened) {
+      event.preventDefault()
+      openListbox()
 
-      const nodes = traveller(listboxNode, '[data-listbox-option]', (el) => {
-        return $disabled.includes(el.dataset.listboxOption!)
-      })
-
-      let target =
-        nodes
-          .all()
-          .find((el) => el.dataset.listboxOption === $activeDescendant) || null
-
-      if (['Enter', ' ', 'ArrowDown'].includes(event.key) && !$opened) {
-        event.preventDefault()
-        openListbox()
-
-        // TODO: Set activeDescendant to the first selected option (if none)
-        if (!target) {
-          listbox.activeDescendant.set(nodes.first()?.dataset.listboxOption!)
-        }
-        return
-      }
-
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        closeListbox()
-        return
-      }
-
-      if (['Enter', ' ', 'Tab'].includes(event.key) && $opened) {
-        event.preventDefault()
-        event.stopPropagation()
-
-        if ($multiple) {
-          if (event.shiftKey) {
-            // TODO: Select all options between lastSelected and key
-          } else {
-            listbox.toggle($activeDescendant)
-          }
-        } else {
-          listbox.select($activeDescendant)
-        }
-        return
-      }
-
+      // TODO: Set activeDescendant to the first selected option (if none)
       if (!target) {
-        console.warn('There are no options in this listbox')
-        return
+        listbox.activeDescendant.set(nodes.first()?.dataset.listboxOption!)
       }
-
-      if (event.key === 'ArrowDown') {
-        event.preventDefault()
-        const next = nodes.next(target)
-
-        if (next) {
-          listbox.activeDescendant.set(next.dataset.listboxOption!)
-
-          if (event.shiftKey && $multiple) {
-            listbox.select(next.dataset.listboxOption!)
-          }
-        }
-      }
-
-      if (event.key === 'ArrowUp') {
-        event.preventDefault()
-        const previous = nodes.previous(target)
-
-        if (previous) {
-          listbox.activeDescendant.set(previous.dataset.listboxOption!)
-
-          if (event.shiftKey && $multiple) {
-            listbox.select(previous.dataset.listboxOption!)
-          }
-        }
-      }
-
-      if (event.key === 'Home') {
-        event.preventDefault()
-        const first = nodes.first()
-
-        if (first) {
-          // Selects the focused option and all options up to the first option.
-          if ($multiple && event.shiftKey && event.ctrlKey) {
-            // TODO: Implement
-          } else {
-            listbox.activeDescendant.set(first.dataset.listboxOption!)
-          }
-        }
-      }
-
-      if (event.key === 'End') {
-        event.preventDefault()
-        const last = nodes.last()
-
-        if (last) {
-          // Selects the focused option and all options up to the last option.
-          if ($multiple && event.shiftKey && event.ctrlKey) {
-            // TODO: Implement
-          } else {
-            listbox.activeDescendant.set(last.dataset.listboxOption!)
-          }
-        }
-      }
-
-      if ($multiple && event.key === 'a' && event.ctrlKey) {
-        event.preventDefault()
-        // TODO: Implement
-      }
-
-      // TODO: Implement typeahead (from interactions)
+      return
     }
 
-    const onButtonClick = () => {
-      toggleListbox()
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      closeListbox()
+      return
     }
 
-    node.addEventListener('keydown', onButtonKeyDown)
-    node.addEventListener('click', onButtonClick)
+    if (['Enter', ' ', 'Tab'].includes(event.key) && $opened) {
+      event.preventDefault()
+      event.stopPropagation()
 
-    return {
-      destroy() {
-        node.removeEventListener('keydown', onButtonKeyDown)
-        node.removeEventListener('click', onButtonClick)
-        document.removeEventListener('click', onDocumentClick, true)
-        buttonNode = null
-      },
+      if ($multiple) {
+        if (event.shiftKey) {
+          // TODO: Select all options between lastSelected and key
+        } else {
+          listbox.toggle($activeDescendant)
+        }
+      } else {
+        listbox.select($activeDescendant)
+      }
+      return
     }
+
+    if (!target) {
+      console.warn('There are no options in this listbox')
+      return
+    }
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      const next = nodes.next(target)
+
+      if (next) {
+        listbox.activeDescendant.set(next.dataset.listboxOption!)
+
+        if (event.shiftKey && $multiple) {
+          listbox.select(next.dataset.listboxOption!)
+        }
+      }
+    }
+
+    if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      const previous = nodes.previous(target)
+
+      if (previous) {
+        listbox.activeDescendant.set(previous.dataset.listboxOption!)
+
+        if (event.shiftKey && $multiple) {
+          listbox.select(previous.dataset.listboxOption!)
+        }
+      }
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault()
+      const first = nodes.first()
+
+      if (first) {
+        // Selects the focused option and all options up to the first option.
+        if ($multiple && event.shiftKey && event.ctrlKey) {
+          // TODO: Implement
+        } else {
+          listbox.activeDescendant.set(first.dataset.listboxOption!)
+        }
+      }
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault()
+      const last = nodes.last()
+
+      if (last) {
+        // Selects the focused option and all options up to the last option.
+        if ($multiple && event.shiftKey && event.ctrlKey) {
+          // TODO: Implement
+        } else {
+          listbox.activeDescendant.set(last.dataset.listboxOption!)
+        }
+      }
+    }
+
+    if ($multiple && event.key === 'a' && event.ctrlKey) {
+      event.preventDefault()
+      // TODO: Implement
+    }
+
+    // TODO: Implement typeahead (from interactions)
   }
 
-  let listboxNode: HTMLElement | null = null
-
-  // TODO: Kind of duplicate of what the listbox action does
-  const useListbox: Action = (node) => {
-    listboxNode = node
-
-    // TODO: Subscribe outside of action
-    const unsubscribe = listbox.selected.subscribe((selected) => {
-      // if (selected.length === 0) return
-      // const key = selected[selected.length - 1]
-      // const option = document.getElementById(key)
-      // if (option) option.scrollIntoView({ block: 'nearest' })
-
-      // Close the listbox when the user (un)selects an option (if not multiple)
-      if (!multiple) {
-        closeListbox()
-      }
-    })
-
-    // TODO: Huge copy pasta from the listbox action, refactor
-    const removeListeners = delegateEventListeners(node, {
-      click: {
-        '[data-listbox-option]': (event: DelegateEvent<MouseEvent>) => {
-          // TODO: The multiple value check should come from the listbox
-          // TODO: If shift is pressed, select all options between lastSelected and key
-          if (multiple) {
-            listbox.toggle(event.delegateTarget.dataset.listboxOption!)
-          } else {
-            listbox.select(event.delegateTarget.dataset.listboxOption!)
-          }
-          listbox.activeDescendant.set(
-            event.delegateTarget.dataset.listboxOption!
-          )
-        },
-      },
-    })
-
-    return {
-      destroy() {
-        removeListeners()
-        unsubscribe()
-        listboxNode = null
-      },
-    }
+  const onButtonClick = () => {
+    toggleListbox()
   }
 
   const lookupListboxOption = (text: string): HTMLElement | null => {
@@ -312,15 +244,53 @@ export const createSelect = (config?: SelectConfig): Select => {
     },
   })
 
+  let buttonNode: HTMLElement | null = null
+  let listboxNode: HTMLElement | null = null
+
+  onBrowserMount(() => {
+    buttonNode = document.querySelector(`[data-select-button="${buttonId}"]`)
+
+    if (!buttonNode) {
+      throw new Error('Could not find the button node for the select')
+    }
+
+    listboxNode = document.getElementById(listboxId)
+
+    if (!listboxNode) {
+      throw new Error('Could not find the listbox node for the select')
+    }
+
+    // TODO: Insane duplicate code from the listbox, refactor
+    buttonNode.addEventListener('keydown', onButtonKeyDown)
+    buttonNode.addEventListener('click', onButtonClick)
+
+    // Close the listbox when the user (un)selects an option (if not multiple)
+    const unsubscribe = listbox.selected.subscribe(() => {
+      if (!multiple) {
+        closeListbox()
+      }
+    })
+
+    // Attach typeahead to the button node
+    const typeaheadAction = typeahead.typeAhead(buttonNode)
+
+    return () => {
+      buttonNode?.removeEventListener('keydown', onButtonKeyDown)
+      buttonNode?.removeEventListener('click', onButtonClick)
+      document.removeEventListener('click', onDocumentClick, true)
+      unsubscribe()
+      typeaheadAction?.destroy?.()
+    }
+  })
+
   return {
     opened: readonly(opened$),
     selected: listbox.selected,
     disabled: listbox.disabled,
     selectedLabel,
     activeDescendant: listbox.activeDescendant,
-    button: mergeActions(useButton, typeahead.typeAhead),
+    selectAttrs,
     buttonAttrs,
-    listbox: useListbox,
     listboxAttrs,
     optionAttrs: listbox.optionAttrs,
     select: listbox.select,
@@ -328,5 +298,5 @@ export const createSelect = (config?: SelectConfig): Select => {
     toggle: listbox.toggle,
     selectAll: listbox.selectAll,
     unselectAll: listbox.unselectAll,
-  } as Select
+  }
 }
