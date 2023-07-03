@@ -1,8 +1,9 @@
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
+import { generateId } from '$lib/helpers/uuid.js'
 import { tick } from 'svelte'
-import type { Action } from 'svelte/action'
-import { derived, get, readonly, writable, type Readable } from 'svelte/store'
+import { derived, get, readonly, writable, type Readable, readable } from 'svelte/store'
 import type { Calendar, CalendarConfig, CalendarDay } from './calendar.types.js'
 
 export const createCalendar = (config?: CalendarConfig): Calendar => {
@@ -25,6 +26,12 @@ export const createCalendar = (config?: CalendarConfig): Calendar => {
 
   // TODO: Add support for different languages
   const firstDayOfWeek$ = writable(firstDayOfWeek || 7)
+
+  const baseId = generateId()
+
+  const calendarAttrs = readable({
+    'data-calendar': baseId,
+  })
 
   // Contains the dates that are selected (in the format YYYY-MM-DD)
   const selected$ = writable(
@@ -70,7 +77,7 @@ export const createCalendar = (config?: CalendarConfig): Calendar => {
 
     tick().then(() => {
       // Focus the date cell in the calendar
-      rootNode
+      calendarNode
         ?.querySelector<HTMLElement>(
           `[data-calendar-day="${date.toISOString().slice(0, 10)}"]`
         )
@@ -234,12 +241,16 @@ export const createCalendar = (config?: CalendarConfig): Calendar => {
     }
   }
 
-  let rootNode: HTMLElement | null = null
+  let calendarNode: HTMLElement | null = null
 
-  const useCalendar: Action = (node) => {
-    rootNode = node
+  onBrowserMount(() => {
+    calendarNode = document.querySelector(`[data-calendar="${baseId}"]`)
 
-    const removeListeners = delegateEventListeners(node, {
+    if (!calendarNode) {
+      throw new Error('Could not find the root node for the calendar')
+    }
+
+    return delegateEventListeners(calendarNode, {
       click: {
         '[data-calendar-prev-month]': onPrevMonthClick,
         '[data-calendar-next-month]': onNextMonthClick,
@@ -251,13 +262,7 @@ export const createCalendar = (config?: CalendarConfig): Calendar => {
         '[data-calendar-day]': onDayKeyDown,
       },
     })
-
-    return {
-      destroy() {
-        removeListeners()
-      },
-    }
-  }
+  })
 
   month$.subscribe(() => {
     onMonthChange?.()
@@ -387,7 +392,7 @@ export const createCalendar = (config?: CalendarConfig): Calendar => {
     title,
     weekdays,
     days,
-    calendar: useCalendar,
+    calendarAttrs,
     prevButtonAttrs,
     nextButtonAttrs,
     goToPrevMonth,
