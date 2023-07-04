@@ -1,21 +1,6 @@
 <script lang="ts">
   import { createTooltip } from '$lib'
-  import { onMount } from 'svelte'
-  import { browser } from '$app/environment'
-  import {
-    computePosition,
-    autoUpdate,
-    size,
-    type Placement,
-  } from '@floating-ui/dom'
-
-  const { triggerAttrs, tooltipAttrs, visible } = createTooltip()
-
-  export let placement: Placement = 'right'
-
-  let referenceEl: HTMLElement
-  let floatingEl: HTMLElement
-  let position = { x: 0, y: 0 }
+  import { size, type Placement } from '@floating-ui/dom'
 
   const maxSize = size({
     apply({ availableWidth, availableHeight, elements }) {
@@ -26,24 +11,15 @@
     },
   })
 
-  const updatePosition = async () => {
-    const { x, y } = await computePosition(referenceEl, floatingEl, {
-      placement,
-      middleware: [maxSize],
-    })
-    position = { x, y }
-  }
+  export let placement: Placement = 'right'
 
-  if (browser) {
-    onMount(() => autoUpdate(referenceEl, floatingEl, updatePosition))
-  }
+  const { triggerAttrs, tooltipAttrs, visible, position } = createTooltip({
+    placement,
+    middleware: [maxSize],
+  })
 </script>
 
-<button
-  bind:this={referenceEl}
-  {...$triggerAttrs}
-  class="inline-block rounded p-1"
->
+<button {...$triggerAttrs} class="inline-block rounded p-1">
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"
@@ -62,12 +38,11 @@
 </button>
 
 <div
-  bind:this={floatingEl}
   {...$tooltipAttrs}
   class="absolute z-10 w-max rounded bg-white p-2 text-xs shadow dark:bg-neutral-900 max-md:max-w-xs"
   class:hidden={!$visible}
-  style:left={position.x + 'px'}
-  style:top={position.y + 'px'}
+  style:left={$position.x + 'px'}
+  style:top={$position.y + 'px'}
 >
   <slot />
 </div>
