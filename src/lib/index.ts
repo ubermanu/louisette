@@ -1,3 +1,4 @@
+export * from './actions/FocusTrap/focusTrap.js'
 export * from './components/Accordion/index.js'
 export * from './components/Button/index.js'
 export * from './components/Calendar/index.js'

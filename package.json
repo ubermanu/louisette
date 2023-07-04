@@ -82,6 +82,7 @@
     "svelte": "^3.54.0"
   },
   "dependencies": {
-    "@floating-ui/dom": "^1.4.3"
+    "@floating-ui/dom": "^1.4.3",
+    "focusable-selectors": "^0.8.0"
   }
 }

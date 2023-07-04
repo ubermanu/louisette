@@ -8,6 +8,9 @@ dependencies:
   '@floating-ui/dom':
     specifier: ^1.4.3
     version: 1.4.3
+  focusable-selectors:
+    specifier: ^0.8.0
+    version: 0.8.0
 
 devDependencies:
   '@fontsource-variable/caveat':
@@ -1351,6 +1354,10 @@ packages:
     dependencies:
       to-regex-range: 5.0.1
     dev: true
+
+  /focusable-selectors@0.8.0:
+    resolution: {integrity: sha512-lKyq/Cth8mTEzJk2CLHLdMDYl2zmMicQflfrUMs0CZ3Boc5Ca/63d7z+GgKV3nKm79KqrPtCWrwTdoV9RTjVCA==}
+    dev: false
 
   /for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
