@@ -1,8 +1,9 @@
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
+import { generateId } from '$lib/helpers/uuid.js'
 import { activeElement } from '$lib/index.js'
-import type { Action } from 'svelte/action'
 import { derived, get, writable } from 'svelte/store'
 import type { Toolbar, ToolbarConfig } from './toolbar.types.js'
 
@@ -11,9 +12,12 @@ export const createToolbar = (config?: ToolbarConfig): Toolbar => {
 
   const orientation$ = writable(orientation || 'horizontal')
 
+  const baseId = generateId()
+
   const toolbarAttrs = derived([orientation$], ([orientation]) => ({
     role: 'toolbar',
     'aria-orientation': orientation,
+    'data-toolbar': baseId,
   }))
 
   // The last focused item key in the toolbar
@@ -32,18 +36,11 @@ export const createToolbar = (config?: ToolbarConfig): Toolbar => {
     }
   })
 
-  let rootNode: HTMLElement | null = null
-
   const onItemKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
     const target = event.delegateTarget
 
-    if (!rootNode) {
-      console.warn('Toolbar root node not found.')
-      return
-    }
-
     // TODO: Handle disabled items
-    const nodes = traveller(rootNode, '[data-toolbar-item]')
+    const nodes = traveller(toolbarNode!, '[data-toolbar-item]')
     const $orientation = get(orientation$)
 
     if (
@@ -73,33 +70,36 @@ export const createToolbar = (config?: ToolbarConfig): Toolbar => {
     }
   }
 
-  const useToolbar: Action = (node) => {
-    rootNode = node
+  let toolbarNode: HTMLElement | null = null
 
-    const removeListeners = delegateEventListeners(node, {
+  onBrowserMount(() => {
+    toolbarNode = document.querySelector<HTMLElement>(`[data-toolbar="${baseId}"]`)
+
+    if (!toolbarNode) {
+      throw new Error('Could not find the node for the toolbar')
+    }
+
+    const removeListeners = delegateEventListeners(toolbarNode, {
       keydown: {
         '[data-toolbar-item]': onItemKeyDown,
       },
     })
 
     const unsubscribe = activeElement.subscribe((el) => {
-      if (rootNode && el && rootNode.contains(el)) {
+      if (toolbarNode && el && toolbarNode.contains(el)) {
         focused$.set(el.dataset.toolbarItem || null)
       }
     })
 
-    return {
-      destroy() {
-        removeListeners()
-        unsubscribe()
-      },
+    return () => {
+      removeListeners()
+      unsubscribe()
     }
-  }
+  })
 
   return {
     orientation: orientation$,
     toolbarAttrs,
     itemAttrs,
-    toolbar: useToolbar,
   }
 }
