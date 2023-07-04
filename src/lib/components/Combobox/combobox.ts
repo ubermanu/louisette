@@ -1,10 +1,8 @@
 import { createListbox } from '$lib/components/Listbox/listbox.js'
-import type { DelegateEvent } from '$lib/helpers/events.js'
-import { delegateEventListeners } from '$lib/helpers/events.js'
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
-import type { Action } from 'svelte/action'
-import { derived, get, readonly, writable } from 'svelte/store'
+import { derived, get, readable, readonly, writable } from 'svelte/store'
 import type { Combobox, ComboboxConfig } from './combobox.types.js'
 
 export const createCombobox = (config?: ComboboxConfig): Combobox => {
@@ -12,7 +10,12 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
 
   const baseId = generateId()
   const inputId = `${baseId}-input`
+  const buttonId = `${baseId}-button`
   const listboxId = `${baseId}-listbox`
+
+  const comboboxAttrs = readable({
+    'data-combobox': baseId,
+  })
 
   const listbox = createListbox({
     selected,
@@ -37,7 +40,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     inputNode?.focus()
     document.removeEventListener('click', onDocumentClick, true)
     // Remove text selection in the input and move the cursor to the end
-    ;(inputNode as HTMLInputElement | null)?.setSelectionRange(-1, -1)
+    inputNode?.setSelectionRange(-1, -1)
   }
 
   const toggleListbox = () => {
@@ -73,226 +76,151 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
   const onDocumentClick = (event: MouseEvent) => {
     if (
       !(
-        inputNode?.contains(event.target as Node) ||
-        buttonNode?.contains(event.target as Node) ||
-        listboxNode?.contains(event.target as Node)
+        inputNode!.contains(event.target as Node) ||
+        buttonNode!.contains(event.target as Node) ||
+        listboxNode!.contains(event.target as Node)
       )
     ) {
       closeListbox()
     }
   }
 
-  let inputNode: HTMLElement | null = null
+  // TODO: Insane duplicate code from the listbox, refactor
+  const onInputKeyDown = (event: KeyboardEvent) => {
+    const $activeDescendant = get(listbox.activeDescendant)
+    const $disabled = get(listbox.disabled)
+    const $opened = get(opened$)
 
-  const useInput: Action = (node) => {
-    inputNode = node
+    const options = traveller(listboxNode!, '[data-listbox-option]', (el) => {
+      return $disabled.includes(el.dataset.listboxOption!)
+    })
 
-    // TODO: Insane duplicate code from the listbox, refactor
-    const onInputKeyDown = (event: KeyboardEvent) => {
-      const $activeDescendant = get(listbox.activeDescendant)
-      const $disabled = get(listbox.disabled)
-      const $opened = get(opened$)
+    let target =
+      options
+        .all()
+        .find((el) => el.dataset.listboxOption === $activeDescendant) || null
 
-      if (!listboxNode) {
-        console.warn('There is no listbox associated with this select')
-        return
-      }
+    if (['ArrowUp', 'ArrowDown'].includes(event.key) && !$opened) {
+      event.preventDefault()
+      openListbox()
 
-      const nodes = traveller(listboxNode, '[data-listbox-option]', (el) => {
-        return $disabled.includes(el.dataset.listboxOption!)
-      })
-
-      let target =
-        nodes
-          .all()
-          .find((el) => el.dataset.listboxOption === $activeDescendant) || null
-
-      if (['ArrowUp', 'ArrowDown'].includes(event.key) && !$opened) {
-        event.preventDefault()
-        openListbox()
-
-        // TODO: Set activeDescendant to the first selected option (if none)
-        // TODO: Set activeDescendant to the last selected option (if ArrowUp)
-        if (!target) {
-          listbox.activeDescendant.set(nodes.first()?.dataset.listboxOption!)
-        }
-        return
-      }
-
-      if (event.key === 'Escape' && $opened) {
-        event.preventDefault()
-        closeListbox()
-        return
-      }
-
-      if (event.key === 'Escape' && !$opened) {
-        // TODO: Clear the input
-      }
-
-      if (['Enter', 'Tab'].includes(event.key) && $opened) {
-        event.preventDefault()
-        listbox.select($activeDescendant)
-        return
-      }
-
+      // TODO: Set activeDescendant to the first selected option (if none)
+      // TODO: Set activeDescendant to the last selected option (if ArrowUp)
       if (!target) {
-        console.warn('There are no options in this listbox')
-        return
+        listbox.activeDescendant.set(options.first()?.dataset.listboxOption!)
       }
-
-      if ($opened) {
-        switch (event.key) {
-          case 'ArrowDown': {
-            event.preventDefault()
-            const next = nodes.next(target)
-            if (next) {
-              listbox.activeDescendant.set(next.dataset.listboxOption!)
-            }
-            break
-          }
-
-          case 'ArrowUp': {
-            event.preventDefault()
-            const previous = nodes.previous(target)
-            if (previous) {
-              listbox.activeDescendant.set(previous.dataset.listboxOption!)
-            }
-            break
-          }
-
-          case 'Home': {
-            event.preventDefault()
-            const first = nodes.first()
-            if (first) {
-              listbox.activeDescendant.set(first.dataset.listboxOption!)
-            }
-            break
-          }
-
-          case 'End': {
-            event.preventDefault()
-            const last = nodes.last()
-            if (last) {
-              listbox.activeDescendant.set(last.dataset.listboxOption!)
-            }
-            break
-          }
-        }
-      }
+      return
     }
 
-    const onInputInput = (event: InputEvent) => {
-      if (event.inputType !== 'insertText') {
-        return
-      }
-
-      const text = (inputNode as HTMLInputElement).value.trim()
-
-      if (text.length === 0) {
-        listbox.activeDescendant.set('')
-        closeListbox()
-        return
-      }
-
-      // Set the activeDescendant to the first option that starts with the input value
-      const nodes = traveller(listboxNode!, '[data-listbox-option]')
-
-      const firstMatch = nodes.all().find((el) => {
-        return el.textContent?.toLowerCase().startsWith(text.toLowerCase())
-      })
-
-      if (firstMatch) {
-        openListbox()
-        const match = firstMatch.dataset.listboxOption!
-        listbox.activeDescendant.set(match)
-
-        if (autocomplete) {
-          // Set selection to the rest of the matched text
-          ;(inputNode as HTMLInputElement).value = match
-          ;(inputNode as HTMLInputElement).setSelectionRange(
-            text.length,
-            match.length
-          )
-        }
-      } else {
-        closeListbox()
-      }
-    }
-
-    node.addEventListener('keydown', onInputKeyDown)
-    // @ts-ignore
-    node.addEventListener('input', onInputInput)
-
-    return {
-      destroy() {
-        node.removeEventListener('keydown', onInputKeyDown)
-        // @ts-ignore
-        node.removeEventListener('input', onInputInput)
-        document.removeEventListener('click', onDocumentClick, true)
-        inputNode = null
-      },
-    }
-  }
-
-  let listboxNode: HTMLElement | null = null
-
-  // TODO: Kind of duplicate of what the listbox action does
-  const useListbox: Action = (node) => {
-    listboxNode = node
-
-    // TODO: Subscribe outside of action
-    const unsubscribe = listbox.selected.subscribe((selected) => {
-      // Set the input value to the selected option
-      ;(inputNode as HTMLInputElement).value = selected[0] || ''
-
-      // Close the listbox when the user (un)selects an option
+    if (event.key === 'Escape' && $opened) {
+      event.preventDefault()
       closeListbox()
-    })
+      return
+    }
 
-    // TODO: Huge copy pasta from the listbox action, refactor
-    const removeListeners = delegateEventListeners(node, {
-      click: {
-        '[data-listbox-option]': (event: DelegateEvent<MouseEvent>) => {
-          listbox.select(event.delegateTarget.dataset.listboxOption!)
-          listbox.activeDescendant.set(
-            event.delegateTarget.dataset.listboxOption!
-          )
-        },
-      },
-    })
+    if (event.key === 'Escape' && !$opened) {
+      // TODO: Clear the input
+    }
 
-    return {
-      destroy() {
-        removeListeners()
-        unsubscribe()
-        listboxNode = null
-      },
+    if (['Enter', 'Tab'].includes(event.key) && $opened) {
+      event.preventDefault()
+      listbox.select($activeDescendant)
+      return
+    }
+
+    if (!target) {
+      console.warn('There are no options in this listbox')
+      return
+    }
+
+    if ($opened) {
+      switch (event.key) {
+        case 'ArrowDown': {
+          event.preventDefault()
+          const next = options.next(target)
+          if (next) {
+            listbox.activeDescendant.set(next.dataset.listboxOption!)
+          }
+          break
+        }
+
+        case 'ArrowUp': {
+          event.preventDefault()
+          const previous = options.previous(target)
+          if (previous) {
+            listbox.activeDescendant.set(previous.dataset.listboxOption!)
+          }
+          break
+        }
+
+        case 'Home': {
+          event.preventDefault()
+          const first = options.first()
+          if (first) {
+            listbox.activeDescendant.set(first.dataset.listboxOption!)
+          }
+          break
+        }
+
+        case 'End': {
+          event.preventDefault()
+          const last = options.last()
+          if (last) {
+            listbox.activeDescendant.set(last.dataset.listboxOption!)
+          }
+          break
+        }
+      }
     }
   }
 
-  let buttonNode: HTMLElement | null = null
-
-  const useButton: Action = (node) => {
-    buttonNode = node
-
-    const onButtonClick = () => {
-      toggleListbox()
+  const onInputInput = (event: InputEvent) => {
+    if (event.inputType !== 'insertText') {
+      return
     }
 
-    node.addEventListener('click', onButtonClick)
+    const text = inputNode?.value.trim() ?? ''
 
-    return {
-      destroy() {
-        node.removeEventListener('click', onButtonClick)
-        buttonNode = null
-      },
+    if (text.length === 0) {
+      listbox.activeDescendant.set('')
+      closeListbox()
+      return
     }
+
+    // Set the activeDescendant to the first option that starts with the input value
+    const options = traveller(listboxNode!, '[data-listbox-option]')
+
+    const firstMatch = options.all().find((el) => {
+      return el.textContent?.toLowerCase().startsWith(text.toLowerCase())
+    })
+
+    if (firstMatch) {
+      openListbox()
+      const match = firstMatch.dataset.listboxOption!
+      listbox.activeDescendant.set(match)
+
+      if (autocomplete && inputNode) {
+        // Set selection to the rest of the matched text
+        inputNode.value = match
+        inputNode.setSelectionRange(
+          text.length,
+          match.length
+        )
+      }
+    } else {
+      closeListbox()
+    }
+  }
+
+  const onButtonClick = () => {
+    toggleListbox()
   }
 
   const buttonAttrs = derived([opened$], ([opened]) => ({
     tabindex: '-1',
     'aria-expanded': opened,
     'aria-controls': listboxId,
+    'data-combobox-button': buttonId,
   }))
 
   // Remove the "aria-selected" attribute from the option
@@ -303,16 +231,61 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
     }
   })
 
+  let listboxNode: HTMLElement | null = null
+  let buttonNode: HTMLElement | null = null
+  let inputNode: HTMLInputElement | null = null
+
+  onBrowserMount(() => {
+    inputNode = document.getElementById(inputId) as HTMLInputElement | null
+
+    if (!inputNode) {
+      throw new Error('Could not find the input for the combobox')
+    }
+
+    buttonNode = document.querySelector(`[data-combobox-button="${buttonId}"]`)
+
+    if (!buttonNode) {
+      throw new Error('Could not find the button for the combobox')
+    }
+
+    listboxNode = document.getElementById(listboxId)
+
+    if (!listboxNode) {
+      throw new Error('Could not find the listbox for the combobox')
+    }
+
+    // TODO: delegate event listeners for input + button
+    buttonNode.addEventListener('click', onButtonClick)
+    inputNode.addEventListener('input', onInputInput)
+    inputNode.addEventListener('keydown', onInputKeyDown)
+
+    const unsubscribe = listbox.selected.subscribe((selected) => {
+      // Set the input value to the selected option
+      if (inputNode) {
+        inputNode.value = selected[0] || ''
+      }
+
+      // Close the listbox when the user (un)selects an option
+      closeListbox()
+    })
+
+    return () => {
+      buttonNode?.removeEventListener('click', onButtonClick)
+      inputNode?.removeEventListener('input', onInputInput)
+      inputNode?.removeEventListener('keydown', onInputKeyDown)
+      document.removeEventListener('click', onDocumentClick, true)
+      unsubscribe()
+    }
+  })
+
   return {
     opened: readonly(opened$),
     selected: listbox.selected,
     disabled: listbox.disabled,
     activeDescendant: listbox.activeDescendant,
-    input: useInput,
+    comboboxAttrs,
     inputAttrs,
-    button: useButton,
     buttonAttrs,
-    listbox: useListbox,
     listboxAttrs,
     optionAttrs,
     select: listbox.select,

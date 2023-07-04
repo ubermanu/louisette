@@ -7,11 +7,9 @@
   export let autocomplete: boolean = false
 
   const {
-    input,
+    comboboxAttrs,
     inputAttrs,
-    button,
     buttonAttrs,
-    listbox,
     listboxAttrs,
     optionAttrs,
     opened,
@@ -19,11 +17,10 @@
   } = createCombobox({ autocomplete })
 </script>
 
-<div class="relative min-w-[1rem]">
+<div {...$comboboxAttrs} class="relative min-w-[1rem]">
   <div class="flex gap-1">
     <input
       type="text"
-      use:input
       {...$inputAttrs}
       {placeholder}
       aria-label={label}
@@ -31,7 +28,6 @@
     />
     <button
       class="ml-auto flex place-items-center rounded bg-white p-2 shadow dark:bg-neutral-700 dark:text-neutral-100"
-      use:button
       {...$buttonAttrs}
     >
       <span class:rotate-180={$opened}>
@@ -54,7 +50,6 @@
   </div>
 
   <div
-    use:listbox
     {...$listboxAttrs}
     class:hidden={!$opened}
     class="absolute z-10 mt-1 w-full space-y-2 rounded-b bg-white p-2 text-sm shadow-lg dark:bg-neutral-700 dark:text-neutral-100"

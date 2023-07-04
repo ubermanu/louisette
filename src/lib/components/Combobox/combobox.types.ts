@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from '$lib/helpers/types.js'
-import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 
 export type ComboboxConfig = {
@@ -23,11 +22,9 @@ export type Combobox = {
   disabled: Readable<string[]>
   selected: Readable<string[]>
   activeDescendant: Readable<string>
-  input: Action
+  comboboxAttrs: Readable<HTMLAttributes>
   inputAttrs: Readable<HTMLAttributes>
-  button: Action
   buttonAttrs: Readable<HTMLAttributes>
-  listbox: Action
   listboxAttrs: Readable<HTMLAttributes>
   optionAttrs: Readable<(key: string) => HTMLAttributes>
   select: (key: string) => void
