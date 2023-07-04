@@ -47,7 +47,9 @@ export const createSwitch = (config?: SwitchConfig): Switch => {
   }
 
   onBrowserMount(() => {
-    const node = document.querySelector(`[data-switch="${baseId}"]`) as HTMLElement | null
+    const node = document.querySelector<HTMLElement>(
+      `[data-switch="${baseId}"]`
+    )
 
     if (!node) {
       throw new Error('Could not find the switch')

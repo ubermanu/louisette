@@ -32,7 +32,9 @@ export const createButton = (config?: ButtonConfig): Button => {
   }
 
   onBrowserMount(() => {
-    const node = document.querySelector(`[data-button="${baseId}"]`) as HTMLElement | null
+    const node = document.querySelector<HTMLElement>(
+      `[data-button="${baseId}"]`
+    )
 
     if (!node) {
       throw new Error('Could not find the button')

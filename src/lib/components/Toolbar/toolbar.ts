@@ -73,7 +73,9 @@ export const createToolbar = (config?: ToolbarConfig): Toolbar => {
   let toolbarNode: HTMLElement | null = null
 
   onBrowserMount(() => {
-    toolbarNode = document.querySelector<HTMLElement>(`[data-toolbar="${baseId}"]`)
+    toolbarNode = document.querySelector<HTMLElement>(
+      `[data-toolbar="${baseId}"]`
+    )
 
     if (!toolbarNode) {
       throw new Error('Could not find the node for the toolbar')

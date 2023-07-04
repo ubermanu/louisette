@@ -18,11 +18,9 @@
   <ListboxItem value="🐦">Bird</ListboxItem>
 </Listbox>
 
-<br>
+<br />
 
-<p class="mb-4 text-sm opacity-60">
-  Same example but multiple:
-</p>
+<p class="mb-4 text-sm opacity-60">Same example but multiple:</p>
 
 <Listbox label="Select your favourite pets" multiple>
   <ListboxItem value="🐈">Cat</ListboxItem>

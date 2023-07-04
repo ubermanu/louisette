@@ -40,8 +40,11 @@ export const createTooltip = (config?: TooltipConfig): Tooltip => {
 
   const onTriggerPointerLeave = (event: PointerEvent) => {
     hide()
-    // @ts-ignore
-    event.currentTarget?.removeEventListener('pointerleave', onTriggerPointerLeave)
+    event.currentTarget?.removeEventListener(
+      'pointerleave',
+      // @ts-ignore
+      onTriggerPointerLeave
+    )
   }
 
   const onTriggerKeyDown = (event: KeyboardEvent) => {
@@ -64,9 +67,11 @@ export const createTooltip = (config?: TooltipConfig): Tooltip => {
 
   // TODO: The tooltip should keep open when the mouse is over the tooltip
   onBrowserMount(() => {
-    const node = document.querySelector<HTMLElement>(`[data-tooltip=${tooltipId}]`)
+    const trigger = document.querySelector<HTMLElement>(
+      `[data-tooltip=${tooltipId}]`
+    )
 
-    if (!node) {
+    if (!trigger) {
       throw new Error('Could not find the trigger for the tooltip')
     }
 
@@ -76,25 +81,25 @@ export const createTooltip = (config?: TooltipConfig): Tooltip => {
       throw new Error('Could not find the element for the tooltip')
     }
 
-    node.addEventListener('pointerenter', onTriggerPointerEnter)
-    node.addEventListener('keydown', onTriggerKeyDown)
-    node.addEventListener('focus', onTriggerFocus)
+    trigger.addEventListener('pointerenter', onTriggerPointerEnter)
+    trigger.addEventListener('keydown', onTriggerKeyDown)
+    trigger.addEventListener('focus', onTriggerFocus)
 
     const updatePosition = async () => {
-      const { x, y } = await computePosition(node, tooltip, {
+      const { x, y } = await computePosition(trigger, tooltip, {
         placement,
         middleware,
       })
       position$.set({ x, y })
     }
 
-    const destroy = autoUpdate(node, tooltip, updatePosition)
+    const destroy = autoUpdate(trigger, tooltip, updatePosition)
 
     return () => {
       destroy()
-      node.removeEventListener('pointerenter', onTriggerPointerEnter)
-      node.removeEventListener('keydown', onTriggerKeyDown)
-      node.removeEventListener('focus', onTriggerFocus)
+      trigger.removeEventListener('pointerenter', onTriggerPointerEnter)
+      trigger.removeEventListener('keydown', onTriggerKeyDown)
+      trigger.removeEventListener('focus', onTriggerFocus)
     }
   })
 

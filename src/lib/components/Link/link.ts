@@ -56,7 +56,7 @@ export const createLink = (config: LinkConfig): Link => {
   }
 
   onBrowserMount(() => {
-    const node = document.querySelector(`[data-link="${baseId}"]`) as HTMLElement | null
+    const node = document.querySelector<HTMLElement>(`[data-link="${baseId}"]`)
 
     if (!node) {
       throw new Error('Could not find the link')

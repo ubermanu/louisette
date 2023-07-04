@@ -3,7 +3,14 @@ import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { generateId } from '$lib/helpers/uuid.js'
 import { tick } from 'svelte'
-import { derived, get, readonly, writable, type Readable, readable } from 'svelte/store'
+import {
+  derived,
+  get,
+  readable,
+  readonly,
+  writable,
+  type Readable,
+} from 'svelte/store'
 import type { Calendar, CalendarConfig, CalendarDay } from './calendar.types.js'
 
 export const createCalendar = (config?: CalendarConfig): Calendar => {

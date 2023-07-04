@@ -172,7 +172,9 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
   }
 
   onBrowserMount(() => {
-    rootNode = document.querySelector(`[data-accordion="${baseId}"]`) as HTMLElement | null
+    rootNode = document.querySelector<HTMLElement>(
+      `[data-accordion="${baseId}"]`
+    )
 
     if (!rootNode) {
       throw new Error('No root node found for the accordion')

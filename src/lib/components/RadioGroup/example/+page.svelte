@@ -5,8 +5,7 @@
   let value: string = ''
 </script>
 
-
-<p class="text-sm mb-4 opacity-60">
+<p class="mb-4 text-sm opacity-60">
   You have selected the <b>{value || 'unknown'}</b> power plan.
 </p>
 

@@ -202,10 +202,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
       if (autocomplete && inputNode) {
         // Set selection to the rest of the matched text
         inputNode.value = match
-        inputNode.setSelectionRange(
-          text.length,
-          match.length
-        )
+        inputNode.setSelectionRange(text.length, match.length)
       }
     } else {
       closeListbox()
@@ -256,6 +253,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
 
     // TODO: delegate event listeners for input + button
     buttonNode.addEventListener('click', onButtonClick)
+    // @ts-ignore
     inputNode.addEventListener('input', onInputInput)
     inputNode.addEventListener('keydown', onInputKeyDown)
 
@@ -271,6 +269,7 @@ export const createCombobox = (config?: ComboboxConfig): Combobox => {
 
     return () => {
       buttonNode?.removeEventListener('click', onButtonClick)
+      // @ts-ignore
       inputNode?.removeEventListener('input', onInputInput)
       inputNode?.removeEventListener('keydown', onInputKeyDown)
       document.removeEventListener('click', onDocumentClick, true)

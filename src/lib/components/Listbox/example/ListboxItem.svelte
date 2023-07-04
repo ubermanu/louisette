@@ -12,7 +12,7 @@
 </script>
 
 <div
-  class="flex cursor-pointer items-center justify-between gap-4 rounded-md p-2 transition-colors hover:bg-neutral-200 focus:outline-none focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700 text-sm"
+  class="flex cursor-pointer items-center justify-between gap-4 rounded-md p-2 text-sm transition-colors hover:bg-neutral-200 focus:outline-none focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:hover:bg-neutral-700"
   class:is-active-descendant={$activeDescendant === value}
   {...$optionAttrs(value)}
 >

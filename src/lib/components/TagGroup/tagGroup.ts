@@ -1,3 +1,4 @@
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
@@ -6,7 +7,6 @@ import { activeElement } from '$lib/stores/ActiveElement/activeElement.js'
 import { tick } from 'svelte'
 import { derived, get, readable, writable } from 'svelte/store'
 import type { TagGroup, TagGroupConfig } from './tagGroup.types.js'
-import { onBrowserMount } from '$lib/helpers/environment.js'
 
 export const createTagGroup = (config?: TagGroupConfig): TagGroup => {
   const { disabled, onDismiss } = { ...config }
@@ -77,9 +77,7 @@ export const createTagGroup = (config?: TagGroupConfig): TagGroup => {
           tagGroupNode!,
           '[data-taggroup-tag]',
           (node) => {
-            return get(disabled$).includes(
-              node.dataset.taggroupTag!
-            )
+            return get(disabled$).includes(node.dataset.taggroupTag!)
           }
         )
         nodes.last()?.focus()

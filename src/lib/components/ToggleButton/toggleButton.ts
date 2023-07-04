@@ -17,7 +17,7 @@ export const createToggleButton = (
   const toggleButtonAttrs = derived(
     [disabled$, checked$],
     ([disabled, checked]) => ({
-      'role': 'button',
+      role: 'button',
       'aria-disabled': disabled,
       tabIndex: disabled ? 0 : -1,
       'aria-pressed': checked,
@@ -57,9 +57,10 @@ export const createToggleButton = (
     }
   }
 
-
   onBrowserMount(() => {
-    const node = document.querySelector(`[data-togglebutton="${baseId}"]`) as HTMLElement | null
+    const node = document.querySelector<HTMLElement>(
+      `[data-togglebutton="${baseId}"]`
+    )
 
     if (!node) {
       throw new Error('Could not find the toggle button')

@@ -6,19 +6,14 @@
   /** @type {{ label: string; value: string }[]} */
   export let options = []
 
-  const { tagGroupAttrs, tagAttrs, dismissButtonAttrs } =
-    createTagGroup({
-      onDismiss: (key) => {
-        options = options.filter((option) => option.value !== key)
-      },
-    })
+  const { tagGroupAttrs, tagAttrs, dismissButtonAttrs } = createTagGroup({
+    onDismiss: (key) => {
+      options = options.filter((option) => option.value !== key)
+    },
+  })
 </script>
 
-<div
-  {...$tagGroupAttrs}
-  class="flex flex-wrap gap-2"
-  aria-label={label}
->
+<div {...$tagGroupAttrs} class="flex flex-wrap gap-2" aria-label={label}>
   {#if options.length > 0}
     {#each options as { label, value }}
       <div

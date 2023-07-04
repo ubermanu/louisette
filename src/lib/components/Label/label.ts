@@ -15,7 +15,9 @@ export const createLabel = (): Label => {
   })
 
   const onLabelClick = () => {
-    const field = document.querySelector<HTMLElement>(`[aria-labelledby="${labelId}"]`)
+    const field = document.querySelector<HTMLElement>(
+      `[aria-labelledby="${labelId}"]`
+    )
     field?.focus()
   }
 

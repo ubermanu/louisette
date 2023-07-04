@@ -92,10 +92,11 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
     const $disabled = get(disabled$)
     if ($multiple) {
       selected$.set(
-        Array.from(listboxNode?.querySelectorAll(`[data-listbox-option]`) ?? [])
-          .map(
-            (option) => (option as HTMLElement).dataset.listboxOption!
-          )
+        Array.from(
+          listboxNode?.querySelectorAll<HTMLElement>(`[data-listbox-option]`) ??
+            []
+        )
+          .map((option) => option.dataset.listboxOption!)
           .filter((key) => !$disabled.includes(key))
       )
     }
@@ -105,7 +106,6 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
   const unselectAll = () => {
     selected$.set([])
   }
-
 
   const onOptionClick = (event: DelegateEvent<MouseEvent>) => {
     const $multiple = get(multiple$)
@@ -145,7 +145,9 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
       return $disabled.includes(el.dataset.listboxOption!)
     })
 
-    let target = listboxNode!.querySelector(`[data-listbox-option="${$activeDescendant}"]`) as HTMLElement | null
+    let target = listboxNode!.querySelector<HTMLElement>(
+      `[data-listbox-option="${$activeDescendant}"]`
+    )
 
     if (!target) {
       event.preventDefault()

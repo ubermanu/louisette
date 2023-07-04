@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from '$lib/helpers/types.js'
+import type { Middleware, Placement } from '@floating-ui/dom'
 import type { Readable } from 'svelte/store'
-import type { Placement, Middleware } from '@floating-ui/dom'
 
 export type TooltipConfig = {
   placement?: Placement
@@ -9,7 +9,7 @@ export type TooltipConfig = {
 
 export type Tooltip = {
   visible: Readable<boolean>
-  position: Readable<{ x: number, y: number }>
+  position: Readable<{ x: number; y: number }>
   tooltipAttrs: Readable<HTMLAttributes>
   triggerAttrs: Readable<HTMLAttributes>
   show: () => void

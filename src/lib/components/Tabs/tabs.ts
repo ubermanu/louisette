@@ -1,8 +1,8 @@
 import { onBrowserMount } from '$lib/helpers/environment.js'
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
-import { generateId } from '$lib/helpers/uuid.js'
 import { traveller } from '$lib/helpers/traveller.js'
+import { generateId } from '$lib/helpers/uuid.js'
 import { derived, get, readable, readonly, writable } from 'svelte/store'
 import type { Tabs, TabsConfig } from './tabs.types.js'
 
@@ -22,7 +22,7 @@ export const createTabs = (config?: TabsConfig): Tabs => {
   const panelId = (key: string) => `${baseId}-panel-${key}`
 
   const rootAttrs = readable({
-    'data-tabs': baseId
+    'data-tabs': baseId,
   })
 
   const listAttrs = derived([orientation$], ([orientation]) => ({
@@ -131,7 +131,7 @@ export const createTabs = (config?: TabsConfig): Tabs => {
   let rootNode: HTMLElement | null = null
 
   onBrowserMount(() => {
-    rootNode = document.querySelector(`[data-tabs="${baseId}"]`) as HTMLElement | null
+    rootNode = document.querySelector<HTMLElement>(`[data-tabs="${baseId}"]`)
 
     if (!rootNode) {
       throw new Error('No root node found for the tabs')
