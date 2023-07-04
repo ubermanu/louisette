@@ -1,5 +1,5 @@
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import { generateId } from '$lib/helpers/uuid.js'
-import type { Action } from 'svelte/action'
 import { readable } from 'svelte/store'
 import type { Label } from './label.types.js'
 
@@ -14,25 +14,28 @@ export const createLabel = (): Label => {
     'aria-labelledby': labelId,
   })
 
-  const onLabelClick = (event: MouseEvent) => {
-    const field = document.querySelector(
+  const onLabelClick = () => {
+    const field = document.querySelector<HTMLElement>(
       `[aria-labelledby="${labelId}"]`
-    ) as HTMLElement
+    )
     field?.focus()
   }
 
-  const useLabel: Action = (node) => {
+  onBrowserMount(() => {
+    const node = document.getElementById(labelId)
+
+    if (!node) {
+      throw new Error('Could not find the label node')
+    }
+
     node.addEventListener('click', onLabelClick)
 
-    return {
-      destroy() {
-        node.removeEventListener('click', onLabelClick)
-      },
+    return () => {
+      node.removeEventListener('click', onLabelClick)
     }
-  }
+  })
 
   return {
-    label: useLabel,
     labelAttrs,
     fieldAttrs,
   }
