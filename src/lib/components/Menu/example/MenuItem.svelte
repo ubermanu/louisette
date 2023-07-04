@@ -98,10 +98,11 @@
       <ChevronRight class="h-4 w-4" />
     {/if}
   </a>
-  {#if hasSubmenu && $visible}
+  {#if hasSubmenu}
     <div
       bind:this={submenuContainer}
       class="absolute left-full top-0 z-10 -mt-2 pl-2"
+      class:hidden={!$visible}
     >
       <slot name="submenu" />
     </div>
