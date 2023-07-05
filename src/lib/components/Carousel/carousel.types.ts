@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from '$lib/helpers/types.js'
-import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 
 export type CarouselConfig = {
@@ -27,7 +26,6 @@ export type Carousel = {
   slideAttrs: Readable<(key: string) => HTMLAttributes>
   previousButtonAttrs: Readable<HTMLAttributes>
   nextButtonAttrs: Readable<HTMLAttributes>
-  carousel: Action
   goToSlide: (key: string) => void
   goToPrevSlide: () => void
   goToNextSlide: () => void

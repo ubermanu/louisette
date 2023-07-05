@@ -5,7 +5,6 @@
   export let controls = true
 
   const {
-    carousel,
     carouselAttrs,
     trackAttrs,
     previousButtonAttrs,
@@ -21,7 +20,7 @@
   setContext('carousel', carouselContext)
 </script>
 
-<div use:carousel {...$carouselAttrs} class="relative flex flex-col">
+<div {...$carouselAttrs} class="relative flex flex-col">
   <div {...$trackAttrs} class="flex flex-row">
     <slot />
   </div>
