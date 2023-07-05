@@ -5,7 +5,7 @@
   import { createMenu } from '$lib'
   import { setContext } from 'svelte'
 
-  const { menu, menuAttrs, ...menuContext } = createMenu()
+  const { menuAttrs, ...menuContext } = createMenu()
   setContext('menu', menuContext)
 
   $: sidebar = $page?.data?.sidebar ?? []
@@ -25,7 +25,7 @@
 
   {#if sidebar.length > 0}
     <nav>
-      <ul use:menu {...$menuAttrs} class="space-y-1">
+      <ul {...$menuAttrs} class="space-y-1">
         {#each sidebar as item}
           {#if item.children}
             <li class="p-2 text-xl font-bold opacity-50">
