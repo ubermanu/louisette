@@ -19,7 +19,7 @@ export const createToggleButton = (
     ([disabled, checked]) => ({
       role: 'button',
       'aria-disabled': disabled,
-      tabIndex: disabled ? 0 : -1,
+      tabIndex: disabled ? -1 : 0,
       'aria-pressed': checked,
       'data-togglebutton': baseId,
     })
