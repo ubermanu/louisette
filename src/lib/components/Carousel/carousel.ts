@@ -189,9 +189,7 @@ export const createCarousel = (config?: CarouselConfig): Carousel => {
   let carouselNode: HTMLElement | null = null
 
   onBrowserMount(() => {
-    carouselNode = document.querySelector<HTMLElement>(
-      `[data-carousel="${baseId}"]`
-    )
+    carouselNode = document.querySelector(`[data-carousel="${baseId}"]`)
 
     if (!carouselNode) {
       throw new Error('Could not find the carousel root node')
