@@ -24,7 +24,6 @@ export const createMenu = (config?: MenuConfig): Menu => {
     'data-menu': menuId,
   }))
 
-  // TODO: Add support for submenu
   const itemAttrs = derived(
     [focused$, disabled$, activePath$],
     ([focused, disabled, activePath]) =>
