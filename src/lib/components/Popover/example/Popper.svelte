@@ -17,7 +17,7 @@
 
 <div
   {...$popoverAttrs}
-  class="absolute w-full max-w-sm rounded bg-neutral-100 p-4 shadow dark:bg-neutral-900"
+  class="absolute mt-2 w-full max-w-sm rounded bg-neutral-100 p-4 shadow dark:bg-neutral-900"
   class:hidden={!$visible}
   style:left={$position.x + 'px'}
   style:top={$position.y + 'px'}
