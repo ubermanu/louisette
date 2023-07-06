@@ -1,4 +1,5 @@
-import type { Action } from 'svelte/action'
+import { onBrowserMount } from '$lib/helpers/environment.js'
+import { generateId } from '$lib/helpers/uuid.js'
 import { derived, get, readonly, writable } from 'svelte/store'
 import type { Switch, SwitchConfig } from './switch.types.js'
 
@@ -8,11 +9,14 @@ export const createSwitch = (config?: SwitchConfig): Switch => {
   const active$ = writable(active || false)
   const disabled$ = writable(disabled || false)
 
+  const baseId = generateId()
+
   const switchAttrs = derived([active$, disabled$], ([active, disabled]) => ({
     role: 'switch',
     'aria-checked': active,
     'aria-disabled': disabled,
     tabIndex: disabled ? -1 : 0,
+    'data-switch': baseId,
   }))
 
   const activate = () => {
@@ -42,23 +46,28 @@ export const createSwitch = (config?: SwitchConfig): Switch => {
     }
   }
 
-  const useSwitch: Action = (node) => {
+  onBrowserMount(() => {
+    const node = document.querySelector<HTMLElement>(
+      `[data-switch="${baseId}"]`
+    )
+
+    if (!node) {
+      throw new Error('Could not find the switch')
+    }
+
     node.addEventListener('click', onSwitchClick)
     node.addEventListener('keydown', onSwitchKeyDown)
 
-    return {
-      destroy() {
-        node.removeEventListener('click', onSwitchClick)
-        node.removeEventListener('keydown', onSwitchKeyDown)
-      },
+    return () => {
+      node.removeEventListener('click', onSwitchClick)
+      node.removeEventListener('keydown', onSwitchKeyDown)
     }
-  }
+  })
 
   return {
     active: readonly(active$),
     disabled: disabled$,
     switchAttrs,
-    switch: useSwitch,
     activate,
     deactivate,
     toggle,

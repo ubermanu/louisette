@@ -8,6 +8,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     include: ['src/**/*.{test,spec}.{js,ts}'],
+    setupFiles: ['test/setup.ts'],
   },
   define: {
     LOUISETTE_VERSION: JSON.stringify(version),

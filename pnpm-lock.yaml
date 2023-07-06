@@ -1,9 +1,18 @@
 lockfileVersion: '6.0'
 
-devDependencies:
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
   '@floating-ui/dom':
-    specifier: ^1.2.9
-    version: 1.2.9
+    specifier: ^1.4.3
+    version: 1.4.3
+  focusable-selectors:
+    specifier: ^0.8.0
+    version: 0.8.0
+
+devDependencies:
   '@fontsource-variable/caveat':
     specifier: ^5.0.1
     version: 5.0.1
@@ -340,15 +349,15 @@ packages:
     dev: true
     optional: true
 
-  /@floating-ui/core@1.2.6:
-    resolution: {integrity: sha512-EvYTiXet5XqweYGClEmpu3BoxmsQ4hkj3QaYA6qEnigCWffTP3vNRwBReTdrwDwo7OoJ3wM8Uoe9Uk4n+d4hfg==}
-    dev: true
+  /@floating-ui/core@1.3.1:
+    resolution: {integrity: sha512-Bu+AMaXNjrpjh41znzHqaz3r2Nr8hHuHZT6V2LBKMhyMl0FgKA62PNYbqnfgmzOhoWZj70Zecisbo4H1rotP5g==}
+    dev: false
 
-  /@floating-ui/dom@1.2.9:
-    resolution: {integrity: sha512-sosQxsqgxMNkV3C+3UqTS6LxP7isRLwX8WMepp843Rb3/b0Wz8+MdUkxJksByip3C2WwLugLHN1b4ibn//zKwQ==}
+  /@floating-ui/dom@1.4.3:
+    resolution: {integrity: sha512-nB/68NyaQlcdY22L+Fgd1HERQ7UGv7XFN+tPxwrEfQL4nKtAP/jIZnZtpUlXbtV+VEGHh6W/63Gy2C5biWI3sA==}
     dependencies:
-      '@floating-ui/core': 1.2.6
-    dev: true
+      '@floating-ui/core': 1.3.1
+    dev: false
 
   /@fontsource-variable/caveat@5.0.1:
     resolution: {integrity: sha512-3RkMB0IPQx5/7xA11IZc9HxZ+ExR7WzYGWTSSFIVRedN7BvMRuxCsebKhi9q/FpPiv3TDJ1T0jfmFO07+ij1Lg==}
@@ -1345,6 +1354,10 @@ packages:
     dependencies:
       to-regex-range: 5.0.1
     dev: true
+
+  /focusable-selectors@0.8.0:
+    resolution: {integrity: sha512-lKyq/Cth8mTEzJk2CLHLdMDYl2zmMicQflfrUMs0CZ3Boc5Ca/63d7z+GgKV3nKm79KqrPtCWrwTdoV9RTjVCA==}
+    dev: false
 
   /for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}

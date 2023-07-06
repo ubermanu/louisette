@@ -1,8 +1,8 @@
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
 import { activeElement, documentVisible, reducedMotion } from '$lib/index.js'
-import type { Action } from 'svelte/action'
 import { derived, get, readable, readonly, writable } from 'svelte/store'
 import type { Carousel, CarouselConfig } from './carousel.types.js'
 
@@ -21,6 +21,7 @@ export const createCarousel = (config?: CarouselConfig): Carousel => {
   const carouselAttrs = readable({
     role: 'group',
     'aria-roledescription': 'carousel',
+    'data-carousel': baseId,
   })
 
   const trackAttrs = derived(
@@ -42,7 +43,7 @@ export const createCarousel = (config?: CarouselConfig): Carousel => {
       let label = ''
 
       // If the root node is defined, we can now count the number of slides
-      if (rootNode) {
+      if (carouselNode) {
         const slideKeys = getSlideKeys()
         label = `${slideKeys.indexOf(key) + 1} / ${slideKeys.length}`
       }
@@ -62,7 +63,7 @@ export const createCarousel = (config?: CarouselConfig): Carousel => {
     let disabled = false
 
     // Set the disabled state of the previous button if the root node is defined
-    if (rootNode && !loop) {
+    if (carouselNode && !loop) {
       const slideKeys = getSlideKeys()
       const currentIndex = slideKeys.indexOf(current)
       disabled = currentIndex === 0
@@ -80,7 +81,7 @@ export const createCarousel = (config?: CarouselConfig): Carousel => {
     let disabled = false
 
     // Set the disabled state of the next button if the root node is defined
-    if (rootNode && !loop) {
+    if (carouselNode && !loop) {
       const slideKeys = getSlideKeys()
       const currentIndex = slideKeys.indexOf(current)
       disabled = currentIndex === slideKeys.length - 1
@@ -99,12 +100,7 @@ export const createCarousel = (config?: CarouselConfig): Carousel => {
   }
 
   const getSlideKeys = (): string[] => {
-    if (!rootNode) {
-      console.warn('No root node found for carousel')
-      return []
-    }
-
-    const nodes = traveller(rootNode, '[data-carousel-slide]')
+    const nodes = traveller(carouselNode!, '[data-carousel-slide]')
     return nodes.all().map((node) => node.dataset.carouselSlide as string)
   }
 
@@ -190,19 +186,23 @@ export const createCarousel = (config?: CarouselConfig): Carousel => {
     }
   }
 
-  let rootNode: HTMLElement | null = null
+  let carouselNode: HTMLElement | null = null
 
-  const useCarousel: Action = (node) => {
-    rootNode = node
+  onBrowserMount(() => {
+    carouselNode = document.querySelector(`[data-carousel="${baseId}"]`)
+
+    if (!carouselNode) {
+      throw new Error('Could not find the carousel root node')
+    }
 
     if (autoplay) {
       play()
     }
 
-    node.addEventListener('mouseenter', onCarouselMouseEnter)
-    node.addEventListener('mouseleave', onCarouselMouseLeave)
+    carouselNode.addEventListener('mouseenter', onCarouselMouseEnter)
+    carouselNode.addEventListener('mouseleave', onCarouselMouseLeave)
 
-    const removeListeners = delegateEventListeners(node, {
+    const removeListeners = delegateEventListeners(carouselNode, {
       click: {
         '[data-carousel-prev-slide]': () => goToPrevSlide(),
         '[data-carousel-next-slide]': () => goToNextSlide(),
@@ -222,7 +222,7 @@ export const createCarousel = (config?: CarouselConfig): Carousel => {
     // Pause the carousel when the user is interacting with it
     // TODO: Use the dedicated action
     const unsubscribe2 = activeElement.subscribe((element) => {
-      if (element && node.contains(element)) {
+      if (element && carouselNode!.contains(element)) {
         focusWithin = true
 
         if (get(status$) === 'playing') {
@@ -254,17 +254,14 @@ export const createCarousel = (config?: CarouselConfig): Carousel => {
       }
     })
 
-    return {
-      destroy() {
-        removeListeners()
-        unsubscribe()
-        unsubscribe2()
-        unsubscribe3()
-        pause()
-        rootNode = null
-      },
+    return () => {
+      removeListeners()
+      unsubscribe()
+      unsubscribe2()
+      unsubscribe3()
+      pause()
     }
-  }
+  })
 
   return {
     current: readonly(current$),
@@ -274,7 +271,6 @@ export const createCarousel = (config?: CarouselConfig): Carousel => {
     slideAttrs,
     previousButtonAttrs,
     nextButtonAttrs,
-    carousel: useCarousel,
     goToSlide,
     goToPrevSlide,
     goToNextSlide,

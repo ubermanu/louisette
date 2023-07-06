@@ -1,14 +1,9 @@
 <script lang="ts">
   import { createLink } from '$lib'
 
-  const { link, linkAttrs } = createLink({
+  const { linkAttrs } = createLink({
     href: '#',
   })
 </script>
 
-<img
-  use:link
-  {...$linkAttrs}
-  src="https://placekitten.com/200/300"
-  alt="kitten"
-/>
+<img {...$linkAttrs} src="https://placekitten.com/200/300" alt="kitten" />

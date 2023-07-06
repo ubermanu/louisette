@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from '$lib/helpers/types.js'
-import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 
 export type SelectConfig = {
@@ -14,9 +13,8 @@ export type Select = {
   selected: Readable<string[]>
   selectedLabel: Readable<string>
   activeDescendant: Readable<string>
-  button: Action
+  selectAttrs: Readable<HTMLAttributes>
   buttonAttrs: Readable<HTMLAttributes>
-  listbox: Action
   listboxAttrs: Readable<HTMLAttributes>
   optionAttrs: Readable<(key: string) => HTMLAttributes>
   select: (key: string) => void

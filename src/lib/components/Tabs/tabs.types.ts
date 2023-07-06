@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from '$lib/helpers/types.js'
-import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 
 export type TabsConfig = {
@@ -20,9 +19,9 @@ export type Tabs = {
   active: Readable<string>
   disabled: Readable<string[]>
   orientation: Readable<'horizontal' | 'vertical'>
+  rootAttrs: Readable<HTMLAttributes>
   listAttrs: Readable<HTMLAttributes>
   tabAttrs: Readable<(key: string) => HTMLAttributes>
   panelAttrs: Readable<(key: string) => HTMLAttributes>
-  tabs: Action
   open: (key: string) => void
 }

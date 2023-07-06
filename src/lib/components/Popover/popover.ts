@@ -1,35 +1,59 @@
-import type { Action } from 'svelte/action'
-import { derived, readonly, writable } from 'svelte/store'
-import type { Popover } from './popover.types.js'
+import { focusTrap } from '$lib/actions/FocusTrap/focusTrap.js'
+import { getFirstFocusableElement } from '$lib/helpers/dom.js'
+import { onBrowserMount } from '$lib/helpers/environment.js'
+import { generateId } from '$lib/helpers/uuid.js'
+import { autoUpdate, computePosition } from '@floating-ui/dom'
+import { tick } from 'svelte'
+import { derived, get, readonly, writable } from 'svelte/store'
+import type { Popover, PopoverConfig } from './popover.types.js'
 
-/**
- * A popover is a transient view that appears above other content on the screen
- * when a trigger is activated. The focus is transferred to the popover, and the
- * popover is dismissed when the focus is lost.
- */
-export const createPopover = (): Popover => {
+export const createPopover = (config?: PopoverConfig): Popover => {
+  const { placement, middleware } = { ...config }
+
   const visible$ = writable(false)
+  const position$ = writable({ x: 0, y: 0 })
+
+  const baseId = generateId()
+  const triggerId = `${baseId}-trigger`
+  const popoverId = `${baseId}-popover`
 
   const triggerAttrs = derived(visible$, (visible) => ({
-    'aria-haspopup': true,
+    id: triggerId,
     'aria-expanded': visible,
+    'aria-controls': popoverId,
   }))
 
   const popoverAttrs = derived(visible$, (visible) => ({
+    id: popoverId,
     inert: !visible ? '' : undefined,
     'aria-hidden': !visible,
+    'aria-labelledby': triggerId,
   }))
 
   const show = () => {
     visible$.set(true)
+    document.addEventListener('click', onDocumentClick, true)
+    document.addEventListener('keydown', onDocumentKeyDown, true)
+    tick().then(() => {
+      if (popover) {
+        getFirstFocusableElement(popover)?.focus()
+      }
+    })
   }
 
   const hide = () => {
     visible$.set(false)
+    document.removeEventListener('click', onDocumentClick, true)
+    document.removeEventListener('keydown', onDocumentKeyDown, true)
+    trigger?.focus()
   }
 
   const toggle = () => {
-    visible$.update((visible) => !visible)
+    if (get(visible$)) {
+      hide()
+    } else {
+      show()
+    }
   }
 
   const onTriggerClick = () => {
@@ -41,48 +65,70 @@ export const createPopover = (): Popover => {
       event.preventDefault()
       toggle()
     }
+  }
 
-    if (['Escape'].includes(event.key)) {
-      event.preventDefault()
+  const onDocumentClick = (event: MouseEvent) => {
+    if (
+      popover?.contains(event.target as Node) ||
+      trigger?.contains(event.target as Node)
+    ) {
+      return
+    }
+
+    hide()
+  }
+
+  const onDocumentKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
       hide()
     }
   }
 
-  const onPopoverKeyDown = (event: KeyboardEvent) => {
-    if (['Escape'].includes(event.key)) {
-      event.preventDefault()
+  let trigger: HTMLElement | null = null
+  let popover: HTMLElement | null = null
+
+  onBrowserMount(() => {
+    trigger = document.getElementById(triggerId)
+
+    if (!trigger) {
+      throw new Error('Could not find the trigger for the popover')
+    }
+
+    popover = document.getElementById(popoverId)
+
+    if (!popover) {
+      throw new Error('Could not find the element for the popover')
+    }
+
+    trigger.addEventListener('click', onTriggerClick)
+    trigger.addEventListener('keydown', onTriggerKeyDown)
+
+    const popoverFocusTrap = focusTrap(popover)
+
+    const updatePosition = async () => {
+      const { x, y } = await computePosition(trigger!, popover!, {
+        placement,
+        middleware,
+      })
+      position$.set({ x, y })
+    }
+
+    const destroy = autoUpdate(trigger, popover, updatePosition)
+
+    return () => {
       hide()
+      destroy()
+      trigger?.removeEventListener('click', onTriggerClick)
+      trigger?.removeEventListener('keydown', onTriggerKeyDown)
+      popoverFocusTrap?.destroy?.()
     }
-  }
-
-  const useTrigger: Action = (node) => {
-    node.addEventListener('click', onTriggerClick)
-    node.addEventListener('keydown', onTriggerKeyDown)
-
-    return {
-      destroy() {
-        node.removeEventListener('click', onTriggerClick)
-        node.removeEventListener('keydown', onTriggerKeyDown)
-      },
-    }
-  }
-
-  const usePopover: Action = (node) => {
-    node.addEventListener('keydown', onPopoverKeyDown)
-
-    return {
-      destroy() {
-        node.removeEventListener('keydown', onPopoverKeyDown)
-      },
-    }
-  }
+  })
 
   return {
     visible: readonly(visible$),
+    position: readonly(position$),
     triggerAttrs,
     popoverAttrs,
-    trigger: useTrigger,
-    popover: usePopover,
     show,
     hide,
     toggle,

@@ -1,5 +1,5 @@
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import { generateId } from '$lib/helpers/uuid.js'
-import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
 import type { Collapsible, CollapsibleConfig } from './collapsible.types.js'
 
@@ -64,24 +64,27 @@ export const createCollapsible = (config?: CollapsibleConfig): Collapsible => {
     toggle()
   }
 
-  const useTrigger: Action = (node) => {
+  onBrowserMount(() => {
+    const node = document.getElementById(triggerId)
+
+    if (!node) {
+      throw new Error('No trigger found for this collapsible')
+    }
+
     node.addEventListener('keydown', onTriggerKeyDown)
     node.addEventListener('click', onTriggerClick)
 
-    return {
-      destroy() {
-        node.removeEventListener('keydown', onTriggerKeyDown)
-        node.removeEventListener('click', onTriggerClick)
-      },
+    return () => {
+      node.removeEventListener('keydown', onTriggerKeyDown)
+      node.removeEventListener('click', onTriggerClick)
     }
-  }
+  })
 
   return {
     expanded: readonly(expanded$),
     disabled: disabled$,
     triggerAttrs,
     contentAttrs,
-    trigger: useTrigger,
     expand,
     toggle,
     collapse,

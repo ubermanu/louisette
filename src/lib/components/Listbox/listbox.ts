@@ -1,8 +1,8 @@
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
-import type { Action } from 'svelte/action'
 import { derived, get, readonly, writable } from 'svelte/store'
 import type { Listbox, ListboxConfig } from './listbox.types.js'
 
@@ -17,6 +17,9 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
   const orientation$ = writable(orientation || 'vertical')
   const activeDescendant$ = writable<string>('')
 
+  const baseId = generateId()
+  const optionId = (key: string) => `${baseId}-option-${key}`
+
   const listboxAttrs = derived(
     [multiple$, orientation$, activeDescendant$],
     ([multiple, orientation, activeDescendant]) => ({
@@ -27,11 +30,9 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
         ? optionId(activeDescendant)
         : undefined,
       tabIndex: 0,
+      'data-listbox': baseId,
     })
   )
-
-  const baseId = generateId()
-  const optionId = (key: string) => `${baseId}-option-${key}`
 
   const optionAttrs = derived(
     [selected$, disabled$, multiple$],
@@ -46,6 +47,7 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
     }
   )
 
+  // TODO: Implement groups
   const groupAttrs = derived([selected$, disabled$], ([selected, disabled]) => {
     return (key: string) => ({
       role: 'group',
@@ -90,10 +92,11 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
     const $disabled = get(disabled$)
     if ($multiple) {
       selected$.set(
-        Array.from(rootNode?.querySelectorAll(`[data-listbox-option]`) ?? [])
-          .map(
-            (option) => (option as HTMLElement).dataset.listboxOption as string
-          )
+        Array.from(
+          listboxNode?.querySelectorAll<HTMLElement>(`[data-listbox-option]`) ??
+            []
+        )
+          .map((option) => option.dataset.listboxOption!)
           .filter((key) => !$disabled.includes(key))
       )
     }
@@ -104,144 +107,150 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
     selected$.set([])
   }
 
-  let rootNode: HTMLElement | undefined
+  const onOptionClick = (event: DelegateEvent<MouseEvent>) => {
+    const $multiple = get(multiple$)
+    // TODO: If shift is pressed, select all options between lastSelected and key
+    if ($multiple) {
+      toggle(event.delegateTarget.dataset.listboxOption!)
+    } else {
+      select(event.delegateTarget.dataset.listboxOption!)
+    }
+    activeDescendant$.set(event.delegateTarget.dataset.listboxOption!)
+  }
 
-  const useListbox: Action = (node) => {
-    rootNode = node
+  const onListboxKeyDown = (event: KeyboardEvent) => {
+    const $multiple = get(multiple$)
+    const $orientation = get(orientation$)
+    const $activeDescendant = get(activeDescendant$)
 
-    const onListboxKeyDown = (event: KeyboardEvent) => {
-      const $multiple = get(multiple$)
-      const $orientation = get(orientation$)
-      const $activeDescendant = get(activeDescendant$)
+    if (event.key === ' ') {
+      event.preventDefault()
 
-      if (event.key === ' ') {
-        event.preventDefault()
-
-        if ($multiple) {
-          if (event.shiftKey) {
-            // TODO: Select all options between lastSelected and key
-          } else {
-            toggle($activeDescendant)
-          }
+      if ($multiple) {
+        if (event.shiftKey) {
+          // TODO: Select all options between lastSelected and key
         } else {
-          select($activeDescendant)
+          toggle($activeDescendant)
         }
-
-        return
+      } else {
+        select($activeDescendant)
       }
 
-      const $disabled = get(disabled$)
-
-      const nodes = traveller(node, '[data-listbox-option]', (el) => {
-        return $disabled.includes(el.dataset.listboxOption!)
-      })
-
-      let target =
-        nodes
-          .all()
-          .find((el) => el.dataset.listboxOption === $activeDescendant) || null
-
-      if (!target) {
-        activeDescendant$.set(nodes.first()?.dataset.listboxOption!)
-        return
-      }
-
-      if (!target) {
-        console.warn('There are no options in this listbox')
-        return
-      }
-
-      if (
-        (event.key === 'ArrowDown' && $orientation === 'vertical') ||
-        (event.key === 'ArrowRight' && $orientation === 'horizontal')
-      ) {
-        event.preventDefault()
-        const next = nodes.next(target)
-
-        if (next) {
-          activeDescendant$.set(next.dataset.listboxOption!)
-
-          if (event.shiftKey && $multiple) {
-            select(next.dataset.listboxOption!)
-          }
-        }
-      }
-
-      if (
-        (event.key === 'ArrowUp' && $orientation === 'vertical') ||
-        (event.key === 'ArrowLeft' && $orientation === 'horizontal')
-      ) {
-        event.preventDefault()
-        const previous = nodes.previous(target)
-
-        if (previous) {
-          activeDescendant$.set(previous.dataset.listboxOption!)
-
-          if (event.shiftKey && $multiple) {
-            select(previous.dataset.listboxOption!)
-          }
-        }
-      }
-
-      if (event.key === 'Home') {
-        event.preventDefault()
-        const first = nodes.first()
-
-        if (first) {
-          // Selects the focused option and all options up to the first option.
-          if ($multiple && event.shiftKey && event.ctrlKey) {
-            // TODO: Implement
-          } else {
-            activeDescendant$.set(first.dataset.listboxOption!)
-          }
-        }
-      }
-
-      if (event.key === 'End') {
-        event.preventDefault()
-        const last = nodes.last()
-
-        if (last) {
-          // Selects the focused option and all options up to the last option.
-          if ($multiple && event.shiftKey && event.ctrlKey) {
-            // TODO: Implement
-          } else {
-            activeDescendant$.set(last.dataset.listboxOption!)
-          }
-        }
-      }
-
-      if ($multiple && event.key === 'a' && event.ctrlKey) {
-        event.preventDefault()
-
-        const allKeys = nodes
-          .all()
-          .map((option) => (option as HTMLElement).dataset.listboxOption!)
-
-        if (allKeys.length === get(selected$).length) {
-          unselectAll()
-        } else {
-          selectAll()
-        }
-      }
-
-      // TODO: Implement typeahead (from interactions)
+      return
     }
 
-    node.addEventListener('keydown', onListboxKeyDown)
+    const $disabled = get(disabled$)
 
-    const removeListeners = delegateEventListeners(node, {
+    const options = traveller(listboxNode!, '[data-listbox-option]', (el) => {
+      return $disabled.includes(el.dataset.listboxOption!)
+    })
+
+    let target = listboxNode!.querySelector<HTMLElement>(
+      `[data-listbox-option="${$activeDescendant}"]`
+    )
+
+    if (!target) {
+      event.preventDefault()
+      activeDescendant$.set(options.first()?.dataset.listboxOption!)
+      return
+    }
+
+    if (!target) {
+      console.warn('There are no options in this listbox')
+      return
+    }
+
+    if (
+      (event.key === 'ArrowDown' && $orientation === 'vertical') ||
+      (event.key === 'ArrowRight' && $orientation === 'horizontal')
+    ) {
+      event.preventDefault()
+      const next = options.next(target)
+
+      if (next) {
+        activeDescendant$.set(next.dataset.listboxOption!)
+
+        if (event.shiftKey && $multiple) {
+          select(next.dataset.listboxOption!)
+        }
+      }
+    }
+
+    if (
+      (event.key === 'ArrowUp' && $orientation === 'vertical') ||
+      (event.key === 'ArrowLeft' && $orientation === 'horizontal')
+    ) {
+      event.preventDefault()
+      const previous = options.previous(target)
+
+      if (previous) {
+        activeDescendant$.set(previous.dataset.listboxOption!)
+
+        if (event.shiftKey && $multiple) {
+          select(previous.dataset.listboxOption!)
+        }
+      }
+    }
+
+    if (event.key === 'Home') {
+      event.preventDefault()
+      const first = options.first()
+
+      if (first) {
+        // Selects the focused option and all options up to the first option.
+        if ($multiple && event.shiftKey && event.ctrlKey) {
+          // TODO: Implement
+        } else {
+          activeDescendant$.set(first.dataset.listboxOption!)
+        }
+      }
+    }
+
+    if (event.key === 'End') {
+      event.preventDefault()
+      const last = options.last()
+
+      if (last) {
+        // Selects the focused option and all options up to the last option.
+        if ($multiple && event.shiftKey && event.ctrlKey) {
+          // TODO: Implement
+        } else {
+          activeDescendant$.set(last.dataset.listboxOption!)
+        }
+      }
+    }
+
+    if ($multiple && event.key === 'a' && event.ctrlKey) {
+      event.preventDefault()
+
+      const allKeys = options
+        .all()
+        .map((option) => (option as HTMLElement).dataset.listboxOption!)
+
+      if (allKeys.length === get(selected$).length) {
+        unselectAll()
+      } else {
+        selectAll()
+      }
+    }
+
+    // TODO: Implement typeahead (from interactions)
+  }
+
+  let listboxNode: HTMLElement | null = null
+
+  onBrowserMount(() => {
+    listboxNode = document.querySelector(`[data-listbox="${baseId}"]`)
+
+    if (!listboxNode) {
+      throw new Error('Could not find the listbox')
+    }
+
+    listboxNode.addEventListener('keydown', onListboxKeyDown)
+
+    const removeListeners = delegateEventListeners(listboxNode, {
       click: {
-        '[data-listbox-option]': (event: DelegateEvent<MouseEvent>) => {
-          const $multiple = get(multiple$)
-          // TODO: If shift is pressed, select all options between lastSelected and key
-          if ($multiple) {
-            toggle(event.delegateTarget.dataset.listboxOption!)
-          } else {
-            select(event.delegateTarget.dataset.listboxOption!)
-          }
-          activeDescendant$.set(event.delegateTarget.dataset.listboxOption!)
-        },
+        '[data-listbox-option]': onOptionClick,
       },
     })
 
@@ -252,14 +261,12 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
       }
     })
 
-    return {
-      destroy() {
-        node.removeEventListener('keydown', onListboxKeyDown)
-        removeListeners()
-        unsubscribe()
-      },
+    return () => {
+      listboxNode?.removeEventListener('keydown', onListboxKeyDown)
+      removeListeners()
+      unsubscribe()
     }
-  }
+  })
 
   return {
     selected: readonly(selected$),
@@ -268,7 +275,6 @@ export const createListbox = (config?: ListboxConfig): Listbox => {
     listboxAttrs,
     optionAttrs,
     groupAttrs,
-    listbox: useListbox,
     select,
     unselect,
     toggle,

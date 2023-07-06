@@ -1,8 +1,9 @@
+import { onBrowserMount } from '$lib/helpers/environment.js'
 import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
-import type { Action } from 'svelte/action'
-import { derived, get, readonly, writable } from 'svelte/store'
+import { generateId } from '$lib/helpers/uuid.js'
+import { derived, get, readable, readonly, writable } from 'svelte/store'
 import type { Tabs, TabsConfig } from './tabs.types.js'
 
 export const createTabs = (config?: TabsConfig): Tabs => {
@@ -15,6 +16,14 @@ export const createTabs = (config?: TabsConfig): Tabs => {
 
   const orientation$ = writable(orientation || 'horizontal')
   const behavior$ = writable(behavior || 'auto')
+
+  const baseId = generateId()
+  const tabId = (key: string) => `${baseId}-tab-${key}`
+  const panelId = (key: string) => `${baseId}-panel-${key}`
+
+  const rootAttrs = readable({
+    'data-tabs': baseId,
+  })
 
   const listAttrs = derived([orientation$], ([orientation]) => ({
     role: 'tablist',
@@ -35,18 +44,22 @@ export const createTabs = (config?: TabsConfig): Tabs => {
 
         return {
           role: 'tab',
+          id: tabId(key),
           'aria-selected': active === String(key),
           'aria-disabled': disabled.includes(String(key)),
           'data-tabs-tab': key,
           tabIndex: active === String(key) ? 0 : -1,
+          'aria-controls': panelId(key),
         }
       }
   )
 
   const panelAttrs = derived([active$], ([active]) => (key: string) => ({
     role: 'tabpanel',
+    id: panelId(key),
     'data-tabs-panel': key,
     inert: active !== String(key) ? '' : undefined,
+    'aria-labelledby': tabId(key),
   }))
 
   // TODO: Select the first enabled tab if no active tab
@@ -57,30 +70,25 @@ export const createTabs = (config?: TabsConfig): Tabs => {
   }
 
   const onTabClick = (event: DelegateEvent<MouseEvent>) => {
-    open(event.delegateTarget.dataset.tabsTab as string)
+    open(event.delegateTarget.dataset.tabsTab!)
   }
 
   const onTabKeyDown = (event: DelegateEvent<KeyboardEvent>) => {
     const target = event.delegateTarget
-    const key = (event.target as HTMLElement).dataset.tabsTab || ''
 
     const $orientation = get(orientation$)
     const $behavior = get(behavior$)
 
     if (['Enter', ' '].includes(event.key) && $behavior === 'manual') {
       event.preventDefault()
-      open(key)
-    }
-
-    if (!rootNode) {
-      console.warn('Tabs root node not found.')
+      open(target.dataset.tabsTab!)
       return
     }
 
     const $disabled = get(disabled$)
 
-    const nodes = traveller(rootNode, '[data-tabs-tab]', (el) => {
-      return $disabled.includes(el.dataset.tabsTab as string)
+    const nodes = traveller(rootNode!, '[data-tabs-tab]', (el) => {
+      return $disabled.includes(el.dataset.tabsTab!)
     })
 
     if (
@@ -89,6 +97,7 @@ export const createTabs = (config?: TabsConfig): Tabs => {
     ) {
       event.preventDefault()
       nodes.previous(target)?.focus()
+      return
     }
 
     if (
@@ -97,32 +106,38 @@ export const createTabs = (config?: TabsConfig): Tabs => {
     ) {
       event.preventDefault()
       nodes.next(target)?.focus()
+      return
     }
 
     if (event.key === 'Home') {
       event.preventDefault()
       nodes.first()?.focus()
+      return
     }
 
     if (event.key === 'End') {
       event.preventDefault()
       nodes.last()?.focus()
+      return
     }
   }
 
-  const onTabFocus = (event: FocusEvent) => {
+  const onTabFocus = (event: DelegateEvent<FocusEvent>) => {
     if (get(behavior$) === 'auto') {
-      const key = (event.target as HTMLElement).dataset.tabsTab || ''
-      open(key)
+      open(event.delegateTarget.dataset.tabsTab!)
     }
   }
 
   let rootNode: HTMLElement | null = null
 
-  const useTabs: Action = (node) => {
-    rootNode = node
+  onBrowserMount(() => {
+    rootNode = document.querySelector<HTMLElement>(`[data-tabs="${baseId}"]`)
 
-    const removeListeners = delegateEventListeners(node, {
+    if (!rootNode) {
+      throw new Error('No root node found for the tabs')
+    }
+
+    return delegateEventListeners(rootNode, {
       click: {
         '[data-tabs-tab]': onTabClick,
       },
@@ -133,22 +148,16 @@ export const createTabs = (config?: TabsConfig): Tabs => {
         '[data-tabs-tab]': onTabFocus,
       },
     })
-
-    return {
-      destroy() {
-        removeListeners()
-      },
-    }
-  }
+  })
 
   return {
     active: readonly(active$),
     disabled: disabled$,
     orientation: orientation$,
+    rootAttrs,
     listAttrs,
     tabAttrs,
     panelAttrs,
-    tabs: useTabs,
     open,
   }
 }

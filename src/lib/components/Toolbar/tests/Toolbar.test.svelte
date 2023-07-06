@@ -5,10 +5,10 @@
 
   export let items: { id: string; text: string; disabled: boolean }[] = []
 
-  const { toolbar, toolbarAttrs, itemAttrs } = createToolbar(defaults)
+  const { toolbarAttrs, itemAttrs } = createToolbar(defaults)
 </script>
 
-<div use:toolbar {...$toolbarAttrs} data-testid="toolbar">
+<div {...$toolbarAttrs} data-testid="toolbar">
   {#each items as { id, text, disabled }}
     <button {...$itemAttrs(id)} data-testid="toolbar-item-{id}" {disabled}>
       {text}

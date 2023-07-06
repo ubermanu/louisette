@@ -17,11 +17,11 @@ npm install louisette
 <script>
   import { createCollapsible } from 'louisette'
 
-  const { trigger, triggerAttrs, contentAttrs } = createCollapsible()
+  const { triggerAttrs, contentAttrs } = createCollapsible()
 </script>
 
 <div>
-  <button use:trigger {...$triggerAttrs}>Toggle</button>
+  <button {...$triggerAttrs}>Toggle</button>
   <div {...$contentAttrs}>
     <p>Content</p>
   </div>

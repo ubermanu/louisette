@@ -49,6 +49,6 @@ export const traveller = (
     last: () => last(items()),
     next,
     previous,
-    all: () => items(),
+    all: () => items().filter((el) => !skip?.(el)),
   }
 }

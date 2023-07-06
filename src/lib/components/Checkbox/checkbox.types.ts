@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from '$lib/helpers/types.js'
-import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 
 export type CheckboxConfig = {
@@ -13,7 +12,6 @@ export type Checkbox = {
   indeterminate: Readable<boolean>
   disabled: Readable<boolean>
   checkboxAttrs: Readable<HTMLAttributes>
-  checkbox: Action
   check: () => void
   partiallyCheck: () => void
   uncheck: () => void

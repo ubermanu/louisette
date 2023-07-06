@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { setContext } from 'svelte'
   import { createSelect } from '$lib'
+  import { setContext } from 'svelte'
 
   export let multiple: boolean = false
   export let value: string | string[] = ''
@@ -14,9 +14,8 @@
 
   const {
     opened,
-    button,
+    selectAttrs,
     buttonAttrs,
-    listbox,
     listboxAttrs,
     selectedLabel,
     selected: selectedList,
@@ -25,9 +24,8 @@
   $: value = multiple ? $selectedList : $selectedList[0]
 </script>
 
-<div class="relative min-w-[1rem]">
+<div {...$selectAttrs} class="relative min-w-[1rem]">
   <button
-    use:button
     {...$buttonAttrs}
     class="flex w-full items-center justify-between gap-4 rounded bg-white px-4 py-2 shadow dark:bg-neutral-700 dark:text-neutral-100"
   >
@@ -53,7 +51,6 @@
   </button>
 
   <div
-    use:listbox
     {...$listboxAttrs}
     class:hidden={!$opened}
     class="absolute z-10 mt-1 w-full space-y-2 rounded-b bg-white p-2 text-sm shadow-lg dark:bg-neutral-700 dark:text-neutral-100"

@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from '$lib/helpers/types.js'
-import type { Action } from 'svelte/action'
 import type { Readable } from 'svelte/store'
 
 export type AccordionConfig = {
@@ -12,9 +11,9 @@ export type Accordion = {
   multiple: Readable<boolean>
   expanded: Readable<string[]>
   disabled: Readable<string[]>
+  rootAttrs: Readable<HTMLAttributes>
   triggerAttrs: Readable<(key: string) => HTMLAttributes>
   contentAttrs: Readable<(key: string) => HTMLAttributes>
-  accordion: Action
   expand: (key: string) => void
   collapse: (key: string) => void
   toggle: (key: string) => void

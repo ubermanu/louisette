@@ -2,11 +2,18 @@
   import { createRadioGroup } from '$lib'
   import { setContext } from 'svelte'
 
-  const { radioGroup, radioGroupAttrs, ...radioGroupContext } =
-    createRadioGroup()
+  export let value: string = ''
+
+  const { radioGroupAttrs, ...radioGroupContext } = createRadioGroup({
+    selected: value,
+  })
+
   setContext('radioGroup', radioGroupContext)
+
+  const { selected } = radioGroupContext
+  $: value = $selected
 </script>
 
-<div use:radioGroup {...$radioGroupAttrs} class="max-w-xl space-y-2">
+<div {...$radioGroupAttrs} class="max-w-xl space-y-2">
   <slot />
 </div>

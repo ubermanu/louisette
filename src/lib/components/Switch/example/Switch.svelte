@@ -1,11 +1,10 @@
 <script lang="ts">
   import { createSwitch } from '$lib'
 
-  const { switch: switchRef, switchAttrs, active } = createSwitch()
+  const { switchAttrs, active } = createSwitch()
 </script>
 
 <div
-  use:switchRef
   {...$switchAttrs}
   class="flex h-6 w-12 cursor-pointer items-center rounded-full border border-neutral-300 bg-white text-neutral-900 shadow-inner transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring focus-visible:ring-accent-500 focus-visible:ring-opacity-50 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
   class:is-active={$active}

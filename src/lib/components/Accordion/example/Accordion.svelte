@@ -2,10 +2,10 @@
   import { createAccordion } from '$lib'
   import { setContext } from 'svelte'
 
-  const { accordion, ...accordionContext } = createAccordion()
+  const { rootAttrs, ...accordionContext } = createAccordion()
   setContext('accordion', accordionContext)
 </script>
 
-<div use:accordion>
+<div {...$rootAttrs}>
   <slot />
 </div>

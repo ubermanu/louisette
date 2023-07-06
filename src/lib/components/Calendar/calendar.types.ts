@@ -1,4 +1,4 @@
-import type { Action } from 'svelte/action'
+import type { HTMLAttributes } from '$lib/helpers/types.js'
 import type { Readable, Writable } from 'svelte/store'
 
 export type CalendarConfig = {
@@ -27,7 +27,7 @@ export type Calendar = {
   title: Readable<string>
   weekdays: Readable<string[]>
   days: Readable<CalendarDay[]>
-  calendar: Action
+  calendarAttrs: Readable<HTMLAttributes>
   prevButtonAttrs: Readable<Record<string, any>>
   nextButtonAttrs: Readable<Record<string, any>>
   goToPrevMonth: () => void

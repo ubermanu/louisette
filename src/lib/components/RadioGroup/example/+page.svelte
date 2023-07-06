@@ -1,9 +1,15 @@
 <script lang="ts">
   import RadioGroup from './RadioGroup.svelte'
   import Radio from './Radio.svelte'
+
+  let value: string = ''
 </script>
 
-<RadioGroup>
+<p class="mb-4 text-sm opacity-60">
+  You have selected the <b>{value || 'unknown'}</b> power plan.
+</p>
+
+<RadioGroup bind:value>
   <Radio value="balanced">
     <h3>⚖️ Balanced</h3>
     <p>
