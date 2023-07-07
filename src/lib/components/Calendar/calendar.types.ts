@@ -16,7 +16,7 @@ export type CalendarConfig = {
 export type CalendarDay = {
   date: Date
   isOutOfMonth: boolean
-  dayAttrs: Record<string, any>
+  dayAttrs: HTMLAttributes
 }
 
 export type Calendar = {
@@ -28,8 +28,8 @@ export type Calendar = {
   weekdays: Readable<string[]>
   days: Readable<CalendarDay[]>
   calendarAttrs: Readable<HTMLAttributes>
-  prevButtonAttrs: Readable<Record<string, any>>
-  nextButtonAttrs: Readable<Record<string, any>>
+  prevButtonAttrs: Readable<HTMLAttributes>
+  nextButtonAttrs: Readable<HTMLAttributes>
   goToPrevMonth: () => void
   goToNextMonth: () => void
   goToPrevYear: () => void
