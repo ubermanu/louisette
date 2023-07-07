@@ -11,7 +11,7 @@ export type Accordion = {
   multiple: Readable<boolean>
   expanded: Readable<string[]>
   disabled: Readable<string[]>
-  rootAttrs: Readable<HTMLAttributes>
+  accordionAttrs: Readable<HTMLAttributes>
   triggerAttrs: Readable<(key: string) => HTMLAttributes>
   contentAttrs: Readable<(key: string) => HTMLAttributes>
   expand: (key: string) => void

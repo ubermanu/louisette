@@ -17,7 +17,7 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
   const triggerId = (key: string) => `${baseId}-trigger-${key}`
   const contentId = (key: string) => `${baseId}-content-${key}`
 
-  const rootAttrs = readable({
+  const accordionAttrs = readable({
     'data-accordion': baseId,
   })
 
@@ -79,7 +79,7 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
 
   /** Expands all accordion items. */
   const expandAll = () => {
-    const triggers = rootNode?.querySelectorAll(
+    const triggers = accordionNode?.querySelectorAll(
       '[data-accordion-trigger]'
     ) as NodeListOf<HTMLElement>
     const $disabled = get(disabled$)
@@ -112,7 +112,7 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
     })
   }
 
-  let rootNode: HTMLElement | null = null
+  let accordionNode: HTMLElement | null = null
 
   /** Toggles the accordion when the trigger is clicked. */
   const onTriggerClick = (event: DelegateEvent<MouseEvent>) => {
@@ -146,9 +146,13 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
 
     const $disabled = get(disabled$)
 
-    const nodes = traveller(rootNode!, '[data-accordion-trigger]', (el) => {
-      return $disabled.includes(el.dataset.accordionTrigger!)
-    })
+    const nodes = traveller(
+      accordionNode!,
+      '[data-accordion-trigger]',
+      (el) => {
+        return $disabled.includes(el.dataset.accordionTrigger!)
+      }
+    )
 
     if (event.key === 'ArrowUp') {
       event.preventDefault()
@@ -172,15 +176,15 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
   }
 
   onBrowserMount(() => {
-    rootNode = document.querySelector<HTMLElement>(
+    accordionNode = document.querySelector<HTMLElement>(
       `[data-accordion="${baseId}"]`
     )
 
-    if (!rootNode) {
+    if (!accordionNode) {
       throw new Error('No root node found for the accordion')
     }
 
-    const removeListeners = delegateEventListeners(rootNode, {
+    const removeListeners = delegateEventListeners(accordionNode, {
       keydown: {
         '[data-accordion-trigger]': onTriggerKeyDown,
       },
@@ -206,7 +210,7 @@ export const createAccordion = (config?: AccordionConfig): Accordion => {
     multiple: multiple$,
     expanded: readonly(expanded$),
     disabled: readonly(disabled$),
-    rootAttrs,
+    accordionAttrs,
     triggerAttrs,
     contentAttrs,
     expand,
