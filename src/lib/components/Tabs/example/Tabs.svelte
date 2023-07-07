@@ -2,12 +2,11 @@
   import { createTabs } from '$lib'
   import { setContext } from 'svelte'
 
-  const { rootAttrs, listAttrs, ...tabsContext } = createTabs()
+  const { listAttrs, ...tabsContext } = createTabs()
   setContext('tabs', tabsContext)
 </script>
 
 <div
-  {...$rootAttrs}
   class="flex flex-col gap-2 overflow-clip rounded-lg border border-neutral-200 bg-white p-4 text-neutral-900 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
 >
   <div {...$listAttrs} class="flex gap-2">

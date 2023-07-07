@@ -3,7 +3,7 @@ import type { DelegateEvent } from '$lib/helpers/events.js'
 import { delegateEventListeners } from '$lib/helpers/events.js'
 import { traveller } from '$lib/helpers/traveller.js'
 import { generateId } from '$lib/helpers/uuid.js'
-import { derived, get, readable, readonly, writable } from 'svelte/store'
+import { derived, get, readonly, writable } from 'svelte/store'
 import type { Tabs, TabsConfig } from './tabs.types.js'
 
 export const createTabs = (config?: TabsConfig): Tabs => {
@@ -18,16 +18,14 @@ export const createTabs = (config?: TabsConfig): Tabs => {
   const behavior$ = writable(behavior || 'auto')
 
   const baseId = generateId()
+  const listId = `${baseId}-list`
   const tabId = (key: string) => `${baseId}-tab-${key}`
   const panelId = (key: string) => `${baseId}-panel-${key}`
-
-  const rootAttrs = readable({
-    'data-tabs': baseId,
-  })
 
   const listAttrs = derived([orientation$], ([orientation]) => ({
     role: 'tablist',
     'aria-orientation': orientation,
+    'data-tabs-list': listId,
   }))
 
   let defaultActive = active || ''
@@ -87,7 +85,7 @@ export const createTabs = (config?: TabsConfig): Tabs => {
 
     const $disabled = get(disabled$)
 
-    const nodes = traveller(rootNode!, '[data-tabs-tab]', (el) => {
+    const tabs = traveller(listNode!, '[data-tabs-tab]', (el) => {
       return $disabled.includes(el.dataset.tabsTab!)
     })
 
@@ -96,7 +94,7 @@ export const createTabs = (config?: TabsConfig): Tabs => {
       (event.key === 'ArrowUp' && $orientation === 'vertical')
     ) {
       event.preventDefault()
-      nodes.previous(target)?.focus()
+      tabs.previous(target)?.focus()
       return
     }
 
@@ -105,19 +103,19 @@ export const createTabs = (config?: TabsConfig): Tabs => {
       (event.key === 'ArrowDown' && $orientation === 'vertical')
     ) {
       event.preventDefault()
-      nodes.next(target)?.focus()
+      tabs.next(target)?.focus()
       return
     }
 
     if (event.key === 'Home') {
       event.preventDefault()
-      nodes.first()?.focus()
+      tabs.first()?.focus()
       return
     }
 
     if (event.key === 'End') {
       event.preventDefault()
-      nodes.last()?.focus()
+      tabs.last()?.focus()
       return
     }
   }
@@ -128,16 +126,18 @@ export const createTabs = (config?: TabsConfig): Tabs => {
     }
   }
 
-  let rootNode: HTMLElement | null = null
+  let listNode: HTMLElement | null = null
 
   onBrowserMount(() => {
-    rootNode = document.querySelector<HTMLElement>(`[data-tabs="${baseId}"]`)
+    listNode = document.querySelector<HTMLElement>(
+      `[data-tabs-list="${listId}"]`
+    )
 
-    if (!rootNode) {
-      throw new Error('No root node found for the tabs')
+    if (!listNode) {
+      throw new Error('No list node found for the tabs')
     }
 
-    return delegateEventListeners(rootNode, {
+    return delegateEventListeners(listNode, {
       click: {
         '[data-tabs-tab]': onTabClick,
       },
@@ -154,7 +154,6 @@ export const createTabs = (config?: TabsConfig): Tabs => {
     active: readonly(active$),
     disabled: disabled$,
     orientation: orientation$,
-    rootAttrs,
     listAttrs,
     tabAttrs,
     panelAttrs,

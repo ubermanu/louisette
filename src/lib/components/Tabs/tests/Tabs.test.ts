@@ -7,7 +7,7 @@ describe('Tabs', async () => {
   test('Renders without items', async () => {
     const { getByTestId } = render(TabsTest)
     expect(getByTestId('tabs')).toBeTruthy()
-    expect(getByTestId('tabs').children.length).toBe(0)
+    expect(getByTestId('tabs').children.length).toBe(1) // the tab list
   })
 
   test('Renders with items', async () => {

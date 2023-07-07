@@ -19,7 +19,6 @@ export type Tabs = {
   active: Readable<string>
   disabled: Readable<string[]>
   orientation: Readable<'horizontal' | 'vertical'>
-  rootAttrs: Readable<HTMLAttributes>
   listAttrs: Readable<HTMLAttributes>
   tabAttrs: Readable<(key: string) => HTMLAttributes>
   panelAttrs: Readable<(key: string) => HTMLAttributes>
