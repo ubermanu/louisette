@@ -83,6 +83,6 @@
   },
   "dependencies": {
     "@floating-ui/dom": "^1.4.3",
-    "focusable-selectors": "^0.8.0"
+    "tabbable": "^6.2.0"
   }
 }

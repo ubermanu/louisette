@@ -1,9 +1,9 @@
-import { getFocusableElements } from '$lib/helpers/dom.js'
 import type { Action } from 'svelte/action'
+import { tabbable } from 'tabbable'
 
 export const focusTrap: Action = (node: HTMLElement) => {
   const onKeyDown = (event: KeyboardEvent) => {
-    const focusableElements = getFocusableElements(node)
+    const focusableElements = tabbable(node)
 
     const firstFocusableElement = focusableElements[0]
     const lastFocusableElement = focusableElements[focusableElements.length - 1]

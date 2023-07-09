@@ -1,10 +1,10 @@
 import { focusTrap } from '$lib/actions/FocusTrap/focusTrap.js'
-import { getFirstFocusableElement } from '$lib/helpers/dom.js'
 import { onBrowserMount } from '$lib/helpers/environment.js'
 import { generateId } from '$lib/helpers/uuid.js'
 import { autoUpdate, computePosition } from '@floating-ui/dom'
 import { tick } from 'svelte'
 import { derived, get, readonly, writable } from 'svelte/store'
+import { tabbable } from 'tabbable'
 import type { Popover, PopoverConfig } from './popover.types.js'
 
 export const createPopover = (config?: PopoverConfig): Popover => {
@@ -36,7 +36,7 @@ export const createPopover = (config?: PopoverConfig): Popover => {
     document.addEventListener('keydown', onDocumentKeyDown, true)
     tick().then(() => {
       if (popover) {
-        getFirstFocusableElement(popover)?.focus()
+        tabbable(popover).shift()?.focus()
       }
     })
   }
