@@ -1,5 +1,5 @@
+import { tabbable } from '$lib/helpers/tabbable.js'
 import type { Action } from 'svelte/action'
-import { tabbable } from 'tabbable'
 
 export const focusTrap: Action = (node: HTMLElement) => {
   const onKeyDown = (event: KeyboardEvent) => {

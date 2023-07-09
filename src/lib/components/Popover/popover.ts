@@ -1,10 +1,10 @@
 import { focusTrap } from '$lib/actions/FocusTrap/focusTrap.js'
 import { onBrowserMount } from '$lib/helpers/environment.js'
+import { tabbable } from '$lib/helpers/tabbable.js'
 import { generateId } from '$lib/helpers/uuid.js'
 import { autoUpdate, computePosition } from '@floating-ui/dom'
 import { tick } from 'svelte'
 import { derived, get, readonly, writable } from 'svelte/store'
-import { tabbable } from 'tabbable'
 import type { Popover, PopoverConfig } from './popover.types.js'
 
 export const createPopover = (config?: PopoverConfig): Popover => {
