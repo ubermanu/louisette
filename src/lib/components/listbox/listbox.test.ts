@@ -231,3 +231,17 @@ test('space + shift selects from the latest selection to the active element (mul
   expect(screen.getByTestId('opt-2').getAttribute('aria-checked')).toBe('true')
   expect(screen.getByTestId('opt-3').getAttribute('aria-checked')).toBe('true')
 })
+
+test('ctrl + a selects all the options (multiple)', async () => {
+  render(ListboxTest, { multiple: true })
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{Control>}a{/Control}')
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-checked')).toBe('true')
+  expect(screen.getByTestId('opt-2').getAttribute('aria-checked')).toBe('true')
+  expect(screen.getByTestId('opt-3').getAttribute('aria-checked')).toBe('true')
+})

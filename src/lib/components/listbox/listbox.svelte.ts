@@ -159,6 +159,13 @@ export function createListbox(config: ListboxConfig) {
       select(activeDescendant)
     }
 
+    // Select all the options
+    if (event.key.toLowerCase() === 'a' && event.ctrlKey) {
+      for (let item of options.all()) {
+        select(item.id.substring(baseId.length + '-option-'.length) ?? null)
+      }
+    }
+
     if (
       (event.key === 'ArrowDown' && orientation === 'vertical') ||
       (event.key === 'ArrowRight' && orientation === 'horizontal')
