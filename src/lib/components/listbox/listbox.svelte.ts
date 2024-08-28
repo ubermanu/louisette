@@ -7,6 +7,7 @@ export interface ListboxConfig {
   selection: string[]
   orientation: Orientation
   behavior: Behavior
+  multiple: boolean
 }
 
 /**
@@ -18,6 +19,7 @@ export function createListbox(config: ListboxConfig) {
   let activeDescendant = $state<string | null>(null)
   let orientation = $state<Orientation>(config?.orientation ?? 'vertical')
   let behavior = $state<Behavior>(config?.behavior ?? 'manual')
+  let multiple = $state(config?.multiple ?? false)
 
   const baseId = crypto.randomUUID()
   const optionId = (key: string) => `${baseId}-option-${key}`
@@ -35,7 +37,9 @@ export function createListbox(config: ListboxConfig) {
   const option = $derived((key: string | number) => ({
     id: optionId(key.toString()),
     role: 'option',
-    'aria-selected': selection.includes(key.toString()),
+    [multiple ? 'aria-checked' : 'aria-selected']: selection.includes(
+      key.toString()
+    ),
   }))
 
   /**
@@ -47,7 +51,48 @@ export function createListbox(config: ListboxConfig) {
       element?.id.substring(baseId.length + '-option-'.length) ?? null
 
     if (activeDescendant && behavior === 'auto') {
-      selection = [activeDescendant]
+      select(activeDescendant)
+    }
+  }
+
+  /**
+   * Add a key to the selection. If the listbox is not multiple, replace the
+   * selection.
+   */
+  function select(key: string | number) {
+    const k = key.toString()
+    if (multiple) {
+      if (selection.includes(k) === false) {
+        selection.push(k)
+      }
+    } else {
+      selection = [k]
+    }
+  }
+
+  /** Deselect a key from the selection. */
+  function deselect(key: string | number) {
+    if (multiple === false) {
+      // In a single listbox context, user cannot deselect an item.
+      return
+    }
+
+    selection = selection.filter((k) => k !== key.toString())
+  }
+
+  /** Toggle a key from the selection. */
+  function toggle(key: string | number) {
+    const k = key.toString()
+    if (multiple) {
+      if (selection.includes(k)) {
+        deselect(k)
+      } else {
+        select(k)
+      }
+    } else {
+      if (selection.includes(k) === false) {
+        select(k)
+      }
     }
   }
 
@@ -76,8 +121,7 @@ export function createListbox(config: ListboxConfig) {
 
     if (event.key === ' ') {
       event.preventDefault()
-      selection = [activeDescendant]
-      console.log(selection)
+      toggle(activeDescendant)
       return
     }
 

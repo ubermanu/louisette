@@ -127,3 +127,76 @@ test('when behavior is auto, focusing an item selects it', async () => {
   await user.keyboard('{ArrowDown}')
   expect(screen.getByTestId('opt-2').getAttribute('aria-selected')).toBe('true')
 })
+
+test('press space, selects the active element', async () => {
+  render(ListboxTest)
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{ }')
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-selected')).toBe('true')
+})
+
+test('the selection only have a single element', async () => {
+  render(ListboxTest)
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{ }')
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-selected')).toBe('true')
+
+  await user.keyboard('{ArrowDown}')
+  await user.keyboard('{ }')
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-selected')).toBe(
+    'false'
+  )
+  expect(screen.getByTestId('opt-2').getAttribute('aria-selected')).toBe('true')
+})
+
+test('press space 2 times, keeps the active element selected', async () => {
+  render(ListboxTest)
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{ }')
+  await user.keyboard('{ }')
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-selected')).toBe('true')
+})
+
+test('the selection can have many elements (multiple)', async () => {
+  render(ListboxTest, { multiple: true })
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{ }')
+  await user.keyboard('{ArrowDown}')
+  await user.keyboard('{ }')
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-checked')).toBe('true')
+  expect(screen.getByTestId('opt-2').getAttribute('aria-checked')).toBe('true')
+})
+
+test('press space 2 times, toggles the active element (multiple)', async () => {
+  render(ListboxTest, { multiple: true })
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{ }')
+  await user.keyboard('{ }')
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-checked')).toBe('false')
+})
