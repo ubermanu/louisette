@@ -86,3 +86,31 @@ test('end key moves focus to the last option', async () => {
     screen.getByTestId('opt-3').id
   )
 })
+
+test('arrow right moves the focus to the next option (horizontal)', async () => {
+  render(ListboxTest, { orientation: 'horizontal' })
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{ArrowRight}')
+
+  expect(list.getAttribute('aria-activedescendant')).toBe(
+    screen.getByTestId('opt-2').id
+  )
+})
+
+test('arrow left moves the focus to the previous option (horizontal)', async () => {
+  render(ListboxTest, { orientation: 'horizontal', selection: [2] })
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{ArrowLeft}')
+
+  expect(list.getAttribute('aria-activedescendant')).toBe(
+    screen.getByTestId('opt-1').id
+  )
+})

@@ -1,7 +1,10 @@
 import traveller from '$lib/util/traveller.js'
 
+type Orientation = 'vertical' | 'horizontal'
+
 export interface ListboxConfig {
   selection: string[]
+  orientation: Orientation
 }
 
 /**
@@ -11,6 +14,7 @@ export interface ListboxConfig {
 export function createListbox(config: ListboxConfig) {
   let selection = $state<string[]>(config?.selection ?? [])
   let activeDescendant = $state<string | null>(null)
+  let orientation = $state<Orientation>(config?.orientation ?? 'vertical')
 
   const baseId = crypto.randomUUID()
   const optionId = (key: string) => `${baseId}-option-${key}`
@@ -19,6 +23,7 @@ export function createListbox(config: ListboxConfig) {
     'aria-activedescendant': activeDescendant
       ? optionId(activeDescendant)
       : null,
+    'aria-orientation': orientation !== 'horizontal' ? orientation : null,
     tabindex: 0,
     onfocusin: onListboxFocusin,
     onkeydown: onListboxKeydown,
@@ -72,7 +77,10 @@ export function createListbox(config: ListboxConfig) {
 
     const active = document.getElementById(optionId(activeDescendant))
 
-    if (event.key === 'ArrowDown') {
+    if (
+      (event.key === 'ArrowDown' && orientation === 'vertical') ||
+      (event.key === 'ArrowRight' && orientation === 'horizontal')
+    ) {
       event.preventDefault()
       const next = options.next(active)
       if (next) {
@@ -80,7 +88,10 @@ export function createListbox(config: ListboxConfig) {
       }
     }
 
-    if (event.key === 'ArrowUp') {
+    if (
+      (event.key === 'ArrowUp' && orientation === 'vertical') ||
+      (event.key === 'ArrowLeft' && orientation === 'horizontal')
+    ) {
       event.preventDefault()
       const prev = options.prev(active)
       if (prev) {
