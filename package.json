@@ -1,0 +1,54 @@
+{
+  "name": "louisette",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    }
+  },
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "scripts": {
+    "build": "vite build && npm run package",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "dev": "vite dev",
+    "format": "prettier --write .",
+    "lint": "prettier --check .",
+    "package": "svelte-kit sync && svelte-package && publint",
+    "prepublishOnly": "npm run package",
+    "preview": "vite preview",
+    "test": "vitest"
+  },
+  "prettier": "@ubermanu/prettier-config",
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^3.0.0",
+    "@sveltejs/kit": "^2.0.0",
+    "@sveltejs/package": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
+    "@testing-library/svelte": "^5.2.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@ubermanu/prettier-config": "^3.3.0",
+    "@vitest/ui": "^2.0.5",
+    "axe-core": "^4.10.0",
+    "jsdom": "^25.0.0",
+    "prettier": "^3.1.1",
+    "prettier-plugin-svelte": "^3.1.2",
+    "publint": "^0.2.0",
+    "svelte": "5.0.0-next.240",
+    "svelte-check": "^3.6.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.4.2",
+    "vitest": "^2.0.5"
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0-next.1"
+  }
+}
