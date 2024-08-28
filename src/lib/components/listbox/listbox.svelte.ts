@@ -202,6 +202,13 @@ export function createListbox(config: ListboxConfig) {
       event.preventDefault()
       const first = options.first()
       if (first) {
+        // Select from the cursor to the top.
+        if (multiple && event.shiftKey && event.ctrlKey) {
+          for (let item of options.slice(first, active!)) {
+            select(item.id.substring(baseId.length + '-option-'.length) ?? null)
+          }
+        }
+
         activate(first)
       }
     }
@@ -210,6 +217,13 @@ export function createListbox(config: ListboxConfig) {
       event.preventDefault()
       const last = options.last()
       if (last) {
+        // Select from the cursor to the bottom.
+        if (multiple && event.shiftKey && event.ctrlKey) {
+          for (let item of options.slice(last, active!)) {
+            select(item.id.substring(baseId.length + '-option-'.length) ?? null)
+          }
+        }
+
         activate(last)
       }
     }

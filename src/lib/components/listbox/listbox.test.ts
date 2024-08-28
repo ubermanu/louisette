@@ -245,3 +245,18 @@ test('ctrl + a selects all the options (multiple)', async () => {
   expect(screen.getByTestId('opt-2').getAttribute('aria-checked')).toBe('true')
   expect(screen.getByTestId('opt-3').getAttribute('aria-checked')).toBe('true')
 })
+
+test('ctrl + shift + home selects all the options from cursor to the top (multiple)', async () => {
+  render(ListboxTest, { multiple: true })
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{ArrowDown}{ArrowDown}')
+  await user.keyboard('{Control>}{Shift>}{Home}{/Shift}{/Control}')
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-checked')).toBe('true')
+  expect(screen.getByTestId('opt-2').getAttribute('aria-checked')).toBe('true')
+  expect(screen.getByTestId('opt-3').getAttribute('aria-checked')).toBe('false')
+})
