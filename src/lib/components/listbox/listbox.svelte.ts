@@ -21,6 +21,10 @@ export function createListbox(config: ListboxConfig) {
   let behavior = $state<Behavior>(config?.behavior ?? 'manual')
   let multiple = $state(config?.multiple ?? false)
 
+  if (multiple && behavior === 'auto') {
+    console.warn('A listbox should not be multiple and have its behavior set to `auto`.')
+  }
+
   const baseId = crypto.randomUUID()
   const optionId = (key: string) => `${baseId}-option-${key}`
 
@@ -50,7 +54,7 @@ export function createListbox(config: ListboxConfig) {
     activeDescendant =
       element?.id.substring(baseId.length + '-option-'.length) ?? null
 
-    if (activeDescendant && behavior === 'auto') {
+    if (activeDescendant && behavior === 'auto' && multiple === false) {
       select(activeDescendant)
     }
   }
