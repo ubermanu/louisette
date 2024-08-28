@@ -1,10 +1,12 @@
 import traveller from '$lib/util/traveller.js'
 
 type Orientation = 'vertical' | 'horizontal'
+type Behavior = 'manual' | 'auto'
 
 export interface ListboxConfig {
   selection: string[]
   orientation: Orientation
+  behavior: Behavior
 }
 
 /**
@@ -15,6 +17,7 @@ export function createListbox(config: ListboxConfig) {
   let selection = $state<string[]>(config?.selection ?? [])
   let activeDescendant = $state<string | null>(null)
   let orientation = $state<Orientation>(config?.orientation ?? 'vertical')
+  let behavior = $state<Behavior>(config?.behavior ?? 'manual')
 
   const baseId = crypto.randomUUID()
   const optionId = (key: string) => `${baseId}-option-${key}`
@@ -35,10 +38,17 @@ export function createListbox(config: ListboxConfig) {
     'aria-selected': selection.includes(key.toString()),
   }))
 
-  /** Set the element as active descendant. If `null`, nothing is focused. */
+  /**
+   * Set the element as active descendant. If `null`, nothing is focused. If the
+   * behavior is set to `auto`, it is also selected.
+   */
   function activate(element: HTMLElement | Element | null) {
     activeDescendant =
       element?.id.substring(baseId.length + '-option-'.length) ?? null
+
+    if (activeDescendant && behavior === 'auto') {
+      selection = [activeDescendant]
+    }
   }
 
   /**

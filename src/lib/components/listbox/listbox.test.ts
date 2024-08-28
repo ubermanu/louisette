@@ -114,3 +114,16 @@ test('arrow left moves the focus to the previous option (horizontal)', async () 
     screen.getByTestId('opt-1').id
   )
 })
+
+test('when behavior is auto, focusing an item selects it', async () => {
+  render(ListboxTest, { behavior: 'auto' })
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  expect(screen.getByTestId('opt-1').getAttribute('aria-selected')).toBe('true')
+
+  await user.keyboard('{ArrowDown}')
+  expect(screen.getByTestId('opt-2').getAttribute('aria-selected')).toBe('true')
+})
