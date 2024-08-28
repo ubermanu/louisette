@@ -34,11 +34,25 @@ export default function traveller(
     return last(list.slice(0, index))
   }
 
+  const slice = (from: Element, to: Element): Element[] => {
+    const list = items()
+
+    const a = list.indexOf(from)
+    const b = list.indexOf(to)
+
+    if (a * b < 0) {
+      return []
+    }
+
+    return list.slice(Math.min(a, b), Math.max(a, b))
+  }
+
   return {
     first: () => first(items()),
     last: () => last(items()),
     next,
     prev: previous,
     all: () => items().filter((el) => !skip?.(el)),
+    slice,
   }
 }

@@ -200,3 +200,34 @@ test('press space 2 times, toggles the active element (multiple)', async () => {
 
   expect(screen.getByTestId('opt-1').getAttribute('aria-checked')).toBe('false')
 })
+
+test('arrow down + shift extends the selection (multiple)', async () => {
+  render(ListboxTest, { multiple: true })
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{ }')
+  await user.keyboard('{Shift>}{ArrowDown}{/Shift}')
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-checked')).toBe('true')
+  expect(screen.getByTestId('opt-2').getAttribute('aria-checked')).toBe('true')
+})
+
+test('space + shift selects from the latest selection to the active element (multiple)', async () => {
+  render(ListboxTest, { multiple: true })
+
+  const list = screen.getByTestId('list')
+  const user = userEvent.setup()
+
+  await user.click(list)
+  await user.keyboard('{ }')
+  await user.keyboard('{ArrowDown}')
+  await user.keyboard('{ArrowDown}')
+  await user.keyboard('{Shift>}{ }{/Shift}')
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-checked')).toBe('true')
+  expect(screen.getByTestId('opt-2').getAttribute('aria-checked')).toBe('true')
+  expect(screen.getByTestId('opt-3').getAttribute('aria-checked')).toBe('true')
+})

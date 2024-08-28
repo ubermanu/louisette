@@ -22,7 +22,9 @@ export function createListbox(config: ListboxConfig) {
   let multiple = $state(config?.multiple ?? false)
 
   if (multiple && behavior === 'auto') {
-    console.warn('A listbox should not be multiple and have its behavior set to `auto`.')
+    console.warn(
+      'A listbox should not be multiple and have its behavior set to `auto`.'
+    )
   }
 
   const baseId = crypto.randomUUID()
@@ -123,7 +125,7 @@ export function createListbox(config: ListboxConfig) {
       return
     }
 
-    if (event.key === ' ') {
+    if (event.key === ' ' && (multiple && event.shiftKey) === false) {
       event.preventDefault()
       toggle(activeDescendant)
       return
@@ -135,6 +137,28 @@ export function createListbox(config: ListboxConfig) {
 
     const active = document.getElementById(optionId(activeDescendant))
 
+    // Extends the selection from the latest selected element, to the active cursor.
+    if (event.key === ' ' && multiple && event.shiftKey) {
+      event.preventDefault()
+
+      if (selection.length === 0) {
+        return
+      }
+
+      const selected = document.getElementById(optionId(selection.reverse()[0]))
+
+      if (!selected) {
+        // The latest selected element does not exist anymore in the DOM.
+        return
+      }
+
+      for (let item of options.slice(selected, active!)) {
+        select(item.id.substring(baseId.length + '-option-'.length) ?? null)
+      }
+
+      select(activeDescendant)
+    }
+
     if (
       (event.key === 'ArrowDown' && orientation === 'vertical') ||
       (event.key === 'ArrowRight' && orientation === 'horizontal')
@@ -143,6 +167,11 @@ export function createListbox(config: ListboxConfig) {
       const next = options.next(active)
       if (next) {
         activate(next)
+
+        // Moves focus to and toggles the selected state of the next option.
+        if (multiple && event.shiftKey) {
+          select(activeDescendant)
+        }
       }
     }
 
@@ -154,6 +183,11 @@ export function createListbox(config: ListboxConfig) {
       const prev = options.prev(active)
       if (prev) {
         activate(prev)
+
+        // Moves focus to and toggles the selected state of the previous option.
+        if (multiple && event.shiftKey) {
+          select(activeDescendant)
+        }
       }
     }
 
