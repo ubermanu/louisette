@@ -46,6 +46,7 @@ export function createListbox(config: ListboxConfig) {
     [multiple ? 'aria-checked' : 'aria-selected']: selection.includes(
       key.toString()
     ),
+    onclick: onOptionClick,
   }))
 
   /**
@@ -227,6 +228,16 @@ export function createListbox(config: ListboxConfig) {
         activate(last)
       }
     }
+  }
+
+  /** Handle the option mouse interactions. */
+  function onOptionClick(event: MouseEvent) {
+    event.preventDefault()
+
+    const optionElement = event.target as Element
+    const key = optionElement.id.substring(baseId.length + '-option-'.length)
+
+    toggle(key)
   }
 
   class Listbox {

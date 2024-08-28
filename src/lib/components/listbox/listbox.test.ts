@@ -260,3 +260,12 @@ test('ctrl + shift + home selects all the options from cursor to the top (multip
   expect(screen.getByTestId('opt-2').getAttribute('aria-checked')).toBe('true')
   expect(screen.getByTestId('opt-3').getAttribute('aria-checked')).toBe('false')
 })
+
+test('click on an option selects it', async () => {
+  render(ListboxTest)
+
+  const user = userEvent.setup()
+  await user.click(screen.getByTestId('opt-1'))
+
+  expect(screen.getByTestId('opt-1').getAttribute('aria-selected')).toBe('true')
+})
