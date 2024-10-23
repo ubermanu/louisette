@@ -29,26 +29,28 @@
   },
   "prettier": "@ubermanu/prettier-config",
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^3.0.0",
-    "@sveltejs/kit": "^2.0.0",
-    "@sveltejs/package": "^2.0.0",
-    "@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
-    "@testing-library/svelte": "^5.2.1",
+    "@sveltejs/adapter-auto": "^3.3.0",
+    "@sveltejs/kit": "^2.7.2",
+    "@sveltejs/package": "^2.3.6",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "@testing-library/svelte": "^5.2.4",
     "@testing-library/user-event": "^14.5.2",
     "@ubermanu/prettier-config": "^3.3.0",
-    "@vitest/ui": "^2.0.5",
-    "axe-core": "^4.10.0",
-    "jsdom": "^25.0.0",
-    "prettier": "^3.1.1",
-    "prettier-plugin-svelte": "^3.1.2",
-    "publint": "^0.2.0",
-    "svelte": "5.0.0-next.240",
-    "svelte-check": "^3.6.0",
-    "typescript": "^5.0.0",
-    "vite": "^5.4.2",
-    "vitest": "^2.0.5"
+    "@vitest/ui": "^2.1.3",
+    "axe-core": "^4.10.1",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.3.3",
+    "prettier-plugin-svelte": "^3.2.7",
+    "publint": "^0.2.11",
+    "svelte-check": "^3.8.6",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.3"
+  },
+  "dependencies": {
+    "svelte": "^5.0.5"
   },
   "peerDependencies": {
-    "svelte": "^5.0.0-next.1"
+    "svelte": "^5.0.5"
   }
 }
