@@ -14,7 +14,7 @@ export interface ListboxConfig {
  * A listbox is a focusable list that handles its internal navigation. Options
  * can be selected or disabled.
  */
-export function createListbox(config: ListboxConfig) {
+export function createListbox(config?: ListboxConfig) {
   let selection = $state<string[]>(config?.selection ?? [])
   let activeDescendant = $state<string | null>(null)
   let orientation = $state<Orientation>(config?.orientation ?? 'vertical')
@@ -238,6 +238,7 @@ export function createListbox(config: ListboxConfig) {
     const key = optionElement.id.substring(baseId.length + '-option-'.length)
 
     toggle(key)
+    activeDescendant = key
   }
 
   class Listbox {
