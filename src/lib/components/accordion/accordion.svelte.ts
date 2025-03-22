@@ -10,12 +10,13 @@ export function createAccordion(config?: AccordionConfig) {
     'aria-controls': `${baseId}-content-${key}`,
     'aria-expanded': open === key,
     onclick: onTriggerClick.bind({ key }),
-    onkeydown: onTriggerKeyDown.bind({ key }),
+    onkeydown: onTriggerKeydown.bind({ key }),
   }))
 
   let content = $derived((key: string) => ({
     id: `${baseId}-content-${key}`,
     'aria-hidden': open !== key,
+    'aria-labelled-by': `${baseId}-trigger-${key}`,
     inert: open !== key,
   }))
 
@@ -24,7 +25,7 @@ export function createAccordion(config?: AccordionConfig) {
     open = open === this.key ? null : this.key
   }
 
-  function onTriggerKeyDown(this: { key: string }, event: KeyboardEvent) {
+  function onTriggerKeydown(this: { key: string }, event: KeyboardEvent) {
     if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault()
       open = open === this.key ? null : this.key

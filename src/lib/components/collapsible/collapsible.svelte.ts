@@ -12,20 +12,22 @@ export function createCollapsible(config?: CollapsibleConfig) {
     'aria-controls': `${baseId}-content`,
     'aria-expanded': open,
     onclick: onTriggerClick,
-    onkeydown: onTriggerKeyDown,
+    onkeydown: onTriggerKeydown,
   })
 
   let content = $derived({
     id: `${baseId}-content`,
     'aria-hidden': !open,
+    'aria-labelled-by': `${baseId}-trigger`,
     inert: !open,
   })
 
   function onTriggerClick(event: MouseEvent) {
+    event.preventDefault()
     open = !open
   }
 
-  function onTriggerKeyDown(event: KeyboardEvent) {
+  function onTriggerKeydown(event: KeyboardEvent) {
     if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault()
       open = !open
