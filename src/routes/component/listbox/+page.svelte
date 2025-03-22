@@ -17,7 +17,7 @@
   {#each kings as king, i}
     <div
       {...listbox.option(String(i))}
-      class="px-4 py-2 cursor-pointer hover:bg-slate-200 select-none"
+      class="cursor-pointer px-4 py-2 select-none hover:bg-slate-200"
       class:bg-slate-200={listbox.activeDescendant === String(i)}
       class:bg-pink-300={listbox.selection.includes(String(i))}
     >
