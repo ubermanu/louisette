@@ -36,14 +36,14 @@
       >
         <span
           class="mr-2 inline-block transition-transform"
-          class:rotate-90={accordion.openList.contains(String(i))}>►</span
+          class:rotate-90={accordion.open === String(i)}>►</span
         >
         {castle.title}
       </button>
       <div
         {...accordion.content(String(i))}
         class="p-4 pt-0"
-        class:hidden={!accordion.openList.contains(String(i))}
+        class:hidden={accordion.open !== String(i)}
       >
         <p>{castle.description}</p>
       </div>
